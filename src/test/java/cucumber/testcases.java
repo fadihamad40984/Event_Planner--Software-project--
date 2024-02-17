@@ -427,4 +427,33 @@ public class testcases {
         throw new io.cucumber.java.PendingException();
     }
 
+    @When("I click add image, add video or add media")
+    public void i_click_add_image_add_video_or_add_media() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @Then("Open files to choose the item")
+    public void open_files_to_choose_the_item() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @Then("Display the image on it specific place")
+    public void display_the_image_on_it_specific_place() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @When("I click on the image, video or media")
+    public void i_click_on_the_image_video_or_media() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @Then("Remove it")
+    public void remove_it() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
 }
