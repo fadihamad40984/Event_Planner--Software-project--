@@ -112,3 +112,24 @@ Feature: Event Creation And Management
     Given I am in the distinct page that pop on the editing page
     When I click on the image, video or media
     Then Remove it
+  Scenario: Adding an image, video or media when adding an event
+    Given I am in addition page
+    When I click add image, add video or add media
+    Then Open files to choose the item
+    And Display the image on it specific place
+
+  Scenario: Removing an image, video or media when adding an event
+    Given I am in addition page
+    When I click on the image, video or media
+    Then Remove it
+
+  Scenario: Adding an image, video or media when editing an event
+    Given I am in the distinct page that pop on the editing page
+    When I click add image, add video or add media
+    Then Open files to choose the item
+    And Display the image on it specific place
+
+  Scenario: Removing an image, video or media when adding an event
+    Given I am in the distinct page that pop on the editing page
+    When I click on the image, video or media
+    Then Remove it

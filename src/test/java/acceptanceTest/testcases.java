@@ -9,7 +9,7 @@ public class testcases {
 
     @Given("I am on the signup page")
     public void i_am_on_the_signup_page() {
-
+        
     }
 
     @When("I fill the signup form with valid details")
@@ -337,6 +337,33 @@ public class testcases {
     public void the_program_returns_me_to_event_addition_page_to_repeat_the_attendee_count() {
 
     }
+
+
+    @When("I click add image, add video or add media")
+    public void i_click_add_image_add_video_or_add_media() {
+
+    }
+
+    @Then("Open files to choose the item")
+    public void open_files_to_choose_the_item() {
+
+    }
+
+    @Then("Display the image on it specific place")
+    public void display_the_image_on_it_specific_place() {
+
+    }
+
+    @When("I click on the image, video or media")
+    public void i_click_on_the_image_video_or_media() {
+
+    }
+
+    @Then("Remove it")
+    public void remove_it() {
+
+    }
+
 
     @When("I change the event information")
     public void i_change_the_event_information() {
