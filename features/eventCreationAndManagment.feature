@@ -9,6 +9,15 @@ Feature: Event Creation And Management
     When I click edit choice
     Then Move to editing page
 
+  Scenario: Select event category
+    Given I am in addition page
+    When I choose party -> birthday
+    Then Show birthday information panel in the addition page
+    When I choose party -> wedding
+    Then Show wedding information panel in the addition page
+    When I choose workshop
+    Then Show workshop information panel in the addition page
+
   Scenario: Successful event adding
     Given I am in addition page
     When I fill the event information
