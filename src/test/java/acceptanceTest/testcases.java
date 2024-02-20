@@ -3,7 +3,6 @@ package acceptanceTest;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.database;
 
 public class testcases {
 
@@ -172,6 +171,38 @@ public class testcases {
     public void the_user_should_receive_a_notification_about_the_lockout_time() {
 
     }
+
+
+    @When("I choose party -> birthday")
+    public void i_choose_party_birthday() {
+
+    }
+
+    @Then("Show birthday information panel in the addition page")
+    public void show_birthday_information_panel_in_the_addition_page() {
+
+    }
+
+    @When("I choose party -> wedding")
+    public void i_choose_party_wedding() {
+
+    }
+
+    @Then("Show wedding information panel in the addition page")
+    public void show_wedding_information_panel_in_the_addition_page() {
+
+    }
+
+    @When("I choose workshop")
+    public void i_choose_workshop() {
+
+    }
+
+    @Then("Show workshop information panel in the addition page")
+    public void show_workshop_information_panel_in_the_addition_page() {
+
+    }
+
 
     @Given("I am in the event creation and management page")
     public void i_am_in_the_event_creation_and_management_page() {
