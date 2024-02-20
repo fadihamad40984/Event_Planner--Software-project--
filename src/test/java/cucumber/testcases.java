@@ -253,6 +253,42 @@ public class testcases {
         throw new io.cucumber.java.PendingException();
     }
 
+    @When("I choose party -> birthday")
+    public void i_choose_party_birthday() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @Then("Show birthday information panel in the addition page")
+    public void show_birthday_information_panel_in_the_addition_page() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @When("I choose party -> wedding")
+    public void i_choose_party_wedding() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @Then("Show wedding information panel in the addition page")
+    public void show_wedding_information_panel_in_the_addition_page() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @When("I choose workshop")
+    public void i_choose_workshop() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @Then("Show workshop information panel in the addition page")
+    public void show_workshop_information_panel_in_the_addition_page() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
     @When("I fill the event information")
     public void i_fill_the_event_information() {
         // Write code here that turns the phrase above into concrete actions
