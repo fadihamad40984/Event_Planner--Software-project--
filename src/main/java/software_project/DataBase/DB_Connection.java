@@ -61,9 +61,9 @@ public class DB_Connection {
         String url = "jdbc:postgresql://localhost:" + port + "/" + databaseName;
         try {
             con = DriverManager.getConnection(url, username, password);
-            setStatus("Connected to the database successfully");
+            setStatus("Connected To The Database Successfully");
         } catch (Exception e) {
-            setStatus("Couldn't connect to the database");
+            setStatus("Couldn't Connect To The Database");
         }
     }
 

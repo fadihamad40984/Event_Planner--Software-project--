@@ -39,10 +39,13 @@ public class LoginController extends Application {
     }
 
 
-    public void onLoginClick(ActionEvent actionEvent) {
-    }
+
 
     public void onSignupClick(ActionEvent actionEvent) {
+    }
+
+    public void onLoginClick(ActionEvent actionEvent) {
+
     }
 }
 
