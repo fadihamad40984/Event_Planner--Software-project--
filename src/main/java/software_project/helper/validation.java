@@ -5,6 +5,7 @@ package software_project.helper;
 import software_project.DataBase.DB_Connection;
 import software_project.DataBase.retrieve.retrieve;
 import software_project.EventManagement.EventService;
+import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
 
 import java.sql.Connection;
@@ -16,6 +17,8 @@ import java.util.regex.Pattern;
 public class validation {
     private static String validUser = "Valid";
     private static String validEvent = "Valid";
+    private static String validvenue = "Valid";
+
     private static retrieve r;
 
     private validation() {
@@ -50,7 +53,13 @@ public class validation {
         else if (es.getBookingTime().isEmpty()) return "You should enter a booking time for the event";
         return validEvent;
     }
+    private static String emptyVenueTest(Places place) {
+        if (place.getName().isEmpty()) return "venue name can't be empty";
+        if (place.getAmenities().isEmpty()) return "amenities can't be empty";
+        if (place.getCapacity().isEmpty()) return "capacity can't be empty";
 
+        return validvenue;
+    }
 
 
     public static String rollValidationTest(User roll) {
@@ -96,6 +105,20 @@ public class validation {
                 return "Schedule conflicts between the time interval of the event service and the time interval of the other event services";
         }
         return validEvent;
+    }
+    public static String venueServiceValidationTest(Places place) {
+        String emptyFieldsTest = emptyVenueTest(place);
+
+      // r = new retrieve(new DB_Connection().getCon());
+
+        if (!emptyFieldsTest.equals(validvenue))
+            return emptyFieldsTest;
+
+        else if (!integerValidationTest(place.getCapacity())){
+            return "capacity should be an integer value";
+        }
+
+        return validvenue;
     }
 
     public static boolean phoneNumberValidationTest(String phoneNumber) {

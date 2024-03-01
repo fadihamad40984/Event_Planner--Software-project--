@@ -31,4 +31,12 @@ public class EventManipulation {
             setStatus("Event added successfully");
         }
     }
+    public void addvenue(Places place) throws SQLException {
+        String st = validation.venueServiceValidationTest(place);
+        setStatus(st);
+        if(getStatus().equals("Valid")) {
+            insertES.insertVenue(place);
+            setStatus("Venue added successfully");
+        }
+    }
 }

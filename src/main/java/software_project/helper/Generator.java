@@ -4,6 +4,7 @@ package software_project.helper;
 
 
 import software_project.EventManagement.EventService;
+import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
 
 import java.sql.*;
@@ -56,6 +57,13 @@ public class Generator {
         preparedStmt.setString(6, es.getStartTime());
         preparedStmt.setString(7, es.getEndTime());
         preparedStmt.setString(8, es.getBookingTime());
+        return preparedStmt;
+    }
+    public static PreparedStatement venueStatementToPS(PreparedStatement preparedStmt, Places p) throws SQLException {
+        preparedStmt.setString(1, p.getName());
+        preparedStmt.setString(2, p.getCapacity());
+        preparedStmt.setString(3, p.getAmenities());
+
         return preparedStmt;
     }
 

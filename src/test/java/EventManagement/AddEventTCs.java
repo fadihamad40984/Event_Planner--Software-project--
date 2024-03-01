@@ -25,24 +25,19 @@ public class AddEventTCs {
 
     @When("I fill in {string} with  {string}")
     public void i_fill_in_with(String string, String string2) {
-        if(string.equals("Title"))
-            es.setTitle(string2);
-        else if(string.equals("Details"))
-            es.setDetails(string2);
-        else if(string.equals("EventCategory"))
-            es.setEventCategory(string2);
-        else if(string.equals("Price"))
-            es.setPrice(string2);
-        else if(string.equals("Place"))
-            es.setPlace(string2);
-        else if(string.equals("StartTime"))
-            es.setStartTime(string2);
-        else if(string.equals("EndTime"))
-            es.setEndTime(string2);
-        else if(string.equals("BookingTime"))
-            es.setBookingTime(string2);
-        else
-            assert(false);
+        switch (string) {
+            case "Title" -> es.setTitle(string2);
+            case "Details" -> es.setDetails(string2);
+            case "EventCategory" -> es.setEventCategory(string2);
+            case "Price" -> es.setPrice(string2);
+            case "Place" -> es.setPlace(string2);
+            case "StartTime" -> es.setStartTime(string2);
+            case "EndTime" -> es.setEndTime(string2);
+            case "BookingTime" -> es.setBookingTime(string2);
+            default -> {
+                assert (false);
+            }
+        }
         assert(true);
     }
 
