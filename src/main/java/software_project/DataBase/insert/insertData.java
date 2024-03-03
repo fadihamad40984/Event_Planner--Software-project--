@@ -1,6 +1,7 @@
 package software_project.DataBase.insert;
 
 import software_project.EventManagement.EventService;
+import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
 import software_project.helper.Generator;
 
@@ -56,6 +57,25 @@ public class insertData {
             conn.commit();
             return true;
         } catch (Exception e) {
+
+            return false;
+        }
+
+    }
+
+    public boolean insertVenue(Places p) {
+
+        try {
+            conn.setAutoCommit(false);
+            String query = "insert into places values (?, ?, ? );";
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt = Generator.venueStatementToPS(preparedStmt, p);
+            preparedStmt.execute();
+            setStatus("Venue added successfully");
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+
 
             return false;
         }

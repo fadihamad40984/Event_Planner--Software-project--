@@ -3,26 +3,18 @@ package software_project.EventManagement;
 import java.util.List;
 
 public class Places {
-    private int id;
     private String name;
-    private int capacity;
+    private String capacity;
     private String amenities;
 
     public Places() {
-        this.id = 0;
         this.name = "";
-        this.capacity = 0;
+        this.capacity = "";
         this.amenities = "";
     }
 
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -32,11 +24,11 @@ public class Places {
         this.name = name;
     }
 
-    public int getCapacity() {
+    public String getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
+    public void setCapacity(String capacity) {
         this.capacity = capacity;
     }
 
