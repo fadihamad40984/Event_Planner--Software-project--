@@ -48,7 +48,7 @@ public class insertData {
 
         try {
             conn.setAutoCommit(false);
-            String query = "insert into Event_Service values (?, ?, ?, ?, ?, ?, ?, ?);";
+            String query = "insert into \"Event_Service\" (\"Title\", \"Details\", \"Event_Category\", \"Price\", \"Place\", \"Start_Time\", \"End_Time\" , \"Booking_Time\") values (?, ?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt = Generator.eventStatementToPS(preparedStmt, es);
             preparedStmt.execute();
@@ -56,7 +56,6 @@ public class insertData {
             conn.commit();
             return true;
         } catch (Exception e) {
-            setStatus("Couldn't insert user");
 
             return false;
         }

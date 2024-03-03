@@ -8,5 +8,6 @@ Feature: Delete Event Service
 
     Examples:
       | Event_ID | Message                            |
-      | 5        | Event service deleted successfully |
+      | 10       | Event service deleted successfully |
       | 8        | Couldn't delete the event service  |
+

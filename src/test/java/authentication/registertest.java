@@ -27,23 +27,19 @@ public class registertest {
     }
 
     @When("he fills in {string} with {string} for register")
-    public void he_fills_in_with_for_register(String string, String string2) {
-        if(string.equals("username"))
-            user.setUsername(string2);
-        else if(string.equals("firstName"))
-            user.setFirstName(string2);
-        else if(string.equals("lastName"))
-            user.setLastName(string2);
-        else if(string.equals("phoneNumber"))
-            user.setPhoneNumber(string2);
-        else if(string.equals("password"))
-            user.setPassword(string2);
-        else if(string.equals("email"))
-            user.setEmail(string2);
-        else if(string.equals("userType"))
-            user.setUserType(string2);
-        else
-            assert(false);
+    public void he_fills_in_with_for_register(String field, String value) {
+        switch (field) {
+            case "username" -> user.setUsername(value);
+            case "firstName" -> user.setFirstName(value);
+            case "lastName" -> user.setLastName(value);
+            case "phoneNumber" -> user.setPhoneNumber(value);
+            case "password" -> user.setPassword(value);
+            case "email" -> user.setEmail(value);
+            case "userType" -> user.setUserType(value);
+            default -> {
+                assert (false);
+            }
+        }
         assert(true);
     }
 

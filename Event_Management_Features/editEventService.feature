@@ -52,4 +52,3 @@
 #      | new event    | enjoy   | Birthdays     | omar  | Jawhara      | 2:00 PM   | 6:00 PM  | 2           | Price should be integer value                                                                       |
 #      | new event    | enjoy   | Birthdays     | 3000  | Jawhara      | 2:00 PM   | 6:00 PM  | omar        | Booking time should be integer value                                                                |
 #      | Second event | on fire | Birthdays     | 2000  | Paris Palace | 10:00 AM  | 4:00 PM  | 2           | Schedule conflicts between the time interval of the event and the time interval of the other events |
-#

@@ -29,9 +29,9 @@ public class deleteEvent {
 
         try {
             conn.setAutoCommit(false);
-            String query = "delete from Event_Service where \"Id\" = ?;";
+            String query = "delete from \"Event_Service\" where \"Id\" = ?;";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
-            preparedStmt.setString(1,String.valueOf(ES.getId()));
+            preparedStmt.setInt(1,ES.getId());
             preparedStmt.execute();
             setStatus("Event service deleted successfully");
             conn.commit();

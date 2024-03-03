@@ -32,30 +32,29 @@ public class retrieve {
         List<EventService> EventServices = new ArrayList<>();
         Statement stmt = null;
         try {
+            stmt = con.createStatement();
+            String query ="SELECT \"iD\" FROM \"Places\" where \"Name\" = \'" + place_name + "\';";
 
-            String query = "SELECT \"iD\" FROM Place where \"Name\" = ?";
-            PreparedStatement preparedStmt = con.prepareStatement(query);
-            preparedStmt.setString(1,place_name);
-            ResultSet rs = preparedStmt.executeQuery(query);
+              ResultSet rs = stmt.executeQuery(query);
             int place_id = 0;
-            while (rs != null && rs.next())
+            while (rs.next())
                 place_id = rs.getInt("iD");
 
 
-            String query2 = "SELECT \"ID_EventService\" FROM Place_EventServices where \"ID_Place\" = " + place_id;
-            stmt = con.createStatement();
+            String query2 = "SELECT \"ID_EventService\" FROM \"Place_EventServices\" where \"ID_Place\" = " + place_id+";";
+
             ResultSet rs2 = stmt.executeQuery(query2);
 
-            List<Integer> ids = null;
-            while (rs2 != null && rs2.next()) {
-                ids.add(rs2.getInt("id"));
+            List<Integer> ids = new ArrayList<>();
+            while (rs2.next()) {
+                ids.add(rs2.getInt("ID_EventService"));
             }
             for(int i = 0; i < ids.size() ; i++) {
-                String query3 = "SELECT * FROM Event_Service where \"Id\" = " + ids.get(i);
+                String query3 = "SELECT * FROM \"Event_Service\" where \"Id\" = " + ids.get(i)+";";
                 ResultSet rs3 = stmt.executeQuery(query3);
                 while (rs3 != null && rs3.next()) {
                     EventService es = new EventService();
-                    es.setId(rs3.getInt("id"));
+                    es.setId(rs3.getInt("Id"));
                     es.setTitle(rs3.getString("Title"));
                     es.setDetails(rs3.getString("Details"));
                     es.setEventCategory(rs3.getString("Event_Category"));

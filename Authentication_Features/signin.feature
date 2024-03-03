@@ -14,3 +14,4 @@ Feature: Login
       | fadihamad | 1234**Fa | Invalid username or password |
       |           | 12de456  | Invalid username or password |
       | fadihamad |          | Invalid username or password |
+

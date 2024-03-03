@@ -1,5 +1,6 @@
 package software_project.EventManagement;
 
+import software_project.DataBase.delete.deleteEvent;
 import software_project.DataBase.insert.insertData;
 import software_project.UserManagement.User;
 import software_project.helper.validation;
@@ -11,8 +12,11 @@ import java.util.List;
 public class EventManipulation {
     private String status;
     private insertData insertES;
+
+    private deleteEvent delete;
     public EventManipulation(Connection con){
         insertES = new insertData(con);
+        delete = new deleteEvent(con);
     }
 
     public String getStatus() {
@@ -30,5 +34,12 @@ public class EventManipulation {
             insertES.insertEventService(eventService);
             setStatus("Event added successfully");
         }
+    }
+
+    public void deleteEventService(EventService es) {
+        boolean b = delete.delete_event(es);
+
+        setStatus(delete.getStatus());
+
     }
 }

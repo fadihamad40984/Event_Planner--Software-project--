@@ -85,14 +85,14 @@ public class validation {
             return "Price should be integer value";
         }
         else if (!integerValidationTest(es.getBookingTime())){
-            return "Booking time should be integer value ";
+            return "Booking time should be integer value";
         }
         else if (Generator.getTimeDifference(es.getEndTime(),es.getStartTime()) <= Integer.parseInt(es.getBookingTime())){
             return "End time should be after at least BookingTime hours from start time";
         }
         for(int i=0; i < r.selectEventServicesOfParticularPlace(es.getPlace()).size() ; i++){
             boolean b = Generator.hasTimeConflict(r.selectEventServicesOfParticularPlace(es.getPlace()).get(i).getStartTime(),r.selectEventServicesOfParticularPlace(es.getPlace()).get(i).getEndTime(),es.getStartTime(),es.getEndTime());
-            if(!b)
+            if(b)
                 return "Schedule conflicts between the time interval of the event service and the time interval of the other event services";
         }
         return validEvent;
@@ -108,10 +108,7 @@ public class validation {
         return regexMatcher(regex, number);
     }
 
-    public static boolean doubleValidationTest(String number) {
-        String regex = "^[0-9]{1,}+.[0-9]{0,2}$";
-        return regexMatcher(regex, number) || integerValidationTest(number);
-    }
+
 
     public static boolean emailValidationTest(String email) {
         String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
