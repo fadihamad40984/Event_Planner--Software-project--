@@ -32,6 +32,7 @@ public class EventManipulation {
         setStatus(st);
         if(getStatus().equals("Valid")) {
             insertES.insertEventService(eventService);
+            insertES.insertEventService_Place(eventService);
             setStatus("Event added successfully");
         }
     }
@@ -42,4 +43,25 @@ public class EventManipulation {
         setStatus(delete.getStatus());
 
     }
+
+    public void addvenue(Places place) throws SQLException {
+        String st = validation.venueServiceValidationTest(place);
+        setStatus(st);
+        if(getStatus().equals("Valid")) {
+            insertES.insertVenue(place);
+            setStatus("Venue added successfully");
+        }
+    }
+
+
+    public void bookEvent(Event e) throws SQLException {
+        String st = validation.eventValidationTest(e);
+        setStatus(st);
+        if(getStatus().equals("Valid")) {
+            insertES.insertEvent(e);
+            setStatus("Event added successfully");
+        }
+    }
+
+
 }

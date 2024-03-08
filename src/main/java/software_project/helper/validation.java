@@ -4,13 +4,17 @@ package software_project.helper;
 
 import software_project.DataBase.DB_Connection;
 import software_project.DataBase.retrieve.retrieve;
+import software_project.EventManagement.Event;
 import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -109,7 +113,6 @@ public class validation {
     public static String venueServiceValidationTest(Places place) {
         String emptyFieldsTest = emptyVenueTest(place);
 
-      // r = new retrieve(new DB_Connection().getCon());
 
         if (!emptyFieldsTest.equals(validvenue))
             return emptyFieldsTest;
@@ -119,6 +122,91 @@ public class validation {
         }
 
         return validvenue;
+    }
+
+
+
+    public static String eventValidationTest(Event e) throws SQLException {
+        String emptyFieldsTest = emptyEventFieldsTest(e);
+
+        r = new retrieve(new DB_Connection().getCon());
+
+        if (!emptyFieldsTest.equals(validEvent))
+            return emptyFieldsTest;
+        else if (!integerValidationTest(e.getAttendeeCount())){
+            return "Attendee count should be integer value";
+        }
+        else if (findNotFoundImages(e.getImages()).size()>0){
+            String allNotFoundImages = findNotFoundImages(e.getImages()).get(0);
+            for (int i = 1; findNotFoundImages(e.getImages()).size() > i; i++) {
+                allNotFoundImages += "," + findNotFoundImages(e.getImages()).get(i);
+            }
+            return "Image "+ allNotFoundImages +" not found";
+        }
+        else if (e.getGuestList().size() != Integer.parseInt(e.getAttendeeCount())){
+            return "Guest list members count should be equal to attendee count";
+        }
+
+        EventService es = r.selectEventServicesOfParticularName(e.getServiceTitle());
+        boolean b = Generator.isTimeInsideInterval(e.getTime(),es.getStartTime(),es.getEndTime());
+        String[] parts = e.getTime().split(":");
+        int part1 = Integer.parseInt(parts[0]) + Integer.parseInt(es.getBookingTime());
+
+        String time = part1 + ":" + parts[1];
+
+        boolean b2 = Generator.isTimeInsideInterval(time,es.getStartTime(),es.getEndTime());
+        if(!b || !b2) {
+            return "Time of the event should be in the interval of the chosen service";
+        }
+
+        for(Event ev : r.selectEventOfParticularDateAndServiceId(e.getDate(),e.getServiceId())){
+            String[] parts2 = ev.getTime().split(":");
+            int part11 = Integer.parseInt(parts2[0]) + Integer.parseInt(es.getBookingTime());
+            String time2 = part11 + ":" + parts2[1];
+
+            boolean b3 = Generator.hasTimeConflict(e.getTime(),time,ev.getTime(),time2);
+            if(b3)
+                return "Schedule conflicts between the booking time of the event and the booking time of the other event from same service";
+        }
+
+        if(Integer.parseInt(e.getAttendeeCount()) > Integer.parseInt(r.retriveplace(es.getPlace()).getCapacity())){
+            return "Attendee count should be less than or equal the capacity of the place of the service";
+        }
+
+        for(String s: e.getGuestList()){
+            boolean containsOnlyAlphabetsAndSpaces = s.matches("[a-zA-Z ]+");
+
+            if (containsOnlyAlphabetsAndSpaces) {
+                continue;
+            } else {
+                return "Guest names must contain only alphabet letters";
+            }
+        }
+
+        return validEvent;
+    }
+
+    private static String emptyEventFieldsTest(Event e) {
+        if (e.getServiceTitle().isEmpty()) return "You should choose a service";
+        else if (e.getDate().isEmpty()) return "You should enter a date for the event";
+        else if (e.getTime().isEmpty()) return "You should enter a time for the event";
+        else if (e.getDescription().isEmpty()) return "You should enter a description for the event";
+        else if (e.getAttendeeCount().isEmpty()) return "You should enter an attendee count for the event";
+        else if (e.getGuestList().isEmpty()) return "You should enter a guest list for the event";
+        return validEvent;
+    }
+
+    public static List<String> findNotFoundImages(List<String> imagePaths) {
+        List<String> notFoundImages = new ArrayList<>();
+
+        for (String path : imagePaths) {
+            File file = new File(path);
+            if (!file.exists()) {
+                notFoundImages.add(path);
+            }
+        }
+
+        return notFoundImages;
     }
 
     public static boolean phoneNumberValidationTest(String phoneNumber) {

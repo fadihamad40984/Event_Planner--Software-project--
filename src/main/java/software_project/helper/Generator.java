@@ -3,6 +3,7 @@ package software_project.helper;
 
 
 
+import software_project.EventManagement.Event;
 import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
@@ -67,6 +68,25 @@ public class Generator {
         return preparedStmt;
     }
 
+    public static PreparedStatement eventBookingStatementToPS(PreparedStatement preparedStmt, Event e) throws SQLException {
+        preparedStmt.setInt(1, e.getServiceId());
+        preparedStmt.setString(2, e.getDate());
+        preparedStmt.setString(3, e.getTime());
+        preparedStmt.setString(4, e.getDescription());
+        preparedStmt.setString(5, e.getAttendeeCount());
+        return preparedStmt;
+    }
+    public static PreparedStatement guestListStatementToPS(PreparedStatement preparedStmt, Event e, String Guest) throws SQLException {
+        preparedStmt.setInt(1, e.getId());
+        preparedStmt.setString(2, Guest);
+        return preparedStmt;
+    }
+    public static PreparedStatement imageStatementToPS(PreparedStatement preparedStmt, Event e, String Path) throws SQLException {
+        preparedStmt.setInt(1, e.getId());
+        preparedStmt.setString(2, Path);
+        return preparedStmt;
+    }
+
     public static int getTimeDifference(String time1, String time2) {
         String[] parts1 = time1.split(":");
         String[] parts2 = time2.split(":");
@@ -89,5 +109,14 @@ public class Generator {
     private static int parseTimeToMinutes(String time) {
         String[] parts = time.split(":");
         return Integer.parseInt(parts[0]) * 60 + Integer.parseInt(parts[1]);
+    }
+
+
+    public static boolean isTimeInsideInterval(String timeStr, String startStr, String endStr) {
+        LocalTime time = LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime start = LocalTime.parse(startStr, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime end = LocalTime.parse(endStr, DateTimeFormatter.ofPattern("HH:mm"));
+
+        return !time.isBefore(start) && !time.isAfter(end);
     }
 }

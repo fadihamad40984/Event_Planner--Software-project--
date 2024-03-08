@@ -13,8 +13,6 @@ Feature: Event Creation And Management
     And I am click add
     Then A "<Message>" should appear
 
-
-
     Examples:
       | Title        | Details | EventCategory | Price | Place        | StartTime | EndTime | BookingTime | Message                                                                                                             |
       | first event  | welcome | Birthdays     | 3000  | Paris Palace | 14:00     | 18:00   | 2           | Event added successfully                                                                                            |

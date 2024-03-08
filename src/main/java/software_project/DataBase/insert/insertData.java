@@ -1,5 +1,8 @@
 package software_project.DataBase.insert;
 
+import software_project.DataBase.DB_Connection;
+import software_project.DataBase.retrieve.retrieve;
+import software_project.EventManagement.Event;
 import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
@@ -14,8 +17,11 @@ public class insertData {
     private String status;
     private Connection conn;
 
+    retrieve retrive;
+
     public insertData(Connection conn) {
         this.conn = conn;
+        retrive = new retrieve(conn);
     }
 
     public String getStatus() {
@@ -63,11 +69,30 @@ public class insertData {
 
     }
 
+    public boolean insertEventService_Place(EventService es) {
+        try {
+            conn.setAutoCommit(false);
+            String query = "insert into \"Place_EventServices\" values (?, ?);";
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt.setInt(1,retrive.retriveplace(es.getPlace()).getId());
+            preparedStmt.setInt(2,retrive.retriveeventid(es.getTitle()));
+
+            preparedStmt.execute();
+            setStatus("Event_Place added successfully");
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+
+            return false;
+        }
+
+    }
+
     public boolean insertVenue(Places p) {
 
         try {
             conn.setAutoCommit(false);
-            String query = "insert into places values (?, ?, ? );";
+            String query = "insert into \"Places\" (\"Name\", \"Capacity\", \"Amenities\") values (?, ?, ? );";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt = Generator.venueStatementToPS(preparedStmt, p);
             preparedStmt.execute();
@@ -82,5 +107,39 @@ public class insertData {
 
     }
 
+    public boolean insertEvent(Event e) {
+        try {
+            conn.setAutoCommit(false);
+            String query = "insert into \"Event\" (\"EventService_id\",\"Date\", \"Time\", \"Description\", \"Attendee_Count\") values (?,?, ?, ?, ?);";//id is serial
+            String query2 = "insert into \"Guests\" (\"Event_id\",\"Guest_Name\") values (?,?)";//guest id is serial
+            String query3 = "insert into \"images\" (\"Event_id\",\"Image_Path\") values (?,?)";//image id is serial
+
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt = Generator.eventBookingStatementToPS(preparedStmt, e);
+            preparedStmt.execute();
+
+            for(String s: e.getGuestList()) {
+                PreparedStatement preparedStmt2 = conn.prepareStatement(query2);
+                preparedStmt2 = Generator.guestListStatementToPS(preparedStmt2, e, s);
+                preparedStmt2.execute();
+            }
+
+            for(String path: e.getImages()) {
+                PreparedStatement preparedStmt3 = conn.prepareStatement(query3);
+                preparedStmt3 = Generator.imageStatementToPS(preparedStmt3, e, path);
+                preparedStmt3.execute();
+            }
+
+            setStatus("Event added successfully");
+            conn.commit();
+            return true;
+        } catch (Exception exception) {
+
+            return false;
+        }
     }
+
+
+
+}
 

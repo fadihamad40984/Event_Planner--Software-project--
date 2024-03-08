@@ -15,6 +15,7 @@
 //    private EventManipulation em;
 //    private EventService es;
 //    private String status;
+//
 //    @When("I am in addition page")
 //    public void i_am_in_addition_page() {
 //        DB_Connection conn = new DB_Connection(5432, "Event_Planner", "postgres", "admin");
@@ -50,8 +51,5 @@
 //    public void a_should_appear(String string) {
 //        assertEquals(status,string);
 //    }
-//
-//
-//
 //
 //}

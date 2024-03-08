@@ -3,6 +3,7 @@ package software_project.EventManagement;
 import java.util.List;
 
 public class Places {
+    private int id;
     private String name;
     private String capacity;
     private String amenities;
@@ -11,6 +12,7 @@ public class Places {
         this.name = "";
         this.capacity = "";
         this.amenities = "";
+        this.id=0;
     }
 
 
@@ -40,4 +42,11 @@ public class Places {
         this.amenities = amenities;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }
