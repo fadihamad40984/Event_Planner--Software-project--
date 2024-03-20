@@ -6,11 +6,11 @@ import software_project.EventManagement.Event;
 import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
+import software_project.Vendor.VendorReview;
+import software_project.Vendor.VendorService;
 import software_project.helper.Generator;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Arrays;
 
 public class insertData {
@@ -36,7 +36,7 @@ public class insertData {
 
         try {
             conn.setAutoCommit(false);
-            String query = "insert into users values (?, ?, ?, ?, ?, ?, ?, ?);";
+            String query = "insert into \"users\" (\"First_Name\", \"Last_Name\", \"User_Name\", \"Email\", \"Password\", \"Phone\", \"User_Type\" , \"image\") values (?, ?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt = Generator.userToPS(preparedStmt, user);
             preparedStmt.execute();
@@ -44,6 +44,7 @@ public class insertData {
             conn.commit();
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             setStatus("Couldn't insert user");
 
             return false;
@@ -110,27 +111,45 @@ public class insertData {
     public boolean insertEvent(Event e) {
         try {
             conn.setAutoCommit(false);
-            String query = "insert into \"Event\" (\"EventService_id\",\"Date\", \"Time\", \"Description\", \"Attendee_Count\") values (?,?, ?, ?, ?);";//id is serial
-            String query2 = "insert into \"Guests\" (\"Event_id\",\"Guest_Name\") values (?,?)";//guest id is serial
-            String query3 = "insert into \"images\" (\"Event_id\",\"Image_Path\") values (?,?)";//image id is serial
+            String query = "insert into \"Event\" (\"EventService_id\",\"Date\", \"Time\", \"Description\", \"Attendee_Count\",\"Balance\") values (?,?, ?, ?, ?,?);";//id is serial
+            String query2 = "insert into \"Guests\" (\"Event_id\",\"Guest_Name\") values (?,?);";//guest id is serial
+            String query3 = "insert into \"images\" (\"Event_id\",\"Image_Path\") values (?,?);";//image id is serial
+            String query4 = "insert into \"Vendor_Bookings\"(\"Vendor_UN\",\"Event_id\") values (?,?);";//booking id is serial
 
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt = Generator.eventBookingStatementToPS(preparedStmt, e);
             preparedStmt.execute();
+            conn.commit();
+            conn.setAutoCommit(false);
+
+            int id = retrieve.retriveeventIID(conn);
+
+            for(String s: e.getVendors()) {
+                PreparedStatement preparedStmt2 = conn.prepareStatement(query4);
+                preparedStmt2 = Generator.vendorsStatementToPS(preparedStmt2, s , id);
+                preparedStmt2.execute();
+                conn.commit();
+                conn.setAutoCommit(false);
+            }
 
             for(String s: e.getGuestList()) {
                 PreparedStatement preparedStmt2 = conn.prepareStatement(query2);
-                preparedStmt2 = Generator.guestListStatementToPS(preparedStmt2, e, s);
+                preparedStmt2 = Generator.guestListStatementToPS(preparedStmt2, s , id);
                 preparedStmt2.execute();
+                conn.commit();
+                conn.setAutoCommit(false);
             }
 
             for(String path: e.getImages()) {
-                PreparedStatement preparedStmt3 = conn.prepareStatement(query3);
-                preparedStmt3 = Generator.imageStatementToPS(preparedStmt3, e, path);
-                preparedStmt3.execute();
+                PreparedStatement preparedStmt2 = conn.prepareStatement(query3);
+                preparedStmt2 = Generator.imageStatementToPS(preparedStmt2,  path , id);
+                preparedStmt2.execute();
+                conn.commit();
+                conn.setAutoCommit(false);
+
             }
 
-            setStatus("Event added successfully");
+            setStatus("Event booked successfully");
             conn.commit();
             return true;
         } catch (Exception exception) {
@@ -139,6 +158,116 @@ public class insertData {
         }
     }
 
+//    public boolean insertEvent(Event e) {
+//        try {
+//            conn.setAutoCommit(false);
+//            String query = "insert into \"Event\" (\"EventService_id\",\"Date\", \"Time\", \"Description\", \"Attendee_Count\") values (?,?, ?, ?, ?);";//id is serial
+//            String query2 = "insert into \"Guests\" (\"Event_id\",\"Guest_Name\") values (?,?);";//guest id is serial
+//            String query3 = "insert into \"images\" (\"Event_id\",\"Image_Path\") values (?,?);";//image id is serial
+//
+//            PreparedStatement preparedStmt = conn.prepareStatement(query);
+//            preparedStmt = Generator.eventBookingStatementToPS(preparedStmt, e);
+//            preparedStmt.execute();
+//            conn.commit();
+//            conn.setAutoCommit(false);
+//
+//            int id = retrieve.retriveeventIID(conn);
+//
+//            for(String s: e.getGuestList()) {
+//                PreparedStatement preparedStmt2 = conn.prepareStatement(query2);
+//                preparedStmt2 = Generator.guestListStatementToPS(preparedStmt2, s , id);
+//                preparedStmt2.execute();
+//                conn.commit();
+//                conn.setAutoCommit(false);
+//            }
+//
+//            for(String path: e.getImages()) {
+//                PreparedStatement preparedStmt3 = conn.prepareStatement(query3);
+//                preparedStmt3 = Generator.imageStatementToPS(preparedStmt3,  path , id);
+//                preparedStmt3.execute();
+//                conn.commit();
+//                conn.setAutoCommit(false);
+//
+//            }
+//
+//            setStatus("Event booked successfully");
+//            conn.commit();
+//            return true;
+//        } catch (Exception exception) {
+//
+//            return false;
+//        }
+//    }
+
+
+
+    public boolean insertVendorService(VendorService vs) {
+        try {
+            conn.setAutoCommit(false);//                                       avgRating
+            String query = "insert into \"Vendor_Service\" (\"Vendor_User_Name\",\"Type\",\"Description\",\"Price\",\"Availability\",\"Average_Rating\") values (?, CAST(? AS \"Vendor_Type\"), ?, ?, ?, ?);";//service id is serial
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt.setString(1,vs.getVendorUserName());
+            preparedStmt.setString(2,vs.getServiceType());
+            preparedStmt.setString(3,vs.getServiceDescription());
+            preparedStmt.setString(4,vs.getServicePrice());
+            preparedStmt.setString(5,vs.getServiceAvailability());
+            preparedStmt.setInt(6,vs.getAverageRating());
+
+            preparedStmt.execute();
+            setStatus("service confirmed to vendor successfully");
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+
+            return false;
+        }
+    }
+
+    public boolean insertVendorReview(VendorReview vr) {
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            conn.setAutoCommit(false);
+            String query = "insert into \"Vendor_Review\" (\"Vendor_User_Name\",\"Customer_User_Name\",\"Rating\",\"FeedBack_Text\") values (?, ?, ?, ?);";//review id is serial
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt.setString(1,vr.getVendorUserName());
+            preparedStmt.setString(2,vr.getCustomerUserName());
+            preparedStmt.setString(3,vr.getRating());
+            preparedStmt.setString(4,vr.getFeedBackText());
+
+            preparedStmt.execute();
+
+            conn.commit();
+            conn.setAutoCommit(false);
+            //return all reviews for this vendor then calculate the avg and update the avgReview in Vendor_Service table
+
+            String query2 = "select \"Rating\" from \"Vendor_Review\" where \"Vendor_User_Name\" = \'" + vr.getVendorUserName() + "\' ;";
+
+            ResultSet rs = stmt.executeQuery(query2);
+            int avgRating = 0;
+            int ratingsCount = 0;
+            while (rs.next()) {
+                avgRating += Generator.StarCounter(rs.getString("Rating"));
+                ratingsCount++;
+            }
+
+            avgRating /= ratingsCount;
+
+            String query3 = "update \"Vendor_Service\" set \"Average_Rating\" = \'" + avgRating + "\' where \"Vendor_User_Name\" = \'" + vr.getVendorUserName() + "\';";
+            stmt.executeUpdate(query3);
+
+
+
+
+            setStatus("service confirmed to vendor successfully");
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return false;
+        }
+    }
 
 
 }

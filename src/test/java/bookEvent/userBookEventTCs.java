@@ -1,4 +1,4 @@
-package EventManagement;
+package bookEvent;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -21,6 +21,7 @@ public class userBookEventTCs {
     private String status;
     private List<String> guest_list;
     private List<String> images_list;
+    private List<String> vendors_list;
 
 
     @When("user is in booking page")
@@ -30,34 +31,43 @@ public class userBookEventTCs {
         e = new Event(conn.getCon());
         guest_list = new ArrayList<>();
         images_list = new ArrayList<>();
+        vendors_list = new ArrayList<>();
     }
 
     @When("he fills in {string} with {string}")
     public void he_fills_in_with(String string, String string2) throws SQLException {
+
         switch (string) {
-            case "ServiceTitle" -> {
+            case "serviceTitle" -> {
                 e.setServiceTitle(string2);
                 e.setServiceIdBasedOnTitle(string2);
             }
-            case "Date" -> e.setDate(string2);
-            case "Time" -> e.setTime(string2);
-            case "Description" -> e.setDescription(string2);
-            case "AttendeeCount" -> e.setAttendeeCount(string2);
-            case "GuestList" -> {
+            case "date" -> e.setDate(string2);
+            case "time" -> e.setTime(string2);
+            case "description" -> e.setDescription(string2);
+            case "vendors" -> {
+                String[] vendors = string2.split(",");
+                vendors_list.addAll(Arrays.asList(vendors));
+                e.setVendors(vendors_list);
+            }
+            case "attendeeCount" -> e.setAttendeeCount(string2);
+            case "guestList" -> {
                 String[] guests = string2.split(",");
                 guest_list.addAll(Arrays.asList(guests));
                 e.setGuestList(guest_list);
             }
-            case "Image" -> {
+            case "balance" -> e.setBalance(string2);
+            case "image" -> {
                 String[] imagesArr = string2.split(",");
                 images_list.addAll(Arrays.asList(imagesArr));
                 e.setImages(images_list);
             }
             default -> {
-                assert(false);
+                assert false;
             }
         }
-        assert(true);
+        assert true;
+
     }
 
     @When("he click book")

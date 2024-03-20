@@ -8,6 +8,7 @@ import software_project.EventManagement.EventService;
 import software_project.UserManagement.User;
 import software_project.authentication.Login;
 import software_project.authentication.Register;
+import software_project.helper.EmailSender;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -24,13 +25,13 @@ import java.util.logging.*;
 import static java.lang.System.exit;
 
 public class Main {
-private static JFileChooser fileChooser = new JFileChooser();
+private static final JFileChooser fileChooser = new JFileChooser();
 
-    private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-   private static Scanner scanner = new Scanner(System.in);
-    private static DB_Connection conn = new DB_Connection();
-    private static Logger logger = Logger.getLogger(Main.class.getName());
+   private static final Scanner scanner = new Scanner(System.in);
+    private static final DB_Connection conn = new DB_Connection();
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
     static {
 
         System.setProperty("mail.debug", "false");
@@ -44,14 +45,13 @@ private static JFileChooser fileChooser = new JFileChooser();
         }
     }
 
-    private static String username;
-    private static String password;
-    private static Login login = new Login(conn.getCon());
-    private static Register register = new Register(conn.getCon());
-    private static EventManipulation eventManipulation = new EventManipulation(conn.getCon());
+    private static final Login login = new Login(conn.getCon());
+    private static final Register register = new Register(conn.getCon());
+    private static final EventManipulation eventManipulation = new EventManipulation(conn.getCon());
 
-     private static retrieve retrieve = new retrieve(conn.getCon());
+     private static final retrieve retrieve = new retrieve(conn.getCon());
     public static void main(String[] args) {
+
         try {
             logger.setUseParentHandlers(false);
 
@@ -117,6 +117,7 @@ private static JFileChooser fileChooser = new JFileChooser();
          String email;
          String imagePath;
          String userType;
+         int code;
 
         while (continueLoop) {
             logger.info("Enter UserName : ");
@@ -137,19 +138,45 @@ private static JFileChooser fileChooser = new JFileChooser();
             imagePath = chooseImagePath();
             logger.info("\n"+imagePath);
 
-            user=new User(username,firstName,lastName,phoneNumber,password,email,imagePath,userType);
 
-            register.registerUser(user);
 
-            if(Objects.equals(register.getStatus(), "User was registered successfully"))
+            EmailSender emailSender = new EmailSender(email);
+            emailSender.sendVerificationCode();
+            if(emailSender.isValidEmail())
             {
-                signinpage();
-                return;
-            }
-            else {
-                logger.info(register.getStatus());
+                logger.info("Enter Verification Code (Send To Your Email) : ");
+                code = scanner.nextInt();
+
+                if(code==emailSender.verificationCode)
+                {
+                    user=new User(username,firstName,lastName,phoneNumber,password,email,imagePath,userType);
+
+                    register.registerUser(user);
+
+                    if(Objects.equals(register.getStatus(), "User was registered successfully"))
+                    {
+                        signinpage();
+                        return;
+                    }
+                    else {
+                        logger.info(register.getStatus());
+
+                    }
+                }
+                else
+                {
+                    logger.info("Invalid Verification Code");
+                }
 
             }
+            else
+            {
+                logger.info("Invalid Email");
+            }
+
+
+
+
 
 
 
@@ -163,13 +190,13 @@ private static JFileChooser fileChooser = new JFileChooser();
         while (continueLoop)
         {
             logger.info("Enter UserName : ");
-            username = reader.readLine();
+            String username = reader.readLine();
 
             logger.info("Enter Password : ");
 
-            password = reader.readLine();
+            String password = reader.readLine();
 
-            boolean b =  login.loginUser(username,password);
+            boolean b =  login.loginUser(username, password);
             if(b)
             {
                 logger.info("Login Successfully\n");
@@ -192,6 +219,13 @@ private static JFileChooser fileChooser = new JFileChooser();
 
             }
 
+                else if(Objects.equals(login.user_type, "vendor"))
+                {
+                    vendorpage();
+                    return;
+
+                }
+
             }
             else
             {
@@ -203,6 +237,9 @@ private static JFileChooser fileChooser = new JFileChooser();
         }
 
 
+    }
+
+    private static void vendorpage() {
     }
 
     private static void customerpage() {
@@ -256,20 +293,10 @@ private static JFileChooser fileChooser = new JFileChooser();
                 boolean continueloop = true;
                 while (continueloop) {
                     int che;
-                    logger.info("1- Add Venue\n" +
-                            "2- Edit Venue\n" +
-                            "3- Delete Venue");
+                    logger.info("1- Add Venue\n");
                     che = scanner.nextInt();
                     if (che == 1) {
                         addvenu();
-                        return;
-
-                    } else if (che == 2) {
-                        editvenue();
-                        return;
-
-                    } else if (che == 3) {
-                        deletevenue();
                         return;
 
                     } else {
@@ -292,13 +319,15 @@ private static JFileChooser fileChooser = new JFileChooser();
 
     }
 
-    private static void editvenue() {
-    }
 
-    private static void deletevenue() {
-    }
 
     private static void addvenu() {
+
+
+
+
+
+
     }
 
     private static void deleteeventservice() throws SQLException, IOException {

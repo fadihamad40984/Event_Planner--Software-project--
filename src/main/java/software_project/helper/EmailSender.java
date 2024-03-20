@@ -1,76 +1,91 @@
 package software_project.helper;
 
+import java.security.SecureRandom;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
+
 public class EmailSender {
 
-    Session newSession = null;
-    MimeMessage mimeMessage = null;
+    private String status;
 
-    public void rasheedEmail(String names) throws MessagingException {
-        EmailSender mail = new EmailSender();
-        mail.setupServerProperties();
-        //mail.draftEmail(names);
-       // Starter.logger.info("Befor mail.send     ; ;;;;;;;;;;;;;;");
+    private boolean validEmail;
 
-        mail.sendEmail();
+    String to;
+    String from;
+    SecureRandom random;
+   public int verificationCode;
+
+    public EmailSender(String to){
+        this.to = to;
+        from="fadi3business@gmail.com";
+        random = new SecureRandom();
+        verificationCode = 10000 + random.nextInt(90000);
     }
 
-    private void sendEmail() throws NoSuchProviderException {
-        String fromUser = "s12112857@stu.najah.edu";
-        String fromUserP = "vqo@954719";
-        String emailHost = "smtp.gmail.com";
 
-        Transport transport = newSession.getTransport("smtp");
 
+    private void sending(String subject, String text){
         try {
-            transport.connect(emailHost, fromUser, fromUserP);
-            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            Properties properties = System.getProperties();
+            properties.put("mail.smtp.host", "smtp.gmail.com");
+            properties.put("mail.smtp.port", "587");
+            properties.put("mail.smtp.auth", "true");
+            properties.put("mail.smtp.starttls.enable", "true");
 
-        } catch (MessagingException e) {
-            //Starter.logger.log(Level.INFO,"Error sending email: {0}", e.getMessage());
-            e.printStackTrace();
-        } finally {
-            try {
-                transport.close();
-            } catch (MessagingException e) {
-                //Starter.logger.log(Level.INFO,"Error closing transport: {0}", e.getMessage());
-                e.printStackTrace();
-            }
+            Session session = Session.getDefaultInstance(properties,new javax.mail.Authenticator(){
+                @Override
+                protected  PasswordAuthentication getPasswordAuthentication(){
+                    return new PasswordAuthentication("fadi3business@gmail.com","tgac jvkm eoak eles");
+                }
+            });
+            session.setDebug(false);
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to,false));
+            message.setSubject(subject);
+            message.setText(text);
+            Transport.send(message);
+            setStatus("Email Send Successfully");
+            setValidEmail(true);
         }
-    }
-//    private MimeMessage draftEmail(String names) throws MessagingException {
-//        String emailSubject = "Your product is completed";
-//        String emailBody = "Come to the store and take the product as soon as possible.";
-//
-//        mimeMessage = new MimeMessage(newSession);
-//
-//        mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(names));
-//        mimeMessage.setSubject(emailSubject);
-//
-//        MimeBodyPart bodyPart = new MimeBodyPart();
-//        bodyPart.setContent(emailBody, "text/html"); // Corrected content type
-//        MimeMultipart multiPart = new MimeMultipart();
-//        multiPart.addBodyPart(bodyPart);
-//        mimeMessage.setContent(multiPart);
-//
-//        return mimeMessage;
-//    }
+        catch (MessagingException ppp) {
+            ppp.printStackTrace();
 
-    private void setupServerProperties() {
-        Properties properties = System.getProperties();
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.host", "smtp.gmail.com");
-        properties.put("mail.smtp.port", "587");
+            setStatus("Email doesnt Send Successfully");
+           setValidEmail(false);
+        }
 
-
-        newSession = Session.getDefaultInstance(properties, null);
     }
 
+    public void sendVerificationCode(){
+        String subject = "This is your verification code for Event Planner";
+        String text = "Your code is "+verificationCode +"\n"+"Please don't share this code with anyone";
+        sending(subject,text);
+
+    }
+
+    public void sendEmail(String subject,String text) {
+        sending(subject,text);
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isValidEmail() {
+        return validEmail;
+    }
+
+    public void setValidEmail(boolean validEmail) {
+        this.validEmail = validEmail;
+    }
 }

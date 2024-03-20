@@ -4,6 +4,8 @@ import software_project.EventManagement.Event;
 import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
+import software_project.Vendor.AVendorBooking;
+import software_project.Vendor.VendorService;
 import software_project.helper.Generator;
 
 import java.sql.*;
@@ -111,6 +113,30 @@ public class retrieve {
     }
 
 
+    public static int retriveeventIID(Connection con2) throws SQLException {
+        Statement stmt = null;
+        int event_id = 0;
+
+
+        try {
+            stmt = con2.createStatement();
+            stmt.execute("SELECT nextval('public.\"Event_Event_id_seq\"');");
+
+            String query = "SELECT currval('public.\"Event_Event_id_seq\"') as \"ii\";";
+
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+                event_id = rs.getInt("ii");
+            return event_id-1;
+
+
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+        }
+        return event_id-1;
+    }
 
 
 
@@ -169,7 +195,7 @@ public class retrieve {
         EventService es = new EventService();
         try {
             stmt = con.createStatement();
-            String query = "SELECT * FROM \"Event_Service\" where \"Name\" = \'" + serviceTitle + "\';";
+            String query = "SELECT * FROM \"Event_Service\" where \"Title\" = \'" + serviceTitle + "\';";
 
             ResultSet rs = stmt.executeQuery(query);
 
@@ -199,12 +225,42 @@ public class retrieve {
         }
     }
 
+
+
+    public String selectEventServicesOfParticularid(int id) throws SQLException {
+        Statement stmt = null;
+        String title = "";
+        try {
+            stmt = con.createStatement();
+            String query = "SELECT \"Title\" FROM \"Event_Service\" where \"Id\" = " + id + ";";
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                title = rs.getString("Title");
+
+            }
+
+            setStatus("Retrieving event successfully");
+            return title;
+
+        } catch (Exception e) {
+            setStatus("Error while retrieving event from database");
+            return title;
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
     public List<Event> selectEventOfParticularDateAndServiceId(String date, int service_id) {
         List<Event> Events = new ArrayList<>();
         Statement stmt = null;
         try {
             stmt = con.createStatement();
-            String query ="SELECT * FROM \"Event\" where \"Date\" = \'" + date + "\' and \"event_service_id\" = " + service_id + ";";
+            String query ="SELECT * FROM \"Event\" where \"Date\" = \'" + date + "\' and \"EventService_id\" = " + service_id + ";";
 
             String query1 = "SELECT \"Title\" FROM \"Event_Service\" where \"Id\" = " + service_id +";";
 
@@ -217,8 +273,8 @@ public class retrieve {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 Event e = new Event(con);
-                e.setId(rs.getInt("id"));
-                e.setServiceId(rs.getInt("event_service_id"));
+                e.setId(rs.getInt("Event_id"));
+                e.setServiceId(rs.getInt("EventService_id"));
                 e.setServiceTitle(service_title);
                 e.setDate(rs.getString("Date"));
                 e.setTime(rs.getString("Time"));
@@ -240,4 +296,144 @@ public class retrieve {
         }
     }
 
+    public VendorService selectVendorServiceOfParticularName(String vendorName) throws SQLException {
+        Statement stmt = null;
+        VendorService vs = new VendorService();
+        try {
+            stmt = con.createStatement();
+            String query = "SELECT * FROM \"Vendor_Service\" where \"Vendor_User_Name\" = \'" + vendorName + "\';";
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                vs.setVendorUserName(rs.getString("Vendor_User_Name"));
+                vs.setServiceType(rs.getString("Type"));
+                vs.setServiceDescription(rs.getString("Description"));
+                vs.setServicePrice(rs.getString("Price"));
+                vs.setServiceAvailability(rs.getString("Availability"));
+                vs.setAverageRating(rs.getInt("Average_Rating"));
+            }
+
+            setStatus("Retrieving vendor service successfully");
+            return vs;
+
+        } catch (Exception e) {
+            setStatus("Error while retrieving vendor service from database");
+            return vs;
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public List<AVendorBooking> selectVendorBookingOfParticularName(String s) {
+        Statement stmt = null;
+        List<AVendorBooking> vbs = new ArrayList<>();
+        try {
+            stmt = con.createStatement();
+            String query = "SELECT * FROM \"Vendor_Bookings\" where \"Vendor_UN\" = \'" + s + "\';";
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            String vendorUN = s;
+            List<Integer> eventIDs = new ArrayList<>();
+
+            while (rs.next()) {
+                eventIDs.add(rs.getInt("Event_id"));
+            }
+
+            for(int i = 0; i < eventIDs.size(); i++) {
+
+                String query2 = "SELECT * FROM \"Event\" where \"Event_id\" = " + eventIDs.get(i) + ";";
+
+                ResultSet rs1 = stmt.executeQuery(query2);
+
+                AVendorBooking vb = new AVendorBooking();
+                Event e = new Event(con);
+                String serviceTitle = "";
+                int ServiceId = 0;
+
+
+                while (rs1.next()) {
+                    ServiceId = rs1.getInt("EventService_id");
+                    vb.setBooking_date(rs1.getString("Date"));
+                    vb.setStart_time(rs1.getString("Time"));
+                }
+
+               serviceTitle =  this.selectEventServicesOfParticularid(ServiceId);
+
+
+
+                vb.setBooking_time(this.selectEventServicesOfParticularName(serviceTitle).getBookingTime());
+                vb.setVendor_user_name(s);
+
+                vbs.add(vb);
+            }
+
+            setStatus("Retrieving vendor booking successfully");
+            return vbs;
+
+        } catch (Exception e) {
+            setStatus("Error while retrieving vendor booking from database");
+            return vbs;
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+//    public AVendorBooking selectVendorBookingOfParticularName(String s) {
+//        Statement stmt = null;
+//        AVendorBooking vb = new AVendorBooking();
+//        try {
+//            stmt = con.createStatement();
+//            String query = "SELECT * FROM \"Vendor_Bookings\" where \"Vendor_UN\" = \'" + s + "\';";
+//
+//            ResultSet rs = stmt.executeQuery(query);
+//
+//            String vendorUN = "";
+//            int eventID = 0;
+//
+//            while (rs.next()) {
+//                vendorUN = rs.getString("Vendor_UN");
+//                eventID = rs.getInt("Event_id");
+//            }
+//
+//            String query2 = "SELECT * FROM \"Event\" where \"Event_id\" = " + eventID + ";";
+//
+//            ResultSet rs1 = stmt.executeQuery(query2);
+//
+//            Event e = new Event(con);
+//            String serviceTitle = "";
+//
+//            while (rs1.next()) {
+//                serviceTitle = rs.getString("Service_Title");
+//                vb.setBooking_date(rs.getString("Date"));
+//                vb.setStart_time(rs.getString("Time"));
+//            }
+//
+//            vb.setBooking_time(this.selectEventServicesOfParticularName(serviceTitle).getBookingTime());
+//            vb.setVendor_user_name(s);
+//
+//            setStatus("Retrieving vendor booking successfully");
+//            return vb;
+//
+//        } catch (Exception e) {
+//            setStatus("Error while retrieving vendor booking from database");
+//            return vb;
+//        } finally {
+//            try {
+//                if (stmt != null) stmt.close();
+//            } catch (Exception e) {
+//            }
+//        }
+//    }
+
 }
+
+
+

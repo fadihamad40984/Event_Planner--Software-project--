@@ -3,6 +3,8 @@ package software_project.helper;
 
 
 
+import software_project.DataBase.DB_Connection;
+import software_project.DataBase.retrieve.retrieve;
 import software_project.EventManagement.Event;
 import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
@@ -16,7 +18,12 @@ import java.util.Arrays;
 
 public class Generator {
 
+    public static DB_Connection conn = new DB_Connection();
+
+
     private Generator() {
+
+
         throw new IllegalStateException("Utility class");
     }
 
@@ -74,16 +81,24 @@ public class Generator {
         preparedStmt.setString(3, e.getTime());
         preparedStmt.setString(4, e.getDescription());
         preparedStmt.setString(5, e.getAttendeeCount());
+        preparedStmt.setString(6, e.getBalance());
+
         return preparedStmt;
     }
-    public static PreparedStatement guestListStatementToPS(PreparedStatement preparedStmt, Event e, String Guest) throws SQLException {
-        preparedStmt.setInt(1, e.getId());
+    public static PreparedStatement guestListStatementToPS(PreparedStatement preparedStmt,  String Guest , int id) throws SQLException {
+        preparedStmt.setInt(1, id);
         preparedStmt.setString(2, Guest);
         return preparedStmt;
     }
-    public static PreparedStatement imageStatementToPS(PreparedStatement preparedStmt, Event e, String Path) throws SQLException {
-        preparedStmt.setInt(1, e.getId());
+    public static PreparedStatement imageStatementToPS(PreparedStatement preparedStmt, String Path , int id) throws SQLException {
+        preparedStmt.setInt(1, id);
         preparedStmt.setString(2, Path);
+        return preparedStmt;
+    }
+
+    public static PreparedStatement vendorsStatementToPS(PreparedStatement preparedStmt,  String vendor , int id) throws SQLException {
+        preparedStmt.setString(1, vendor);
+        preparedStmt.setInt(2, id);
         return preparedStmt;
     }
 
@@ -119,4 +134,13 @@ public class Generator {
 
         return !time.isBefore(start) && !time.isAfter(end);
     }
+
+
+    public static int StarCounter(String rating) {
+        int originalLength = rating.length();
+        int withoutStarsLength = rating.replaceAll("\\*", "").length();
+        return originalLength - withoutStarsLength;
+    }
+
+
 }

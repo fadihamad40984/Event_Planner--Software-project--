@@ -59,7 +59,7 @@ public class EventManipulation {
         setStatus(st);
         if(getStatus().equals("Valid")) {
             insertES.insertEvent(e);
-            setStatus("Event added successfully");
+            setStatus("Event booked successfully");
         }
     }
 

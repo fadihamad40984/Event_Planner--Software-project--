@@ -14,9 +14,11 @@ public class Event {
     private String date;
     private String time;
     private String description;
+    private String balance;
     private String attendeeCount;
     private List<String> guestList;
     private List<String> images;
+    private List<String> vendors;
 
     private Connection con;
     private Statement stmt;
@@ -30,6 +32,7 @@ public class Event {
         this.date = "";
         this.time = "";
         this.description = "";
+        this.balance = "";
         this.attendeeCount = "";
         this.guestList = new ArrayList<>();
         this.images = new ArrayList<>();
@@ -118,5 +121,21 @@ public class Event {
 
     public void setServiceId(int serviceId) {
         this.serviceId = serviceId;
+    }
+
+    public String getBalance() {
+        return balance;
+    }
+
+    public void setBalance(String balance) {
+        this.balance = balance;
+    }
+
+    public List<String> getVendors() {
+        return vendors;
+    }
+
+    public void setVendors(List<String> vendors) {
+        this.vendors = vendors;
     }
 }
