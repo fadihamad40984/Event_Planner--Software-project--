@@ -8,6 +8,8 @@ import software_project.EventManagement.EventManipulation;
 import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
+import software_project.Vendor.AVendorBooking;
+import software_project.Vendor.VendorService;
 import software_project.authentication.Login;
 import software_project.authentication.Register;
 import software_project.helper.EmailSender;
@@ -19,7 +21,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -58,6 +62,10 @@ private static final JFileChooser fileChooser = new JFileChooser();
      private static final retrieve retrieve = new retrieve(conn.getCon());
     public static void main(String[] args) {
 
+
+
+
+
         try {
             logger.setUseParentHandlers(false);
 
@@ -79,6 +87,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "An unexpected error occurred during logger configuration", e);
         }
+
 
         try {
             menu();
@@ -293,6 +302,8 @@ private static final JFileChooser fileChooser = new JFileChooser();
         int AttendeeCount;
         List<String> GuestList = new ArrayList<>();
         List<String> images = new ArrayList<>();
+        List<String> Vendors = new ArrayList<>();
+
         int Balance;
         int StoreBalance;
         Event event = new Event(conn.getCon());
@@ -300,20 +311,24 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
 
         logger.info("Enter The Balance : ");
-        Balance = reader.read();
+        Balance = scanner.nextInt();
         StoreBalance = Balance;
 
 
         logger.info(String.format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
                 "Number", "Title", "Details", "EventCategory", "Price", "Place", "StartTime", "EndTime", "BookingTime"));
         for (EventService eventService : AllEvent) {
-            if(Integer.parseInt(eventService.getPrice()) <= Balance) {
+            if (Integer.parseInt(eventService.getPrice()) <= Balance) {
 
 
                 logger.info(String.format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
                         ++counter, eventService.getTitle(), eventService.getDetails(),
                         eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
                         eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
+            }
+
+            else{
+                counter++;
             }
         }
 
@@ -478,7 +493,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
                 logger.info("Enter AttendeeCount : ");
 
-                AttendeeCount = reader.read();
+                AttendeeCount = scanner.nextInt();
 
                 logger.info("Enter Guests Names : ");
 
@@ -521,37 +536,121 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
 
 
+                while(true) {
+
+
+                    boolean cont = false;
+
+
+                    logger.info(String.format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
+                            "Number", "Vendor_User_Name", "Description", "Price/H", "Type", "Rating"));
+
+                    List<String> printedVendors = new ArrayList<>();
+                    List<Integer> printedPrice = new ArrayList<>();
+
+
+                    int counterservice = 0;
+                    for (VendorService vs : ALLVendorServices()) {
+                        cont = false;
+                        for (AVendorBooking vb : ALLNotAvailableVendors()) {
+                            if ((Objects.equals(vs.getVendorUserName(), vb.getVendor_user_name())) && (date.equals(vb.getBooking_date())) && (Objects.equals(ChosenTime, vb.getStart_time()))) {
+
+                                cont = true;
+                                break;
+
+                            }
+                        }
+                        if (cont)
+                            continue;
+                        else {
+                            String description = vs.getServiceDescription().replace("\n", " ");
+                            StringBuilder rate = new StringBuilder();
+                            for (int i = 0; i < vs.getAverageRating(); i++) {
+                                rate.append("*");
+                            }
+
+
+
+                            if (Integer.parseInt(vs.getServicePrice()) <= Balance) {
+                                printedVendors.add(vs.getVendorUserName());
+                                printedPrice.add(Integer.parseInt(vs.getServicePrice()));
+                                logger.info(String.format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
+                                        ++counterservice, vs.getVendorUserName(), description,
+                                        vs.getServicePrice(), vs.getServiceType(), rate));
+                            } else
+                            {
+                                counterservice++;
+                            }
+
+
+
+                        }
+
+                    }
+
+                    if(printedVendors.isEmpty())
+                    {
+                        logger.severe("No Vendor Matching With Remaining Balance");
+                        break;
+
+                    }
+
+                    boolean f = false;
+                    int chooseVendor;
+                    while (true) {
+                        logger.info("Choose Vendor : ");
+                        chooseVendor = scanner.nextInt();
+                        if (chooseVendor > 0 && chooseVendor <= counterservice) {
+                            Balance -= printedPrice.get(chooseVendor - 1) * Integer.parseInt(AllEvent.get(choice-1).getBookingTime());
+                            Vendors.add(printedVendors.get(chooseVendor - 1));
+                            logger.info("Do You Want Choose Another Vendor : \n" +
+                                    "1- Yes\n" +
+                                    "2- No");
+                            int choise;
+                            choise = scanner.nextInt();
+                            if (choise == 1) {
+                                f=true;
+                                break;
+                            } else
+                                break;
+
+                        } else {
+                            logger.severe("Invalid Input\n");
+                            continue;
+                        }
+                    }
+
+                    if(f)
+                    {
+
+                        continue;
+                    }
+
+                    else
+                        break;
+
+
+                }
 
 
 
 
+                Event accpetevent = new Event(conn.getCon());
+                accpetevent.setDate(date);
+                accpetevent.setDescription(Description);
+                accpetevent.setTime(ChosenTime);
+                accpetevent.setAttendeeCount(String.valueOf(AttendeeCount));
+                accpetevent.setServiceTitle(AllEvent.get(choice-1).getTitle());
+                accpetevent.setServiceId(AllEvent.get(choice-1).getId());
+                accpetevent.setBalance(String.valueOf(StoreBalance));
+                accpetevent.setGuestList(GuestList);
+                accpetevent.setImages(images);
+                accpetevent.setVendors(Vendors);
 
+                eventManipulation.bookEvent(accpetevent);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                logger.severe(eventManipulation.getStatus());
+                logger.severe("Remaining Balance is : " + Balance + "\n");
 
 
 
@@ -567,6 +666,81 @@ private static final JFileChooser fileChooser = new JFileChooser();
         }
 
 
+
+
+    }
+
+
+    private static List<AVendorBooking> ALLNotAvailableVendors()
+    {
+        DB_Connection conn = new DB_Connection(5432,"Event_Planner","postgres","admin");
+
+        Statement stmt = null;
+
+        List<AVendorBooking> vbs = new ArrayList<>();
+
+        try {
+            stmt = conn.getCon().createStatement();
+            String query = "SELECT * FROM \"Vendor_NotAvailable\";";
+
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+                AVendorBooking vb = new AVendorBooking();
+               vb.setVendor_user_name(rs.getString("Vendor_UN"));
+               vb.setBooking_date(rs.getString("Date"));
+               vb.setStart_time(rs.getString("Time"));
+               vbs.add(vb);
+
+
+            }
+
+        } catch (SQLException e) {
+            logger.severe("Error DataBase");
+
+        }
+
+        return vbs;
+
+
+    }
+
+
+
+
+
+    private static List<VendorService> ALLVendorServices()
+    {
+        DB_Connection conn = new DB_Connection(5432,"Event_Planner","postgres","admin");
+
+        Statement stmt = null;
+
+        List<VendorService> vss = new ArrayList<>();
+        try {
+            stmt = conn.getCon().createStatement();
+            String query = "SELECT * FROM \"Vendor_Service\";";
+
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+                VendorService vs = new VendorService();
+
+                vs.setVendorUserName(rs.getString("Vendor_User_Name"));
+                vs.setServiceDescription(rs.getString("Description"));
+                vs.setServicePrice(rs.getString("Price"));
+                vs.setServiceType(rs.getString("Type"));
+                vs.setAverageRating(Integer.parseInt(rs.getString("Average_Rating")));
+
+                vss.add(vs);
+
+            }
+
+        } catch (SQLException e) {
+            logger.severe("Error DataBase");
+
+        }
+
+        return vss;
 
 
     }

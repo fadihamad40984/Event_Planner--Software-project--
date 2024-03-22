@@ -62,6 +62,8 @@ public class EventManipulation {
         setStatus(st);
         if(getStatus().equals("Valid")) {
             insertES.insertEvent(e);
+            insertES.insertNotAvailableVendor(e);
+
             setStatus("Event booked successfully");
         }
     }

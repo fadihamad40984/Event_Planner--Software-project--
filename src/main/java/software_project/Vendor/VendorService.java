@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+
+
 public class VendorService {
     private String vendorUserName;
     private String serviceType;
@@ -68,4 +70,8 @@ public class VendorService {
     public void setAverageRating(int averageRating) {
         this.averageRating = averageRating;
     }
+
+
+
+
 }

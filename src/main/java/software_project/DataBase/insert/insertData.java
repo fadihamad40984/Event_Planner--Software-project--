@@ -12,6 +12,7 @@ import software_project.helper.Generator;
 
 import java.sql.*;
 import java.util.Arrays;
+import java.util.List;
 
 public class insertData {
     private String status;
@@ -106,6 +107,31 @@ public class insertData {
             return false;
         }
 
+    }
+
+
+
+    public void insertNotAvailableVendor(Event ee)
+    {
+        try {
+            conn.setAutoCommit(false);
+            String query = "insert into \"Vendor_NotAvailable\" (\"Vendor_UN\",\"Date\" , \"Time\") values (?,?,?);";
+            for(String s: ee.getVendors()) {
+                PreparedStatement preparedStmt2 = conn.prepareStatement(query);
+                preparedStmt2.setString(1,s);
+                preparedStmt2.setString(2,ee.getDate());
+                preparedStmt2.setString(3,ee.getTime());
+                preparedStmt2.execute();
+                conn.commit();
+                conn.setAutoCommit(false);
+            }
+
+
+
+
+        }catch (Exception e){
+
+        }
     }
 
     public boolean insertEvent(Event e) {

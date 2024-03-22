@@ -207,29 +207,16 @@ public class validation {
 
                         boolean b3 = Generator.hasTimeConflict(e.getTime(), time, vb.getStart_time(), time2);
                         if (b3)
+                        {
+
                             return "vendor " + vb.getVendor_user_name() + " is not available at this time";
+
+                        }
+
+
                     }
                 }
             }
-
-
-//            for(String s: e.getVendors()){
-//
-//                AVendorBooking vb = r.selectVendorBookingOfParticularName(s);
-//                if(!Objects.equals(vb.getBooking_time(), ""))
-//                {
-//                    String[] parts2 = vb.getStart_time().split(":");
-//                    int part11 = Integer.parseInt(parts2[0]) + Integer.parseInt(vb.getBooking_time());
-//                    String time2 = part11 + ":" + parts2[1];
-//
-//                    boolean b3 = Generator.hasTimeConflict(e.getTime(),time,vb.getStart_time(),time2);
-//                    if(b3)
-//                        return "vendor \""+vb.getVendor_user_name()+"\" is not available at this time";
-//                }
-//
-//            }
-
-
 
         }
         return validEvent;
