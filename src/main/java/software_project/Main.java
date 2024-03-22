@@ -290,6 +290,9 @@ private static final JFileChooser fileChooser = new JFileChooser();
         String time;
         String ChosenTime;
         String Description;
+        int AttendeeCount;
+        List<String> GuestList = new ArrayList<>();
+        List<String> images = new ArrayList<>();
         int Balance;
         int StoreBalance;
         Event event = new Event(conn.getCon());
@@ -472,6 +475,57 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 logger.info("Enter Description : ");
 
                 Description = reader.readLine();
+
+                logger.info("Enter AttendeeCount : ");
+
+                AttendeeCount = reader.read();
+
+                logger.info("Enter Guests Names : ");
+
+                String guest;
+                for(int i = 0 ; i < AttendeeCount ; i++)
+                {
+                    guest = reader.readLine();
+                    if(guest == null)
+                    {
+                        logger.severe("You Should Enter A name\n");
+                        i--;
+                        continue;
+                    }
+                    GuestList.add(guest);
+
+                }
+
+
+                while(true)
+                {
+                    String image;
+                    logger.info("Choose Image : ");
+                    image = chooseImagePath();
+                    images.add(image);
+
+                    logger.info("Do You Want Choose Another Image ?\n" +
+                            "1- Yes\n" +
+                            "2- No");
+
+                    int ch;
+                    ch = scanner.nextInt();
+                    if(ch==1)
+                    {
+                        continue;
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+
+
+
+
+
+
+
 
 
 
