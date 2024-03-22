@@ -9,8 +9,14 @@ import software_project.Vendor.VendorService;
 import software_project.helper.Generator;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static java.lang.Math.abs;
 
 public class retrieve {
 
@@ -386,52 +392,103 @@ public class retrieve {
         }
     }
 
-//    public AVendorBooking selectVendorBookingOfParticularName(String s) {
-//        Statement stmt = null;
-//        AVendorBooking vb = new AVendorBooking();
-//        try {
-//            stmt = con.createStatement();
-//            String query = "SELECT * FROM \"Vendor_Bookings\" where \"Vendor_UN\" = \'" + s + "\';";
-//
-//            ResultSet rs = stmt.executeQuery(query);
-//
-//            String vendorUN = "";
-//            int eventID = 0;
-//
-//            while (rs.next()) {
-//                vendorUN = rs.getString("Vendor_UN");
-//                eventID = rs.getInt("Event_id");
-//            }
-//
-//            String query2 = "SELECT * FROM \"Event\" where \"Event_id\" = " + eventID + ";";
-//
-//            ResultSet rs1 = stmt.executeQuery(query2);
-//
-//            Event e = new Event(con);
-//            String serviceTitle = "";
-//
-//            while (rs1.next()) {
-//                serviceTitle = rs.getString("Service_Title");
-//                vb.setBooking_date(rs.getString("Date"));
-//                vb.setStart_time(rs.getString("Time"));
-//            }
-//
-//            vb.setBooking_time(this.selectEventServicesOfParticularName(serviceTitle).getBookingTime());
-//            vb.setVendor_user_name(s);
-//
-//            setStatus("Retrieving vendor booking successfully");
-//            return vb;
-//
-//        } catch (Exception e) {
-//            setStatus("Error while retrieving vendor booking from database");
-//            return vb;
-//        } finally {
-//            try {
-//                if (stmt != null) stmt.close();
-//            } catch (Exception e) {
-//            }
-//        }
-//    }
+    private static void incrementCount(Map<String, Integer> map, String date) {
+        map.put(date, map.getOrDefault(date, 0) + 1);
+    }
+
+
+
+
+
+
+    public Map<Integer,Boolean> CheckDays(int year , int month ,EventService eventService) {
+
+        Map<String, Integer> dateCountMap = new HashMap<>();
+
+        Map<Integer, Boolean> DateAvalability = new HashMap<>();
+
+
+        List<Event> events = this.selectEventOfParticularServiceId(eventService);
+
+        int TimeDiff = abs(Generator.getTimeDifference(eventService.getStartTime(), eventService.getEndTime()));
+        int BookingTime = Integer.parseInt(eventService.getBookingTime()) * 60;
+
+        int NumberOfEvents = TimeDiff / BookingTime;
+
+
+        for (Event event : events) {
+            incrementCount(dateCountMap, event.getDate());
+        }
+
+        for (Map.Entry<String, Integer> entry : dateCountMap.entrySet()) {
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+            LocalDate date = LocalDate.parse(key, formatter);
+
+
+            int Day = date.getDayOfMonth();
+            int Month = date.getMonthValue();
+            int Year = date.getYear();
+
+
+            if (year == Year && month == Month) {
+                if (value == NumberOfEvents) {
+                    DateAvalability.put(Day, false);
+
+                }
+
+            }
+
+
+
+        }
+        return DateAvalability;
+
+
+    }
+
+
+
+    public List<Event> selectEventOfParticularServiceId(EventService eventService) {
+        List<Event> Events = new ArrayList<>();
+        Statement stmt = null;
+        try {
+            stmt = con.createStatement();
+            String query ="SELECT * FROM \"Event\" where \"EventService_id\" = " + eventService.getId() + ";";
+
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                Event e = new Event(con);
+                e.setId(rs.getInt("Event_id"));
+                e.setServiceId(rs.getInt("EventService_id"));
+                e.setServiceTitle(eventService.getTitle());
+                e.setDate(rs.getString("Date"));
+                e.setTime(rs.getString("Time"));
+                e.setDescription(rs.getString("Description"));
+                e.setAttendeeCount(String.valueOf(rs.getInt("Attendee_Count")));
+                Events.add(e);
+            }
+
+
+            return Events;
+        } catch (Exception e) {
+
+            return Events;
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+
+
+
 
 }
 

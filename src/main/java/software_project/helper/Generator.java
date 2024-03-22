@@ -11,10 +11,15 @@ import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Map;
+
+import static java.lang.Math.abs;
 
 public class Generator {
 
@@ -140,6 +145,60 @@ public class Generator {
         int originalLength = rating.length();
         int withoutStarsLength = rating.replaceAll("\\*", "").length();
         return originalLength - withoutStarsLength;
+    }
+
+
+    public static void printCalendar(int year, int month, Map<Integer, Boolean> colorMap) {
+        if (month < 1 || month > 12) {
+            return;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+
+        int startDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+
+        int numDaysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        System.out.println(" " + getMonthName(month) + " " + year);
+        System.out.println(" Su Mo Tu We Th Fr Sa");
+
+        for (int i = 1; i < startDayOfWeek; i++) {
+            System.out.print("   ");
+        }
+
+        for (int i = 1; i <= numDaysInMonth; i++) {
+            String colorCode = colorMap.containsKey(i) && !colorMap.get(i) ? "\u001B[31m" : "\u001B[34m"; // Red for false, Blue for true
+            System.out.printf("%s%3d", colorCode, i);
+            if ((startDayOfWeek + i - 1) % 7 == 0) {
+                System.out.println();
+            }
+            System.out.print("\u001B[0m"); // Reset color
+        }
+        System.out.println("\n");
+    }
+
+    public static String generateDateString(int day, int month, int year) {
+        LocalDate date = LocalDate.of(year, month, day);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        return date.format(formatter);
+}
+
+    public static String getMonthName(int month) {
+        String[] monthNames = {"January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"};
+        return monthNames[month-1];
+    }
+
+
+    public static void main(String args[])
+    {
+       int c = (abs(getTimeDifference("14:00","00:00"))/60);
+       System.out.println(c);
     }
 
 

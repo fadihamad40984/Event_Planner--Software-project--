@@ -158,47 +158,6 @@ public class insertData {
         }
     }
 
-//    public boolean insertEvent(Event e) {
-//        try {
-//            conn.setAutoCommit(false);
-//            String query = "insert into \"Event\" (\"EventService_id\",\"Date\", \"Time\", \"Description\", \"Attendee_Count\") values (?,?, ?, ?, ?);";//id is serial
-//            String query2 = "insert into \"Guests\" (\"Event_id\",\"Guest_Name\") values (?,?);";//guest id is serial
-//            String query3 = "insert into \"images\" (\"Event_id\",\"Image_Path\") values (?,?);";//image id is serial
-//
-//            PreparedStatement preparedStmt = conn.prepareStatement(query);
-//            preparedStmt = Generator.eventBookingStatementToPS(preparedStmt, e);
-//            preparedStmt.execute();
-//            conn.commit();
-//            conn.setAutoCommit(false);
-//
-//            int id = retrieve.retriveeventIID(conn);
-//
-//            for(String s: e.getGuestList()) {
-//                PreparedStatement preparedStmt2 = conn.prepareStatement(query2);
-//                preparedStmt2 = Generator.guestListStatementToPS(preparedStmt2, s , id);
-//                preparedStmt2.execute();
-//                conn.commit();
-//                conn.setAutoCommit(false);
-//            }
-//
-//            for(String path: e.getImages()) {
-//                PreparedStatement preparedStmt3 = conn.prepareStatement(query3);
-//                preparedStmt3 = Generator.imageStatementToPS(preparedStmt3,  path , id);
-//                preparedStmt3.execute();
-//                conn.commit();
-//                conn.setAutoCommit(false);
-//
-//            }
-//
-//            setStatus("Event booked successfully");
-//            conn.commit();
-//            return true;
-//        } catch (Exception exception) {
-//
-//            return false;
-//        }
-//    }
-
 
 
     public boolean insertVendorService(VendorService vs) {
