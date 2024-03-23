@@ -34,6 +34,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.log;
 import static java.lang.System.exit;
 
+
 public class Main {
 private static final JFileChooser fileChooser = new JFileChooser();
 
@@ -285,6 +286,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
     }
 
     private static void CancelEventPage() {
+
     }
 
     private static void BookEventPage() throws SQLException, IOException {
@@ -983,7 +985,15 @@ private static final JFileChooser fileChooser = new JFileChooser();
     }
 
     private static void adminpage() {
-        logger.info("ad page");
+
+        logger.info("Choose Number\n" +
+                "1- Show All Users\n" +
+                "2- Show Requests\n" +
+                "3- Add User\n" +
+                "4- Delete User\n" +
+                "5- Report");
+
+
 
     }
 
