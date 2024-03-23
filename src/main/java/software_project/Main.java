@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -268,12 +269,15 @@ private static final JFileChooser fileChooser = new JFileChooser();
             logger.info("""
                     Choose Number\s
                     1- Book Event
-                    2- Cancel Event""");
+                    2- Cancel Event
+                    3- Check Request""");
             choise = scanner.nextInt();
             if(choise==1)
                 BookEventPage();
             else if(choise==2)
                 CancelEventPage();
+            else if(choise==3)
+                CheckRequestPage();
             else
             {
                 logger.info("Do you want to continue? (yes/no)");
@@ -286,9 +290,52 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
     }
 
+    private static void CheckRequestPage() throws SQLException, IOException {
+
+        List<Event> events = new ArrayList<>();
+        List<String> status = new ArrayList<>();
+        status = SelectStatusOfParticularUserName(UserSession.getCurrentUser().getUsername());
+        events = SelectAllRequestOfParticualrUserName(UserSession.getCurrentUser().getUsername());
+        logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
+                "Number", "Date", "Time", "Description", "Attendee_Count", "Balance" , "Status"));
+
+        int counter = 0;
+        for(Event e : events)
+        {
+            logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
+                    ++counter, e.getDate(), e.getTime(),
+                    e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));
+        }
+
+        logger.info("Do You Want To Return To Main Page : \n" +
+                    "1- Yes\n" +
+                    "2- No");
+
+        while (true)
+        {
+            int ch;
+            ch = scanner.nextInt();
+            if(ch==1)
+            {
+                customerpage();
+                return;
+            }
+            else if(ch==2)
+            {
+                exit(0);
+            }
+            else{
+                logger.info("Enter Valid Input\n");
+            }
+
+        }
+
+
+    }
+
     private static void CancelEventPage() {
 
-        logger.info("Select The Event You Want To Cancel :");
+        logger.info("Choose The Event You Want To Cancel :");
        List<Event> events = new ArrayList<>();
         events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
         logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
@@ -302,7 +349,126 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 e.getDescription(), e.getAttendeeCount(), e.getBalance()));
         }
 
+        int choise;
 
+        while(true)
+        {
+            choise=scanner.nextInt();
+            if(choise > 0 && choise <= counter)
+            {
+
+                sendRequest(events.get(choise-1));
+                logger.info("Request Sent Successfully\n");
+                break;
+            }
+
+            else{
+                logger.severe("Invalid Input\n");
+                logger.info("Enter Another Choice\n");
+
+            }
+        }
+
+
+
+
+
+
+    }
+
+    private static void sendRequest(Event e) {
+
+        try {
+            conn.getCon().setAutoCommit(false);
+
+            String query5 = "insert into \"Requests\"(\"UserName\",\"Event Id\" , \"Status\") values (?,?,?);";
+
+
+
+            PreparedStatement preparedStmt5 = conn.getCon().prepareStatement(query5);
+            preparedStmt5.setString(1,e.getUsername());
+            preparedStmt5.setInt(2,e.getId());
+            preparedStmt5.setString(3,"pending");
+            preparedStmt5.execute();
+            conn.getCon().commit();
+            conn.getCon().setAutoCommit(false);
+
+
+
+
+            conn.getCon().commit();
+        } catch (Exception exception) {
+
+        }
+
+
+
+
+    }
+
+
+    public static List<String> SelectStatusOfParticularUserName(String Username)
+    {
+        Statement stmt = null;
+        List<String> statuses = new ArrayList<>();
+
+        try {
+            stmt = conn.getCon().createStatement();
+            String query = "SELECT * FROM \"Requests\" where \"UserName\" = \'"+Username+ "\';";
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+                statuses.add(rs.getString("Status"));
+            }
+        }catch (Exception e){
+
+        }
+
+        return statuses;
+
+    }
+
+    private static List<Event> SelectAllRequestOfParticualrUserName(String username) {
+        Statement stmt = null;
+        List<Event> events = new ArrayList<>();
+        List<Integer> EventsIDs = new ArrayList<>();
+
+        try {
+            stmt = conn.getCon().createStatement();
+            String query = "SELECT * FROM \"Requests\" where \"UserName\" = \'"+username+ "\';";
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+                EventsIDs.add(rs.getInt("Event Id"));
+            }
+
+            for(int i=0 ; i < EventsIDs.size();i++)
+            {
+                String query2 = "select * from \"Event\" where \"Event_id\" = "+EventsIDs.get(i)+";";
+                ResultSet rs1 = stmt.executeQuery(query2);
+                while(rs1.next())
+                {
+                    Event event = new Event(conn.getCon());
+                    event.setId(rs1.getInt("Event_id"));
+                    event.setDate(rs1.getString("Date"));
+                    event.setDescription(rs1.getString("Description"));
+                    event.setTime(rs1.getString("Time"));
+                    event.setAttendeeCount(rs1.getString("Attendee_Count"));
+                    event.setServiceId(rs1.getInt("EventService_id"));
+                    event.setBalance(rs1.getString("Balance"));
+                    event.setUsername(username);
+                    events.add(event);
+
+                }
+
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return events;
 
     }
 
@@ -313,7 +479,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
         try {
             stmt = conn.getCon().createStatement();
-            String query = "SELECT * FROM \"Event_User\" where \"UserName\" = "+username+ ";";
+            String query = "SELECT * FROM \"Event_User\" where \"UserName\" = \'"+username+ "\';";
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
             {
@@ -334,6 +500,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
                     event.setAttendeeCount(rs1.getString("Attendee_Count"));
                     event.setServiceId(rs1.getInt("EventService_id"));
                     event.setBalance(rs1.getString("Balance"));
+                    event.setUsername(username);
                     events.add(event);
 
                 }
@@ -814,7 +981,8 @@ private static final JFileChooser fileChooser = new JFileChooser();
         boolean continueloopbig = true;
         while(continueloopbig) {
             logger.info("1- Event Service Management\n" +
-                    "2- Venue Management");
+                    "2- Venue Management\n" +
+                        "3- Check Requests");
             ch = scanner.nextInt();
             if (ch == 1) {
                 logger.info("***************************Event Service Management***************************\n");
@@ -869,7 +1037,14 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
                 }
 
-            } else {
+            }
+            else if(ch==3)
+            {
+                RequestsPage();
+            }
+
+
+            else {
                 logger.info("You should choose number above");
                 logger.info("Do you want to continue? (yes/no)");
                 String userInput = reader.readLine();
@@ -879,6 +1054,151 @@ private static final JFileChooser fileChooser = new JFileChooser();
         }
 
     }
+
+    private static void RequestsPage() throws SQLException, IOException {
+        logger.info("***************************Requests Page***************************\n");
+        List<Event> events = new ArrayList<>();
+        List<String> status = new ArrayList<>();
+        status = SelectStatusOfParticularUserName(UserSession.getCurrentUser().getUsername());
+        events = SelectAllRequestOfParticualrUserName(UserSession.getCurrentUser().getUsername());
+        logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
+                "Number", "Date", "Time", "Description", "Attendee_Count", "Balance" , "Status"));
+
+        int counter = 0;
+        for(Event e : events)
+        {
+            logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
+                    ++counter, e.getDate(), e.getTime(),
+                    e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));
+        }
+
+
+
+        while(true)
+        {
+            logger.info("Enter Event Number You Want To Accept/Refuse it : ");
+
+            int ch1;
+            ch1=scanner.nextInt();
+            if(ch1>0 && ch1<=counter)
+            {
+                logger.info("Status\n" +
+                            "1- Accept\n" +
+                            "2- Refuse");
+                int ch2;
+                ch2 = scanner.nextInt();
+                if (ch2==1)
+                {
+                    updateStatus("accept",events.get(ch1-1).getId());
+                    delete_event(events.get(ch1-1).getId());
+
+                }
+                else if(ch2==2)
+                {
+                    updateStatus("refuse",events.get(ch1-1).getId());
+
+                }
+
+                else{
+                    break;
+                }
+
+                break;
+            }
+
+            else{
+
+                logger.info("Invalid Input\n");
+
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        logger.info("Do You Want To Return To Main Page : \n" +
+                    "1- Yes\n" +
+                    "2- No");
+
+        while (true)
+        {
+            int ch;
+            ch = scanner.nextInt();
+            if(ch==1)
+            {
+                serviceproviderpage();
+                return;
+            }
+            else if(ch==2)
+            {
+                exit(0);
+            }
+            else{
+                logger.info("Enter Valid Input\n");
+            }
+
+        }
+
+
+    }
+
+
+    public static boolean delete_event(int id) {
+
+        try {
+            conn.getCon().setAutoCommit(false);
+            String query = "delete from \"Event\" where \"Event_id\" = ?;";
+            PreparedStatement preparedStmt = conn.getCon().prepareStatement(query);
+            preparedStmt.setInt(1,id);
+            preparedStmt.execute();
+            conn.getCon().commit();
+            return true;
+        } catch (Exception e) {
+
+            return false;
+        }
+
+    }
+
+    public static boolean updateStatus(String Status , int id) {
+        try {
+            conn.getCon().setAutoCommit(false);
+            String query = "update \"Requests\" set \"Status\"= ? where \"Event Id\"=?";
+            PreparedStatement preparedStmt = conn.getCon().prepareStatement(query);
+            preparedStmt.setString(1,Status);
+            preparedStmt.setInt(2,id);
+
+            int rowsUpdated = preparedStmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                conn.getCon().commit();
+                return true;
+            } else {
+                conn.getCon().rollback();
+                return false;
+            }
+
+        } catch (Exception e) {
+            try {
+                conn.getCon().rollback();
+            } catch (SQLException rollbackException) {
+                rollbackException.printStackTrace();
+            }
+            return false;
+        }
+    }
+
+
+
 
 
 
