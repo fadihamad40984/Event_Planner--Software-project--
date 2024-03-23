@@ -141,6 +141,7 @@ public class insertData {
             String query2 = "insert into \"Guests\" (\"Event_id\",\"Guest_Name\") values (?,?);";//guest id is serial
             String query3 = "insert into \"images\" (\"Event_id\",\"Image_Path\") values (?,?);";//image id is serial
             String query4 = "insert into \"Vendor_Bookings\"(\"Vendor_UN\",\"Event_id\") values (?,?);";//booking id is serial
+            String query5 = "insert into \"Event_User\"(\"UserName\",\"Event Id\") values (?,?);";
 
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt = Generator.eventBookingStatementToPS(preparedStmt, e);
@@ -174,6 +175,15 @@ public class insertData {
                 conn.setAutoCommit(false);
 
             }
+
+            PreparedStatement preparedStmt5 = conn.prepareStatement(query5);
+            preparedStmt5.setString(1,e.getUsername());
+            preparedStmt5.setInt(2,id);
+            preparedStmt5.execute();
+            conn.commit();
+            conn.setAutoCommit(false);
+
+
 
             setStatus("Event booked successfully");
             conn.commit();

@@ -14,6 +14,7 @@ import software_project.authentication.Login;
 import software_project.authentication.Register;
 import software_project.helper.EmailSender;
 import software_project.helper.Generator;
+import software_project.helper.UserSession;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -287,6 +288,65 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
     private static void CancelEventPage() {
 
+        logger.info("Select The Event You Want To Cancel :");
+       List<Event> events = new ArrayList<>();
+        events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
+        logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
+                "Number", "Date", "Time", "Description", "Attendee_Count", "Balance"));
+
+      int counter = 0;
+        for(Event e : events)
+        {
+              logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
+                ++counter, e.getDate(), e.getTime(),
+                e.getDescription(), e.getAttendeeCount(), e.getBalance()));
+        }
+
+
+
+    }
+
+    private static List<Event> SelectAllEventOfParticualrUserName(String username) {
+        Statement stmt = null;
+        List<Event> events = new ArrayList<>();
+        List<Integer> EventsIDs = new ArrayList<>();
+
+        try {
+            stmt = conn.getCon().createStatement();
+            String query = "SELECT * FROM \"Event_User\" where \"UserName\" = "+username+ ";";
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+               EventsIDs.add(rs.getInt("Event Id"));
+            }
+
+            for(int i=0 ; i < EventsIDs.size();i++)
+            {
+                String query2 = "select * from \"Event\" where \"Event_id\" = "+EventsIDs.get(i)+";";
+                ResultSet rs1 = stmt.executeQuery(query2);
+                while(rs1.next())
+                {
+                    Event event = new Event(conn.getCon());
+                    event.setId(rs1.getInt("Event_id"));
+                    event.setDate(rs1.getString("Date"));
+                    event.setDescription(rs1.getString("Description"));
+                    event.setTime(rs1.getString("Time"));
+                    event.setAttendeeCount(rs1.getString("Attendee_Count"));
+                    event.setServiceId(rs1.getInt("EventService_id"));
+                    event.setBalance(rs1.getString("Balance"));
+                    events.add(event);
+
+                }
+
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return events;
+
     }
 
     private static void BookEventPage() throws SQLException, IOException {
@@ -302,6 +362,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
         String ChosenTime;
         String Description;
         int AttendeeCount;
+        String Username;
         List<String> GuestList = new ArrayList<>();
         List<String> images = new ArrayList<>();
         List<String> Vendors = new ArrayList<>();
@@ -648,7 +709,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 accpetevent.setGuestList(GuestList);
                 accpetevent.setImages(images);
                 accpetevent.setVendors(Vendors);
-
+                accpetevent.setUsername(UserSession.getCurrentUser().getUsername());
                 eventManipulation.bookEvent(accpetevent);
 
                 logger.severe(eventManipulation.getStatus());

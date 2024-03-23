@@ -62,6 +62,8 @@ public class userBookEventTCs {
                 images_list.addAll(Arrays.asList(imagesArr));
                 e.setImages(images_list);
             }
+
+            case "user"->e.setUsername(string2);
             default -> {
                 assert false;
             }

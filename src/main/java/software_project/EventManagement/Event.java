@@ -19,6 +19,7 @@ public class Event {
     private List<String> guestList;
     private List<String> images;
     private List<String> vendors;
+    private String username;
 
     private Connection con;
     private Statement stmt;
@@ -36,6 +37,7 @@ public class Event {
         this.attendeeCount = "";
         this.guestList = new ArrayList<>();
         this.images = new ArrayList<>();
+        this.username="";
     }
 
     public int getId() {
@@ -137,5 +139,13 @@ public class Event {
 
     public void setVendors(List<String> vendors) {
         this.vendors = vendors;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
