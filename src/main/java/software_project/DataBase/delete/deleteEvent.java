@@ -44,4 +44,26 @@ public class deleteEvent {
 
     }
 
+
+    public boolean delete_user(String username) {
+
+        try {
+            conn.setAutoCommit(false);
+            String query = "delete from \"users\" where \"User_Name\" = ?;";
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt.setString(1,username);
+            preparedStmt.execute();
+            setStatus("user deleted successfully");
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            setStatus("Couldn't delete the user");
+
+            return false;
+        }
+
+    }
+
+
+
 }

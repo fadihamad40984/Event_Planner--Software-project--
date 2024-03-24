@@ -106,9 +106,10 @@ private static final JFileChooser fileChooser = new JFileChooser();
     public static void menu() throws IOException, SQLException {
         int ch;
         logger.info("***************************Login Page***************************\n");
-        logger.info("Choose Number \n" +
-                "1- Sign in\n" +
-                "2- Sign up");
+        logger.info("""
+                Choose Number\s
+                1- Sign in
+                2- Sign up""");
 
         ch = scanner.nextInt();
 
@@ -257,7 +258,92 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
     }
 
-    private static void vendorpage() {
+    private static void vendorpage() throws IOException, SQLException {
+        logger.info("***************************Vendor Page***************************\n");
+        List<Event> events = new ArrayList<>();
+
+        int choise;
+        boolean continueloop = true;
+        while(continueloop)
+        {
+            logger.info("1- Show Upcoming Events\n" +
+                    "2- Log out");
+            choise = scanner.nextInt();
+            if(choise==1)
+            {
+                events = ShowUpcomingEventsForParticularVendor(UserSession.getCurrentUser().getUsername());
+
+                logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%n",
+                        "Number", "Date", "Time", "Description", "Attendee_Count"));
+
+                int counter = 0;
+                for(Event e : events)
+                {
+                    logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%n",
+                            ++counter, e.getDate(), e.getTime(),
+                            e.getDescription(), e.getAttendeeCount()));
+                }
+
+
+
+            }
+            else if(choise==2)
+                menu();
+            else
+            {
+                logger.info("Do you want to continue? (yes/no)");
+                String userInput = reader.readLine();
+                continueloop = userInput.equals("yes");
+            }
+        }
+    }
+
+    private static List<Event> ShowUpcomingEventsForParticularVendor(String username) {
+
+        Statement stmt = null;
+        List<Event> events = new ArrayList<>();
+        List<Integer> EventsIDs = new ArrayList<>();
+
+        try {
+            stmt = conn.getCon().createStatement();
+            String query = "SELECT * FROM \"Vendor_Bookings\" where \"Vendor_UN\" = \'"+username+ "\';";
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+                EventsIDs.add(rs.getInt("Event_id"));
+            }
+
+            for(int i=0 ; i < EventsIDs.size();i++)
+            {
+                String query2 = "select * from \"Event\" where \"Event_id\" = "+EventsIDs.get(i)+";";
+                ResultSet rs1 = stmt.executeQuery(query2);
+                while(rs1.next())
+                {
+                    Event event = new Event(conn.getCon());
+                    event.setId(rs1.getInt("Event_id"));
+                    event.setDate(rs1.getString("Date"));
+                    event.setDescription(rs1.getString("Description"));
+                    event.setTime(rs1.getString("Time"));
+                    event.setAttendeeCount(rs1.getString("Attendee_Count"));
+                    event.setServiceId(rs1.getInt("EventService_id"));
+                    event.setBalance(rs1.getString("Balance"));
+                    event.setUsername(username);
+                    events.add(event);
+
+                }
+
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return events;
+
+
+
+
     }
 
     private static void customerpage() throws IOException, SQLException {
@@ -270,7 +356,9 @@ private static final JFileChooser fileChooser = new JFileChooser();
                     Choose Number\s
                     1- Book Event
                     2- Cancel Event
-                    3- Check Request""");
+                    3- Check Request
+                    4- Show Calendar
+                    5- Log out""");
             choise = scanner.nextInt();
             if(choise==1)
                 BookEventPage();
@@ -278,6 +366,10 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 CancelEventPage();
             else if(choise==3)
                 CheckRequestPage();
+            else if(choise==4)
+                ShowCalendarPage();
+            else if(choise==5)
+                menu();
             else
             {
                 logger.info("Do you want to continue? (yes/no)");
@@ -285,6 +377,33 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 continueloop = userInput.equals("yes");
             }
         }
+
+
+
+    }
+
+    private static void ShowCalendarPage() throws SQLException, IOException {  logger.info("Choose The Event You Want To Cancel :");
+        List<Event> events = new ArrayList<>();
+        events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
+        logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
+                "Number", "Date", "Time", "Description", "Attendee_Count", "Balance"));
+
+        int counter = 0;
+        for(Event e : events)
+        {
+            logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
+                    ++counter, e.getDate(), e.getTime(),
+                    e.getDescription(), e.getAttendeeCount(), e.getBalance()));
+        }
+
+       logger.info("Return To Main Page Enter \"ok\" ");
+        String ch;
+        ch= reader.readLine();
+        if(Objects.equals(ch, "ok") || "OK".equals(ch))
+        {
+            customerpage();
+        }
+
 
 
 
@@ -980,9 +1099,11 @@ private static final JFileChooser fileChooser = new JFileChooser();
         int ch;
         boolean continueloopbig = true;
         while(continueloopbig) {
-            logger.info("1- Event Service Management\n" +
-                    "2- Venue Management\n" +
-                        "3- Check Requests");
+            logger.info("""
+                    1- Event Service Management
+                    2- Venue Management
+                    3- Check Requests
+                    4- Log out""");
             ch = scanner.nextInt();
             if (ch == 1) {
                 logger.info("***************************Event Service Management***************************\n");
@@ -1006,7 +1127,14 @@ private static final JFileChooser fileChooser = new JFileChooser();
                         deleteeventservice();
                         return;
 
-                    } else {
+                    }
+
+                    else if(che==4)
+                    {
+                        menu();
+                        return;
+                    }
+                    else {
                         logger.info("You should choose number above");
                         logger.info("Do you want to continue? (yes/no)");
                         String userInput = reader.readLine();
@@ -1059,8 +1187,8 @@ private static final JFileChooser fileChooser = new JFileChooser();
         logger.info("***************************Requests Page***************************\n");
         List<Event> events = new ArrayList<>();
         List<String> status = new ArrayList<>();
-        status = SelectStatusOfParticularUserName(UserSession.getCurrentUser().getUsername());
-        events = SelectAllRequestOfParticualrUserName(UserSession.getCurrentUser().getUsername());
+        status = SelectAllStatus();
+        events = SelectAllRequests();
         logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
                 "Number", "Date", "Time", "Description", "Attendee_Count", "Balance" , "Status"));
 
@@ -1114,18 +1242,6 @@ private static final JFileChooser fileChooser = new JFileChooser();
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
         logger.info("Do You Want To Return To Main Page : \n" +
                     "1- Yes\n" +
                     "2- No");
@@ -1150,6 +1266,71 @@ private static final JFileChooser fileChooser = new JFileChooser();
         }
 
 
+    }
+
+    private static List<Event> SelectAllRequests() {
+        Statement stmt = null;
+        List<Event> events = new ArrayList<>();
+        List<String> users = new ArrayList<>();
+        List<Integer> EventsIDs = new ArrayList<>();
+
+        try {
+            stmt = conn.getCon().createStatement();
+            String query = "SELECT * FROM \"Requests\";";
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+                EventsIDs.add(rs.getInt("Event Id"));
+                users.add(rs.getString("UserName"));
+            }
+
+            for(int i=0 ; i < EventsIDs.size();i++)
+            {
+                String query2 = "select * from \"Event\" where \"Event_id\" = "+EventsIDs.get(i)+";";
+                ResultSet rs1 = stmt.executeQuery(query2);
+                while(rs1.next())
+                {
+                    Event event = new Event(conn.getCon());
+                    event.setId(rs1.getInt("Event_id"));
+                    event.setDate(rs1.getString("Date"));
+                    event.setDescription(rs1.getString("Description"));
+                    event.setTime(rs1.getString("Time"));
+                    event.setAttendeeCount(rs1.getString("Attendee_Count"));
+                    event.setServiceId(rs1.getInt("EventService_id"));
+                    event.setBalance(rs1.getString("Balance"));
+                    event.setUsername(users.get(i));
+                    events.add(event);
+
+                }
+
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return events;
+
+    }
+
+    private static List<String> SelectAllStatus() {
+        Statement stmt = null;
+        List<String> statuses = new ArrayList<>();
+
+        try {
+            stmt = conn.getCon().createStatement();
+            String query = "SELECT * FROM \"Requests\" ;";
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+                statuses.add(rs.getString("Status"));
+            }
+        }catch (Exception e){
+
+        }
+
+        return statuses;
     }
 
 
@@ -1367,12 +1548,12 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
     private static void adminpage() {
 
-        logger.info("Choose Number\n" +
-                "1- Show All Users\n" +
-                "2- Show Requests\n" +
-                "3- Add User\n" +
-                "4- Delete User\n" +
-                "5- Report");
+        logger.info("""
+                Choose Number
+                1- All Users Report\s
+                2- All Events Report
+                3- All EventService Report
+                4- Delete User""");
 
 
 
