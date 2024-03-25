@@ -25,6 +25,18 @@ public class EventService {
         this.bookingTime = "";
     }
 
+    public EventService(String title , String details , String eventCategory , String price , String place , String startTime , String endTime , String bookingTime)
+    {
+        setDetails(details);
+        setTitle(title);
+        setEventCategory(eventCategory);
+        setPrice(price);
+        setPlace(place);
+        setStartTime(startTime);
+        setEndTime(endTime);
+        setBookingTime(bookingTime);
+    }
+
 
     public String getBookingTime() {
         return bookingTime;

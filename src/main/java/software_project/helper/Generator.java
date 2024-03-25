@@ -3,19 +3,32 @@ package software_project.helper;
 
 
 
+import software_project.DataBase.DB_Connection;
+import software_project.DataBase.retrieve.retrieve;
+import software_project.EventManagement.Event;
 import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Map;
+
+import static java.lang.Math.abs;
 
 public class Generator {
 
+    public static DB_Connection conn = new DB_Connection();
+
+
     private Generator() {
+
+
         throw new IllegalStateException("Utility class");
     }
 
@@ -67,6 +80,33 @@ public class Generator {
         return preparedStmt;
     }
 
+    public static PreparedStatement eventBookingStatementToPS(PreparedStatement preparedStmt, Event e) throws SQLException {
+        preparedStmt.setInt(1, e.getServiceId());
+        preparedStmt.setString(2, e.getDate());
+        preparedStmt.setString(3, e.getTime());
+        preparedStmt.setString(4, e.getDescription());
+        preparedStmt.setString(5, e.getAttendeeCount());
+        preparedStmt.setString(6, e.getBalance());
+
+        return preparedStmt;
+    }
+    public static PreparedStatement guestListStatementToPS(PreparedStatement preparedStmt,  String Guest , int id) throws SQLException {
+        preparedStmt.setInt(1, id);
+        preparedStmt.setString(2, Guest);
+        return preparedStmt;
+    }
+    public static PreparedStatement imageStatementToPS(PreparedStatement preparedStmt, String Path , int id) throws SQLException {
+        preparedStmt.setInt(1, id);
+        preparedStmt.setString(2, Path);
+        return preparedStmt;
+    }
+
+    public static PreparedStatement vendorsStatementToPS(PreparedStatement preparedStmt,  String vendor , int id) throws SQLException {
+        preparedStmt.setString(1, vendor);
+        preparedStmt.setInt(2, id);
+        return preparedStmt;
+    }
+
     public static int getTimeDifference(String time1, String time2) {
         String[] parts1 = time1.split(":");
         String[] parts2 = time2.split(":");
@@ -90,4 +130,76 @@ public class Generator {
         String[] parts = time.split(":");
         return Integer.parseInt(parts[0]) * 60 + Integer.parseInt(parts[1]);
     }
+
+
+    public static boolean isTimeInsideInterval(String timeStr, String startStr, String endStr) {
+        LocalTime time = LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime start = LocalTime.parse(startStr, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime end = LocalTime.parse(endStr, DateTimeFormatter.ofPattern("HH:mm"));
+
+        return !time.isBefore(start) && !time.isAfter(end);
+    }
+
+
+    public static int StarCounter(String rating) {
+        int originalLength = rating.length();
+        int withoutStarsLength = rating.replaceAll("\\*", "").length();
+        return originalLength - withoutStarsLength;
+    }
+
+
+    public static void printCalendar(int year, int month, Map<Integer, Boolean> colorMap) {
+        if (month < 1 || month > 12) {
+            return;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+
+        int startDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+
+        int numDaysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        System.out.println(" " + getMonthName(month) + " " + year);
+        System.out.println(" Su Mo Tu We Th Fr Sa");
+
+        for (int i = 1; i < startDayOfWeek; i++) {
+            System.out.print("   ");
+        }
+
+        for (int i = 1; i <= numDaysInMonth; i++) {
+            String colorCode = colorMap.containsKey(i) && !colorMap.get(i) ? "\u001B[31m" : "\u001B[34m"; // Red for false, Blue for true
+            System.out.printf("%s%3d", colorCode, i);
+            if ((startDayOfWeek + i - 1) % 7 == 0) {
+                System.out.println();
+            }
+            System.out.print("\u001B[0m"); // Reset color
+        }
+        System.out.println("\n");
+    }
+
+    public static String generateDateString(int day, int month, int year) {
+        LocalDate date = LocalDate.of(year, month, day);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        return date.format(formatter);
+}
+
+    public static String getMonthName(int month) {
+        String[] monthNames = {"January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"};
+        return monthNames[month-1];
+    }
+
+
+    public static void main(String args[])
+    {
+       int c = (abs(getTimeDifference("14:00","00:00"))/60);
+       System.out.println(c);
+    }
+
+
 }

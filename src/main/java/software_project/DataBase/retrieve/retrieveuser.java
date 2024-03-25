@@ -1,6 +1,7 @@
 package software_project.DataBase.retrieve;
 
 import software_project.UserManagement.User;
+import software_project.Vendor.AVendorBooking;
 import software_project.helper.Generator;
 
 import java.sql.Connection;
@@ -77,6 +78,41 @@ public class retrieveuser {
     public List<User> findUserByUserType(String userType) {
         return selectFromusersTable("User_Type", userType);
     }
+
+    public List<User> ALLUsers(){
+
+        Statement stmt = null;
+        List<User> users = new ArrayList<>();
+
+        try {
+            stmt = con.createStatement();
+            String query = "SELECT * FROM \"users\";";
+
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+                User user = new User();
+                user.setFirstName(rs.getString("First_Name"));
+                user.setLastName(rs.getString("Last_Name"));
+                user.setUsername(rs.getString("User_Name"));
+                user.setEmail(rs.getString("Email"));
+                user.setPassword(rs.getString("Password"));
+                user.setPhoneNumber(rs.getString("Phone"));
+                user.setUserType(rs.getString("User_Type"));
+                users.add(user);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return users;
+
+    }
+
+
+
+
 
 
 

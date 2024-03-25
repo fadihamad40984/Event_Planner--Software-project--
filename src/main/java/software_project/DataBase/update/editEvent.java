@@ -1,9 +1,11 @@
 package software_project.DataBase.update;
 
 import software_project.EventManagement.EventService;
+import software_project.helper.Generator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class editEvent {
     private String status;
@@ -21,24 +23,46 @@ public class editEvent {
         this.status = status;
     }
 
-    public boolean edit_event(EventService ES) {
 
+
+
+
+
+
+
+
+
+    public boolean updateEventService(EventService es) {
         try {
             conn.setAutoCommit(false);
-            String query = "update Event_Service " +
-                    " set \"Id\" = ?;";
+            String query = "update \"Event_Service\" set \"Title\"=?, \"Details\"=?, \"Event_Category\"=?, \"Price\"=?, \"Place\"=?, \"Start_Time\"=?, \"End_Time\"=?, \"Booking_Time\"=? where \"Id\"=?";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
-            preparedStmt.setString(1, String.valueOf(ES.getId()));
-            preparedStmt.execute();
-            setStatus("Event service deleted successfully");
-            conn.commit();
-            return true;
+            preparedStmt = Generator.eventStatementToPS(preparedStmt, es);
+            preparedStmt.setInt(9, es.getId());
+            int rowsUpdated = preparedStmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                setStatus("Event updated successfully");
+                conn.commit();
+                return true;
+            } else {
+                setStatus("Event ID not found");
+                conn.rollback();
+                return false;
+            }
+
         } catch (Exception e) {
-            setStatus("Couldn't delete the event service");
-
-
+            try {
+                conn.rollback();
+            } catch (SQLException rollbackException) {
+                rollbackException.printStackTrace();
+            }
             return false;
         }
-
     }
+
+
+
+
+
+
 }
