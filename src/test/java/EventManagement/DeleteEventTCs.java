@@ -36,8 +36,8 @@ public class DeleteEventTCs {
         status = em.getStatus();
     }
 
-    @Then("A {string} should appear")
-    public void a_should_appear(String string) {
+    @Then("A {string} must appear")
+    public void a_must_appear(String string) {
         assertEquals(status,string);
 
     }

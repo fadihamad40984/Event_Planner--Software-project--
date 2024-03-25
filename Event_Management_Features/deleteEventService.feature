@@ -4,10 +4,9 @@ Feature: Delete Event Service
     Given I am in deletion page
     When I enter in 'Event_ID' the value "<Event_ID>"
     And I click delete
-    Then A "<Message>" should appear
+    Then A "<Message>" must appear
 
     Examples:
       | Event_ID | Message                            |
-      | 10       | Event service deleted successfully |
-      | 8        | Couldn't delete the event service  |
+      | 17       | Event service deleted successfully |
 

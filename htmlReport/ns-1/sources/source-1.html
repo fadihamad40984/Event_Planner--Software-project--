@@ -1,0 +1,1804 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1256"> 
+  <title>Coverage Report > Main</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">software_project</a>
+</div>
+
+<h1>Coverage Summary for Class: Main (software_project)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Main</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/33)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/738)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Main$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">Main$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/38)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/746)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package software_project;
+&nbsp;
+&nbsp;
+&nbsp;import software_project.DataBase.DB_Connection;
+&nbsp;import software_project.DataBase.retrieve.retrieve;
+&nbsp;import software_project.EventManagement.Event;
+&nbsp;import software_project.EventManagement.EventManipulation;
+&nbsp;import software_project.EventManagement.EventService;
+&nbsp;import software_project.EventManagement.Places;
+&nbsp;import software_project.UserManagement.User;
+&nbsp;import software_project.Vendor.AVendorBooking;
+&nbsp;import software_project.Vendor.VendorService;
+&nbsp;import software_project.authentication.Login;
+&nbsp;import software_project.authentication.Register;
+&nbsp;import software_project.helper.EmailSender;
+&nbsp;import software_project.helper.Generator;
+&nbsp;import software_project.helper.UserSession;
+&nbsp;
+&nbsp;import javax.swing.*;
+&nbsp;import javax.swing.filechooser.FileFilter;
+&nbsp;import java.io.BufferedReader;
+&nbsp;import java.io.File;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.InputStreamReader;
+&nbsp;import java.sql.PreparedStatement;
+&nbsp;import java.sql.ResultSet;
+&nbsp;import java.sql.SQLException;
+&nbsp;import java.sql.Statement;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.Scanner;
+&nbsp;import java.util.logging.*;
+&nbsp;
+&nbsp;import static java.lang.Math.abs;
+&nbsp;import static java.lang.Math.log;
+&nbsp;import static java.lang.String.format;
+&nbsp;import static java.lang.System.exit;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;public class Main {</b>
+<b class="nc">&nbsp;private static final JFileChooser fileChooser = new JFileChooser();</b>
+&nbsp;
+<b class="nc">&nbsp;    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));</b>
+&nbsp;
+<b class="nc">&nbsp;   private static final Scanner scanner = new Scanner(System.in);</b>
+<b class="nc">&nbsp;    private static final DB_Connection conn = new DB_Connection();</b>
+<b class="nc">&nbsp;    private static final Logger logger = Logger.getLogger(Main.class.getName());</b>
+&nbsp;    static {
+&nbsp;
+<b class="nc">&nbsp;        System.setProperty(&quot;mail.debug&quot;, &quot;false&quot;);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        Logger rootLogger = Logger.getLogger(&quot;&quot;);</b>
+<b class="nc">&nbsp;        for (Handler handler : rootLogger.getHandlers()) {</b>
+<b class="nc">&nbsp;            if (handler instanceof ConsoleHandler) {</b>
+<b class="nc">&nbsp;                handler.setLevel(Level.OFF);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    private static final Login login = new Login(conn.getCon());</b>
+<b class="nc">&nbsp;    private static final Register register = new Register(conn.getCon());</b>
+<b class="nc">&nbsp;    private static final EventManipulation eventManipulation = new EventManipulation(conn.getCon());</b>
+&nbsp;
+<b class="nc">&nbsp;     private static final retrieve retrieve = new retrieve(conn.getCon());</b>
+&nbsp;    public static void main(String[] args) {
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            logger.setUseParentHandlers(false);</b>
+&nbsp;
+<b class="nc">&nbsp;            Handler[] handlers = logger.getHandlers();</b>
+<b class="nc">&nbsp;            for (Handler handler : handlers) {</b>
+<b class="nc">&nbsp;                logger.removeHandler(handler);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            ConsoleHandler consoleHandler = new ConsoleHandler();</b>
+<b class="nc">&nbsp;            consoleHandler.setLevel(Level.INFO);</b>
+<b class="nc">&nbsp;            consoleHandler.setFormatter(new SimpleFormatter() {</b>
+&nbsp;                @Override
+&nbsp;                public synchronized String format(java.util.logging.LogRecord logRecord) {
+<b class="nc">&nbsp;                    return logRecord.getMessage() + &quot;\n&quot;;</b>
+&nbsp;                }
+&nbsp;            });
+<b class="nc">&nbsp;            logger.setUseParentHandlers(false);</b>
+<b class="nc">&nbsp;            logger.addHandler(consoleHandler);</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            logger.log(Level.SEVERE, &quot;An unexpected error occurred during logger configuration&quot;, e);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            menu();</b>
+&nbsp;
+<b class="nc">&nbsp;        }catch (Exception ignored)</b>
+&nbsp;        {
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public static void menu() throws IOException, SQLException {
+&nbsp;        int ch;
+<b class="nc">&nbsp;        logger.info(&quot;***************************Login Page***************************\n&quot;);</b>
+<b class="nc">&nbsp;        logger.info(&quot;&quot;&quot;</b>
+&nbsp;                Choose Number\s
+&nbsp;                1- Sign in
+&nbsp;                2- Sign up&quot;&quot;&quot;);
+&nbsp;
+<b class="nc">&nbsp;        ch = scanner.nextInt();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (ch==1)</b>
+<b class="nc">&nbsp;            signinpage();</b>
+<b class="nc">&nbsp;        else if(ch==2)</b>
+<b class="nc">&nbsp;            signuppage();</b>
+&nbsp;        else
+<b class="nc">&nbsp;            logger.severe(&quot;You should choose number above&quot;);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void signuppage() throws IOException, SQLException {
+<b class="nc">&nbsp;        logger.info(&quot;***************************Register Page***************************\n&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        boolean continueLoop = true;</b>
+&nbsp;        User user;
+&nbsp;
+&nbsp;        String username;
+&nbsp;         String firstName;
+&nbsp;         String lastName;
+&nbsp;         String phoneNumber;
+&nbsp;         String password;
+&nbsp;         String email;
+&nbsp;         String imagePath;
+&nbsp;         String userType;
+&nbsp;         int code;
+&nbsp;
+<b class="nc">&nbsp;        while (continueLoop) {</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter UserName : &quot;);</b>
+<b class="nc">&nbsp;            username = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter FirstName : &quot;);</b>
+<b class="nc">&nbsp;            firstName = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter LastName : &quot;);</b>
+<b class="nc">&nbsp;            lastName = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter PhoneNumber : &quot;);</b>
+<b class="nc">&nbsp;            phoneNumber = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter Password : &quot;);</b>
+<b class="nc">&nbsp;            password = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter Email : &quot;);</b>
+<b class="nc">&nbsp;            email = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter UserType : &quot;);</b>
+<b class="nc">&nbsp;            userType = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Choose Image : &quot;);</b>
+<b class="nc">&nbsp;            imagePath = chooseImagePath();</b>
+<b class="nc">&nbsp;            logger.info(&quot;\n&quot;+imagePath);</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            EmailSender emailSender = new EmailSender(email);</b>
+<b class="nc">&nbsp;            emailSender.sendVerificationCode();</b>
+<b class="nc">&nbsp;            if(emailSender.isValidEmail())</b>
+&nbsp;            {
+<b class="nc">&nbsp;                logger.info(&quot;Enter Verification Code (Send To Your Email) : &quot;);</b>
+<b class="nc">&nbsp;                code = scanner.nextInt();</b>
+&nbsp;
+<b class="nc">&nbsp;                if(code==emailSender.verificationCode)</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    user=new User(username,firstName,lastName,phoneNumber,password,email,imagePath,userType);</b>
+&nbsp;
+<b class="nc">&nbsp;                    register.registerUser(user);</b>
+&nbsp;
+<b class="nc">&nbsp;                    if(Objects.equals(register.getStatus(), &quot;User was registered successfully&quot;))</b>
+&nbsp;                    {
+<b class="nc">&nbsp;                        signinpage();</b>
+&nbsp;                        return;
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        logger.info(register.getStatus());</b>
+&nbsp;
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                else
+&nbsp;                {
+<b class="nc">&nbsp;                    logger.info(&quot;Invalid Verification Code&quot;);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;            }
+&nbsp;            else
+&nbsp;            {
+<b class="nc">&nbsp;                logger.info(&quot;Invalid Email&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void signinpage() throws IOException, SQLException {
+<b class="nc">&nbsp;        boolean continueLoop = true;</b>
+&nbsp;
+<b class="nc">&nbsp;        while (continueLoop)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            logger.info(&quot;Enter UserName : &quot;);</b>
+<b class="nc">&nbsp;            String username = reader.readLine();</b>
+&nbsp;
+<b class="nc">&nbsp;            logger.info(&quot;Enter Password : &quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            String password = reader.readLine();</b>
+&nbsp;
+<b class="nc">&nbsp;            boolean b =  login.loginUser(username, password);</b>
+<b class="nc">&nbsp;            if(b)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                logger.info(&quot;Login Successfully\n&quot;);</b>
+<b class="nc">&nbsp;                if(Objects.equals(login.user_type, &quot;admin&quot;))</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    adminpage();</b>
+&nbsp;                    return;
+&nbsp;
+&nbsp;                }
+<b class="nc">&nbsp;                else if(Objects.equals(login.user_type, &quot;service provider&quot;))</b>
+&nbsp;            {
+<b class="nc">&nbsp;                serviceproviderpage();</b>
+&nbsp;                return;
+&nbsp;
+&nbsp;            }
+<b class="nc">&nbsp;                else if(Objects.equals(login.user_type, &quot;customer&quot;))</b>
+&nbsp;            {
+<b class="nc">&nbsp;                customerpage();</b>
+&nbsp;                return;
+&nbsp;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;                else if(Objects.equals(login.user_type, &quot;vendor&quot;))</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    vendorpage();</b>
+&nbsp;                    return;
+&nbsp;
+&nbsp;                }
+&nbsp;
+&nbsp;            }
+&nbsp;            else
+&nbsp;            {
+<b class="nc">&nbsp;                logger.severe(login.getStatus());</b>
+<b class="nc">&nbsp;                logger.info(&quot;Do you want to continue? (yes/no)&quot;);</b>
+<b class="nc">&nbsp;                String userInput = reader.readLine();</b>
+<b class="nc">&nbsp;                continueLoop = userInput.equals(&quot;yes&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void vendorpage() throws IOException, SQLException {
+<b class="nc">&nbsp;        logger.info(&quot;***************************Vendor Page***************************\n&quot;);</b>
+<b class="nc">&nbsp;        List&lt;Event&gt; events = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        int choise;
+<b class="nc">&nbsp;        boolean continueloop = true;</b>
+<b class="nc">&nbsp;        while(continueloop)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            logger.info(&quot;1- Show Upcoming Events\n&quot; +</b>
+&nbsp;                    &quot;2- Log out&quot;);
+<b class="nc">&nbsp;            choise = scanner.nextInt();</b>
+<b class="nc">&nbsp;            if(choise==1)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                events = ShowUpcomingEventsForParticularVendor(UserSession.getCurrentUser().getUsername());</b>
+&nbsp;
+<b class="nc">&nbsp;                logger.info(format(&quot;%-15s%-15s%-15s%-30s%-15s%n&quot;,</b>
+&nbsp;                        &quot;Number&quot;, &quot;Date&quot;, &quot;Time&quot;, &quot;Description&quot;, &quot;Attendee_Count&quot;));
+&nbsp;
+<b class="nc">&nbsp;                int counter = 0;</b>
+<b class="nc">&nbsp;                for(Event e : events)</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    logger.info(format(&quot;%-15s%-15s%-15s%-30s%-15s%n&quot;,</b>
+<b class="nc">&nbsp;                            ++counter, e.getDate(), e.getTime(),</b>
+<b class="nc">&nbsp;                            e.getDescription(), e.getAttendeeCount()));</b>
+<b class="nc">&nbsp;                }</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            else if(choise==2)</b>
+<b class="nc">&nbsp;                menu();</b>
+&nbsp;            else
+&nbsp;            {
+<b class="nc">&nbsp;                logger.info(&quot;Do you want to continue? (yes/no)&quot;);</b>
+<b class="nc">&nbsp;                String userInput = reader.readLine();</b>
+<b class="nc">&nbsp;                continueloop = userInput.equals(&quot;yes&quot;);</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private static List&lt;Event&gt; ShowUpcomingEventsForParticularVendor(String username) {
+&nbsp;
+<b class="nc">&nbsp;        Statement stmt = null;</b>
+<b class="nc">&nbsp;        List&lt;Event&gt; events = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Integer&gt; EventsIDs = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            stmt = conn.getCon().createStatement();</b>
+<b class="nc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Vendor_Bookings\&quot; where \&quot;Vendor_UN\&quot; = \&#39;&quot;+username+ &quot;\&#39;;&quot;;</b>
+<b class="nc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="nc">&nbsp;            while (rs.next())</b>
+&nbsp;            {
+<b class="nc">&nbsp;                EventsIDs.add(rs.getInt(&quot;Event_id&quot;));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            for(int i=0 ; i &lt; EventsIDs.size();i++)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                String query2 = &quot;select * from \&quot;Event\&quot; where \&quot;Event_id\&quot; = &quot;+EventsIDs.get(i)+&quot;;&quot;;</b>
+<b class="nc">&nbsp;                ResultSet rs1 = stmt.executeQuery(query2);</b>
+<b class="nc">&nbsp;                while(rs1.next())</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    Event event = new Event(conn.getCon());</b>
+<b class="nc">&nbsp;                    event.setId(rs1.getInt(&quot;Event_id&quot;));</b>
+<b class="nc">&nbsp;                    event.setDate(rs1.getString(&quot;Date&quot;));</b>
+<b class="nc">&nbsp;                    event.setDescription(rs1.getString(&quot;Description&quot;));</b>
+<b class="nc">&nbsp;                    event.setTime(rs1.getString(&quot;Time&quot;));</b>
+<b class="nc">&nbsp;                    event.setAttendeeCount(rs1.getString(&quot;Attendee_Count&quot;));</b>
+<b class="nc">&nbsp;                    event.setServiceId(rs1.getInt(&quot;EventService_id&quot;));</b>
+<b class="nc">&nbsp;                    event.setBalance(rs1.getString(&quot;Balance&quot;));</b>
+<b class="nc">&nbsp;                    event.setUsername(username);</b>
+<b class="nc">&nbsp;                    events.add(event);</b>
+&nbsp;
+<b class="nc">&nbsp;                }</b>
+&nbsp;
+&nbsp;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;        } catch (SQLException e) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return events;</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void customerpage() throws IOException, SQLException {
+<b class="nc">&nbsp;        logger.info(&quot;***************************Customer Page***************************\n&quot;);</b>
+&nbsp;        int choise;
+<b class="nc">&nbsp;        boolean continueloop = true;</b>
+<b class="nc">&nbsp;        while(continueloop)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            logger.info(&quot;&quot;&quot;</b>
+&nbsp;                    Choose Number\s
+&nbsp;                    1- Book Event
+&nbsp;                    2- Cancel Event
+&nbsp;                    3- Check Request
+&nbsp;                    4- Show Calendar
+&nbsp;                    5- Log out&quot;&quot;&quot;);
+<b class="nc">&nbsp;            choise = scanner.nextInt();</b>
+<b class="nc">&nbsp;            if(choise==1)</b>
+<b class="nc">&nbsp;                BookEventPage();</b>
+<b class="nc">&nbsp;            else if(choise==2)</b>
+<b class="nc">&nbsp;                CancelEventPage();</b>
+<b class="nc">&nbsp;            else if(choise==3)</b>
+<b class="nc">&nbsp;                CheckRequestPage();</b>
+<b class="nc">&nbsp;            else if(choise==4)</b>
+<b class="nc">&nbsp;                ShowCalendarPage();</b>
+<b class="nc">&nbsp;            else if(choise==5)</b>
+<b class="nc">&nbsp;                menu();</b>
+&nbsp;            else
+&nbsp;            {
+<b class="nc">&nbsp;                logger.info(&quot;Do you want to continue? (yes/no)&quot;);</b>
+<b class="nc">&nbsp;                String userInput = reader.readLine();</b>
+<b class="nc">&nbsp;                continueloop = userInput.equals(&quot;yes&quot;);</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    private static void ShowCalendarPage() throws SQLException, IOException {  logger.info(&quot;Choose The Event You Want To Cancel :&quot;);</b>
+<b class="nc">&nbsp;        List&lt;Event&gt; events = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());</b>
+<b class="nc">&nbsp;        logger.info(format(&quot;%-15s%-15s%-15s%-30s%-15s%-15s%n&quot;,</b>
+&nbsp;                &quot;Number&quot;, &quot;Date&quot;, &quot;Time&quot;, &quot;Description&quot;, &quot;Attendee_Count&quot;, &quot;Balance&quot;));
+&nbsp;
+<b class="nc">&nbsp;        int counter = 0;</b>
+<b class="nc">&nbsp;        for(Event e : events)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            logger.info(format(&quot;%-15s%-15s%-15s%-30s%-15s%-15s%n&quot;,</b>
+<b class="nc">&nbsp;                    ++counter, e.getDate(), e.getTime(),</b>
+<b class="nc">&nbsp;                    e.getDescription(), e.getAttendeeCount(), e.getBalance()));</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;       logger.info(&quot;Return To Main Page Enter \&quot;ok\&quot; &quot;);</b>
+&nbsp;        String ch;
+<b class="nc">&nbsp;        ch= reader.readLine();</b>
+<b class="nc">&nbsp;        if(Objects.equals(ch, &quot;ok&quot;) || &quot;OK&quot;.equals(ch))</b>
+&nbsp;        {
+<b class="nc">&nbsp;            customerpage();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void CheckRequestPage() throws SQLException, IOException {
+&nbsp;
+<b class="nc">&nbsp;        List&lt;Event&gt; events = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;String&gt; status = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        status = SelectStatusOfParticularUserName(UserSession.getCurrentUser().getUsername());</b>
+<b class="nc">&nbsp;        events = SelectAllRequestOfParticualrUserName(UserSession.getCurrentUser().getUsername());</b>
+<b class="nc">&nbsp;        logger.info(format(&quot;%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n&quot;,</b>
+&nbsp;                &quot;Number&quot;, &quot;Date&quot;, &quot;Time&quot;, &quot;Description&quot;, &quot;Attendee_Count&quot;, &quot;Balance&quot; , &quot;Status&quot;));
+&nbsp;
+<b class="nc">&nbsp;        int counter = 0;</b>
+<b class="nc">&nbsp;        for(Event e : events)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            logger.info(format(&quot;%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n&quot;,</b>
+<b class="nc">&nbsp;                    ++counter, e.getDate(), e.getTime(),</b>
+<b class="nc">&nbsp;                    e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;Do You Want To Return To Main Page : \n&quot; +</b>
+&nbsp;                    &quot;1- Yes\n&quot; +
+&nbsp;                    &quot;2- No&quot;);
+&nbsp;
+&nbsp;        while (true)
+&nbsp;        {
+&nbsp;            int ch;
+<b class="nc">&nbsp;            ch = scanner.nextInt();</b>
+<b class="nc">&nbsp;            if(ch==1)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                customerpage();</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            else if(ch==2)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                exit(0);</b>
+&nbsp;            }
+&nbsp;            else{
+<b class="nc">&nbsp;                logger.info(&quot;Enter Valid Input\n&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void CancelEventPage() {
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;Choose The Event You Want To Cancel :&quot;);</b>
+<b class="nc">&nbsp;       List&lt;Event&gt; events = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());</b>
+<b class="nc">&nbsp;        logger.info(format(&quot;%-15s%-15s%-15s%-30s%-15s%-15s%n&quot;,</b>
+&nbsp;                &quot;Number&quot;, &quot;Date&quot;, &quot;Time&quot;, &quot;Description&quot;, &quot;Attendee_Count&quot;, &quot;Balance&quot;));
+&nbsp;
+<b class="nc">&nbsp;      int counter = 0;</b>
+<b class="nc">&nbsp;        for(Event e : events)</b>
+&nbsp;        {
+<b class="nc">&nbsp;              logger.info(format(&quot;%-15s%-15s%-15s%-30s%-15s%-15s%n&quot;,</b>
+<b class="nc">&nbsp;                ++counter, e.getDate(), e.getTime(),</b>
+<b class="nc">&nbsp;                e.getDescription(), e.getAttendeeCount(), e.getBalance()));</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        int choise;
+&nbsp;
+&nbsp;        while(true)
+&nbsp;        {
+<b class="nc">&nbsp;            choise=scanner.nextInt();</b>
+<b class="nc">&nbsp;            if(choise &gt; 0 &amp;&amp; choise &lt;= counter)</b>
+&nbsp;            {
+&nbsp;
+<b class="nc">&nbsp;                sendRequest(events.get(choise-1));</b>
+<b class="nc">&nbsp;                logger.info(&quot;Request Sent Successfully\n&quot;);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            else{
+<b class="nc">&nbsp;                logger.severe(&quot;Invalid Input\n&quot;);</b>
+<b class="nc">&nbsp;                logger.info(&quot;Enter Another Choice\n&quot;);</b>
+&nbsp;
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void sendRequest(Event e) {
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            conn.getCon().setAutoCommit(false);</b>
+&nbsp;
+<b class="nc">&nbsp;            String query5 = &quot;insert into \&quot;Requests\&quot;(\&quot;UserName\&quot;,\&quot;Event Id\&quot; , \&quot;Status\&quot;) values (?,?,?);&quot;;</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            PreparedStatement preparedStmt5 = conn.getCon().prepareStatement(query5);</b>
+<b class="nc">&nbsp;            preparedStmt5.setString(1,e.getUsername());</b>
+<b class="nc">&nbsp;            preparedStmt5.setInt(2,e.getId());</b>
+<b class="nc">&nbsp;            preparedStmt5.setString(3,&quot;pending&quot;);</b>
+<b class="nc">&nbsp;            preparedStmt5.execute();</b>
+<b class="nc">&nbsp;            conn.getCon().commit();</b>
+<b class="nc">&nbsp;            conn.getCon().setAutoCommit(false);</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            conn.getCon().commit();</b>
+<b class="nc">&nbsp;        } catch (Exception exception) {</b>
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public static List&lt;String&gt; SelectStatusOfParticularUserName(String Username)
+&nbsp;    {
+<b class="nc">&nbsp;        Statement stmt = null;</b>
+<b class="nc">&nbsp;        List&lt;String&gt; statuses = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            stmt = conn.getCon().createStatement();</b>
+<b class="nc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Requests\&quot; where \&quot;UserName\&quot; = \&#39;&quot;+Username+ &quot;\&#39;;&quot;;</b>
+<b class="nc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="nc">&nbsp;            while (rs.next())</b>
+&nbsp;            {
+<b class="nc">&nbsp;                statuses.add(rs.getString(&quot;Status&quot;));</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }catch (Exception e){</b>
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return statuses;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static List&lt;Event&gt; SelectAllRequestOfParticualrUserName(String username) {
+<b class="nc">&nbsp;        Statement stmt = null;</b>
+<b class="nc">&nbsp;        List&lt;Event&gt; events = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Integer&gt; EventsIDs = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            stmt = conn.getCon().createStatement();</b>
+<b class="nc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Requests\&quot; where \&quot;UserName\&quot; = \&#39;&quot;+username+ &quot;\&#39;;&quot;;</b>
+<b class="nc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="nc">&nbsp;            while (rs.next())</b>
+&nbsp;            {
+<b class="nc">&nbsp;                EventsIDs.add(rs.getInt(&quot;Event Id&quot;));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            for(int i=0 ; i &lt; EventsIDs.size();i++)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                String query2 = &quot;select * from \&quot;Event\&quot; where \&quot;Event_id\&quot; = &quot;+EventsIDs.get(i)+&quot;;&quot;;</b>
+<b class="nc">&nbsp;                ResultSet rs1 = stmt.executeQuery(query2);</b>
+<b class="nc">&nbsp;                while(rs1.next())</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    Event event = new Event(conn.getCon());</b>
+<b class="nc">&nbsp;                    event.setId(rs1.getInt(&quot;Event_id&quot;));</b>
+<b class="nc">&nbsp;                    event.setDate(rs1.getString(&quot;Date&quot;));</b>
+<b class="nc">&nbsp;                    event.setDescription(rs1.getString(&quot;Description&quot;));</b>
+<b class="nc">&nbsp;                    event.setTime(rs1.getString(&quot;Time&quot;));</b>
+<b class="nc">&nbsp;                    event.setAttendeeCount(rs1.getString(&quot;Attendee_Count&quot;));</b>
+<b class="nc">&nbsp;                    event.setServiceId(rs1.getInt(&quot;EventService_id&quot;));</b>
+<b class="nc">&nbsp;                    event.setBalance(rs1.getString(&quot;Balance&quot;));</b>
+<b class="nc">&nbsp;                    event.setUsername(username);</b>
+<b class="nc">&nbsp;                    events.add(event);</b>
+&nbsp;
+<b class="nc">&nbsp;                }</b>
+&nbsp;
+&nbsp;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;        } catch (SQLException e) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return events;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static List&lt;Event&gt; SelectAllEventOfParticualrUserName(String username) {
+<b class="nc">&nbsp;        Statement stmt = null;</b>
+<b class="nc">&nbsp;        List&lt;Event&gt; events = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Integer&gt; EventsIDs = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            stmt = conn.getCon().createStatement();</b>
+<b class="nc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Event_User\&quot; where \&quot;UserName\&quot; = \&#39;&quot;+username+ &quot;\&#39;;&quot;;</b>
+<b class="nc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="nc">&nbsp;            while (rs.next())</b>
+&nbsp;            {
+<b class="nc">&nbsp;               EventsIDs.add(rs.getInt(&quot;Event Id&quot;));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            for(int i=0 ; i &lt; EventsIDs.size();i++)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                String query2 = &quot;select * from \&quot;Event\&quot; where \&quot;Event_id\&quot; = &quot;+EventsIDs.get(i)+&quot;;&quot;;</b>
+<b class="nc">&nbsp;                ResultSet rs1 = stmt.executeQuery(query2);</b>
+<b class="nc">&nbsp;                while(rs1.next())</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    Event event = new Event(conn.getCon());</b>
+<b class="nc">&nbsp;                    event.setId(rs1.getInt(&quot;Event_id&quot;));</b>
+<b class="nc">&nbsp;                    event.setDate(rs1.getString(&quot;Date&quot;));</b>
+<b class="nc">&nbsp;                    event.setDescription(rs1.getString(&quot;Description&quot;));</b>
+<b class="nc">&nbsp;                    event.setTime(rs1.getString(&quot;Time&quot;));</b>
+<b class="nc">&nbsp;                    event.setAttendeeCount(rs1.getString(&quot;Attendee_Count&quot;));</b>
+<b class="nc">&nbsp;                    event.setServiceId(rs1.getInt(&quot;EventService_id&quot;));</b>
+<b class="nc">&nbsp;                    event.setBalance(rs1.getString(&quot;Balance&quot;));</b>
+<b class="nc">&nbsp;                    event.setUsername(username);</b>
+<b class="nc">&nbsp;                    events.add(event);</b>
+&nbsp;
+<b class="nc">&nbsp;                }</b>
+&nbsp;
+&nbsp;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;        } catch (SQLException e) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return events;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void BookEventPage() throws SQLException, IOException {
+<b class="nc">&nbsp;        List&lt;EventService&gt; AllEvent = retrieve.retrieveAllEventServices();</b>
+&nbsp;
+<b class="nc">&nbsp;        int counter = 0;</b>
+&nbsp;        int choice;
+&nbsp;        int year;
+&nbsp;        int month;
+&nbsp;        int day;
+&nbsp;        String date;
+&nbsp;        String time;
+&nbsp;        String ChosenTime;
+&nbsp;        String Description;
+&nbsp;        int AttendeeCount;
+&nbsp;        String Username;
+<b class="nc">&nbsp;        List&lt;String&gt; GuestList = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;String&gt; images = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;String&gt; Vendors = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        int Balance;
+&nbsp;        int StoreBalance;
+<b class="nc">&nbsp;        Event event = new Event(conn.getCon());</b>
+<b class="nc">&nbsp;        List&lt;String&gt; Times = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;Enter The Balance : &quot;);</b>
+<b class="nc">&nbsp;        Balance = scanner.nextInt();</b>
+<b class="nc">&nbsp;        StoreBalance = Balance;</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        logger.info(format(&quot;%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n&quot;,</b>
+&nbsp;                &quot;Number&quot;, &quot;Title&quot;, &quot;Details&quot;, &quot;EventCategory&quot;, &quot;Price&quot;, &quot;Place&quot;, &quot;StartTime&quot;, &quot;EndTime&quot;, &quot;BookingTime&quot;));
+<b class="nc">&nbsp;        for (EventService eventService : AllEvent) {</b>
+<b class="nc">&nbsp;            if (Integer.parseInt(eventService.getPrice()) &lt;= Balance) {</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                logger.info(format(&quot;%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n&quot;,</b>
+<b class="nc">&nbsp;                        ++counter, eventService.getTitle(), eventService.getDetails(),</b>
+<b class="nc">&nbsp;                        eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),</b>
+<b class="nc">&nbsp;                        eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            else{
+<b class="nc">&nbsp;                counter++;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;        while(true)
+&nbsp;        {
+<b class="nc">&nbsp;            logger.info(&quot;Choose Event Service (By Enter A Number Of Service) : &quot;);</b>
+<b class="nc">&nbsp;            choice = scanner.nextInt();</b>
+&nbsp;
+<b class="nc">&nbsp;            if(choice&gt;0 &amp;&amp; choice&lt;=counter)</b>
+&nbsp;            {
+&nbsp;
+<b class="nc">&nbsp;                logger.info(&quot;Enter Year You Want To Book The Event : &quot;);</b>
+<b class="nc">&nbsp;                year = scanner.nextInt();</b>
+<b class="nc">&nbsp;                logger.info(&quot;Enter Month You Want To Book The Event : &quot;);</b>
+<b class="nc">&nbsp;                month = scanner.nextInt();</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                Generator.printCalendar(year,month,retrieve.CheckDays(year,month,AllEvent.get(choice-1)));</b>
+&nbsp;
+&nbsp;
+&nbsp;                while(true) {
+&nbsp;                    while (true) {
+<b class="nc">&nbsp;                        logger.info(&quot;Enter Day You Want To Book The Event At: &quot;);</b>
+<b class="nc">&nbsp;                        day = scanner.nextInt();</b>
+<b class="nc">&nbsp;                        if (day &gt;= 1) {</b>
+<b class="nc">&nbsp;                            if (month == 2) {</b>
+&nbsp;
+<b class="nc">&nbsp;                                if (year % 4 == 0) {</b>
+<b class="nc">&nbsp;                                    if (day &gt; 29) {</b>
+<b class="nc">&nbsp;                                        continue;</b>
+&nbsp;                                    }
+&nbsp;
+&nbsp;                                    break;
+&nbsp;
+&nbsp;                                } else {
+<b class="nc">&nbsp;                                    if (day &gt; 28) {</b>
+<b class="nc">&nbsp;                                        continue;</b>
+&nbsp;                                    }
+&nbsp;                                    break;
+&nbsp;
+&nbsp;                                }
+<b class="nc">&nbsp;                            } else if (month % 2 == 0) {</b>
+<b class="nc">&nbsp;                                if (day &gt; 30) {</b>
+<b class="nc">&nbsp;                                    continue;</b>
+&nbsp;                                }
+&nbsp;                                break;
+<b class="nc">&nbsp;                            } else if (month % 2 != 0) {</b>
+<b class="nc">&nbsp;                                if (day &gt; 31) {</b>
+<b class="nc">&nbsp;                                    continue;</b>
+&nbsp;                                }
+&nbsp;                                break;
+&nbsp;                            } else {
+&nbsp;                                break;
+&nbsp;                            }
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                        } else if (day &lt; 1) {</b>
+<b class="nc">&nbsp;                            continue;</b>
+&nbsp;                        }
+&nbsp;
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    date = Generator.generateDateString(day, month, year);</b>
+&nbsp;
+<b class="nc">&nbsp;                    List&lt;Event&gt; events = retrieve.selectEventOfParticularDateAndServiceId(date, AllEvent.get(choice - 1).getId());</b>
+&nbsp;
+<b class="nc">&nbsp;                    if (events.isEmpty()) {</b>
+<b class="nc">&nbsp;                        logger.info(&quot;There Is No Events. You Can Request To Book An Event In This Day!&quot;);</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        logger.info(format(&quot;%-15s%-15s%-15s%n&quot;,</b>
+&nbsp;                                &quot;StartTime&quot;, &quot;EndTime&quot;, &quot;Description&quot;));
+<b class="nc">&nbsp;                        for (Event e : events) {</b>
+<b class="nc">&nbsp;                            int c = (abs(Generator.getTimeDifference(e.getTime(), &quot;00:00&quot;)) / 60) + Integer.parseInt(AllEvent.get(choice - 1).getBookingTime());</b>
+<b class="nc">&nbsp;                            logger.info(format(&quot;%-15s%-15s%-15s%n&quot;,</b>
+&nbsp;
+<b class="nc">&nbsp;                                    e.getTime(), c + &quot;:00&quot;, e.getDescription()));</b>
+<b class="nc">&nbsp;                        }</b>
+&nbsp;                    }
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                    int TimeDiff = abs(Generator.getTimeDifference(AllEvent.get(choice - 1).getStartTime(), AllEvent.get(choice - 1).getEndTime()));</b>
+<b class="nc">&nbsp;                    int BookingTime = Integer.parseInt(AllEvent.get(choice - 1).getBookingTime()) * 60;</b>
+<b class="nc">&nbsp;                    int NumberOfEvents = TimeDiff / BookingTime;</b>
+&nbsp;
+<b class="nc">&nbsp;                    int count = 0;</b>
+&nbsp;
+<b class="nc">&nbsp;                    boolean flag = false;</b>
+<b class="nc">&nbsp;                    boolean f = false;</b>
+<b class="nc">&nbsp;                    String starttime = AllEvent.get(choice - 1).getStartTime();</b>
+<b class="nc">&nbsp;                    List&lt;Event&gt; ALLEven = retrieve.selectEventOfParticularDateAndServiceId(date,AllEvent.get(choice - 1).getId());</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                    for (int i = 0; i &lt; NumberOfEvents; i++) {</b>
+<b class="nc">&nbsp;                        for (Event event2 : ALLEven) {</b>
+<b class="nc">&nbsp;                            if (Objects.equals(starttime, event2.getTime())) {</b>
+<b class="nc">&nbsp;                                starttime = ((abs(Generator.getTimeDifference(event2.getTime(), &quot;00:00&quot;)) / 60) + Integer.parseInt(AllEvent.get(choice - 1).getBookingTime())) + &quot;:00&quot;;</b>
+<b class="nc">&nbsp;                                flag = true;</b>
+<b class="nc">&nbsp;                                break;</b>
+&nbsp;
+&nbsp;                            }
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                        }</b>
+<b class="nc">&nbsp;                        if (flag) {</b>
+<b class="nc">&nbsp;                            continue;</b>
+&nbsp;                        }
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                        Times.add(starttime);</b>
+<b class="nc">&nbsp;                        logger.info(&quot;Time &quot; + (++count) + &quot;: &quot; + starttime);</b>
+<b class="nc">&nbsp;                        f = true;</b>
+<b class="nc">&nbsp;                        starttime = ((abs(Generator.getTimeDifference(starttime, &quot;00:00&quot;)) / 60) + Integer.parseInt(AllEvent.get(choice - 1).getBookingTime())) + &quot;:00&quot;;</b>
+&nbsp;
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    if (!f) {</b>
+<b class="nc">&nbsp;                        logger.severe(&quot;Chosen Day Is Full&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                        continue;</b>
+&nbsp;
+&nbsp;                    }
+&nbsp;
+&nbsp;                    else {
+&nbsp;                        break;
+&nbsp;                    }
+&nbsp;
+&nbsp;
+&nbsp;                }
+&nbsp;
+&nbsp;                while (true)
+&nbsp;                {
+<b class="nc">&nbsp;                    logger.info(&quot;Choose The Time You Want To Book Event At : &quot;);</b>
+&nbsp;
+&nbsp;
+&nbsp;                    int choseTime;
+&nbsp;
+<b class="nc">&nbsp;                    choseTime = scanner.nextInt();</b>
+<b class="nc">&nbsp;                     ChosenTime = Times.get(choseTime-1);</b>
+<b class="nc">&nbsp;                    if(ChosenTime == null)</b>
+&nbsp;                    {
+<b class="nc">&nbsp;                        logger.severe(&quot;Wrong option\n&quot;);</b>
+<b class="nc">&nbsp;                        continue;</b>
+&nbsp;                    }
+&nbsp;
+&nbsp;                    else
+&nbsp;                        break;
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                Balance-=Integer.parseInt(AllEvent.get(choice - 1).getPrice());</b>
+&nbsp;
+<b class="nc">&nbsp;                logger.info(&quot;Enter Description : &quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                Description = reader.readLine();</b>
+&nbsp;
+<b class="nc">&nbsp;                logger.info(&quot;Enter AttendeeCount : &quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                AttendeeCount = scanner.nextInt();</b>
+&nbsp;
+<b class="nc">&nbsp;                logger.info(&quot;Enter Guests Names : &quot;);</b>
+&nbsp;
+&nbsp;                String guest;
+<b class="nc">&nbsp;                for(int i = 0 ; i &lt; AttendeeCount ; i++)</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    guest = reader.readLine();</b>
+<b class="nc">&nbsp;                    if(guest == null)</b>
+&nbsp;                    {
+<b class="nc">&nbsp;                        logger.severe(&quot;You Should Enter A name\n&quot;);</b>
+<b class="nc">&nbsp;                        i--;</b>
+<b class="nc">&nbsp;                        continue;</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    GuestList.add(guest);</b>
+&nbsp;
+&nbsp;                }
+&nbsp;
+&nbsp;
+&nbsp;                while(true)
+&nbsp;                {
+&nbsp;                    String image;
+<b class="nc">&nbsp;                    logger.info(&quot;Choose Image : &quot;);</b>
+<b class="nc">&nbsp;                    image = chooseImagePath();</b>
+<b class="nc">&nbsp;                    images.add(image);</b>
+&nbsp;
+<b class="nc">&nbsp;                    logger.info(&quot;Do You Want Choose Another Image ?\n&quot; +</b>
+&nbsp;                            &quot;1- Yes\n&quot; +
+&nbsp;                            &quot;2- No&quot;);
+&nbsp;
+&nbsp;                    int ch;
+<b class="nc">&nbsp;                    ch = scanner.nextInt();</b>
+<b class="nc">&nbsp;                    if(ch==1)</b>
+&nbsp;                    {
+<b class="nc">&nbsp;                        continue;</b>
+&nbsp;                    }
+&nbsp;                    else {
+&nbsp;                        break;
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;                while(true) {
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                    boolean cont = false;</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                    logger.info(format(&quot;%-15s%-25s%-40s%-15s%-15s%-20s%n&quot;,</b>
+&nbsp;                            &quot;Number&quot;, &quot;Vendor_User_Name&quot;, &quot;Description&quot;, &quot;Price/H&quot;, &quot;Type&quot;, &quot;Rating&quot;));
+&nbsp;
+<b class="nc">&nbsp;                    List&lt;String&gt; printedVendors = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;                    List&lt;Integer&gt; printedPrice = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                    int counterservice = 0;</b>
+<b class="nc">&nbsp;                    for (VendorService vs : ALLVendorServices()) {</b>
+<b class="nc">&nbsp;                        cont = false;</b>
+<b class="nc">&nbsp;                        for (AVendorBooking vb : ALLNotAvailableVendors()) {</b>
+<b class="nc">&nbsp;                            if ((Objects.equals(vs.getVendorUserName(), vb.getVendor_user_name())) &amp;&amp; (date.equals(vb.getBooking_date())) &amp;&amp; (Objects.equals(ChosenTime, vb.getStart_time()))) {</b>
+&nbsp;
+<b class="nc">&nbsp;                                cont = true;</b>
+<b class="nc">&nbsp;                                break;</b>
+&nbsp;
+&nbsp;                            }
+<b class="nc">&nbsp;                        }</b>
+<b class="nc">&nbsp;                        if (cont)</b>
+<b class="nc">&nbsp;                            continue;</b>
+&nbsp;                        else {
+<b class="nc">&nbsp;                            String description = vs.getServiceDescription().replace(&quot;\n&quot;, &quot; &quot;);</b>
+<b class="nc">&nbsp;                            StringBuilder rate = new StringBuilder();</b>
+<b class="nc">&nbsp;                            for (int i = 0; i &lt; vs.getAverageRating(); i++) {</b>
+<b class="nc">&nbsp;                                rate.append(&quot;*&quot;);</b>
+&nbsp;                            }
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                            if (Integer.parseInt(vs.getServicePrice()) &lt;= Balance) {</b>
+<b class="nc">&nbsp;                                printedVendors.add(vs.getVendorUserName());</b>
+<b class="nc">&nbsp;                                printedPrice.add(Integer.parseInt(vs.getServicePrice()));</b>
+<b class="nc">&nbsp;                                logger.info(format(&quot;%-15s%-25s%-40s%-15s%-15s%-20s%n&quot;,</b>
+<b class="nc">&nbsp;                                        ++counterservice, vs.getVendorUserName(), description,</b>
+<b class="nc">&nbsp;                                        vs.getServicePrice(), vs.getServiceType(), rate));</b>
+&nbsp;                            } else
+&nbsp;                            {
+<b class="nc">&nbsp;                                counterservice++;</b>
+&nbsp;                            }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;                        }
+&nbsp;
+<b class="nc">&nbsp;                    }</b>
+&nbsp;
+<b class="nc">&nbsp;                    if(printedVendors.isEmpty())</b>
+&nbsp;                    {
+<b class="nc">&nbsp;                        logger.severe(&quot;No Vendor Matching With Remaining Balance&quot;);</b>
+<b class="nc">&nbsp;                        break;</b>
+&nbsp;
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    boolean f = false;</b>
+&nbsp;                    int chooseVendor;
+&nbsp;                    while (true) {
+<b class="nc">&nbsp;                        logger.info(&quot;Choose Vendor : &quot;);</b>
+<b class="nc">&nbsp;                        chooseVendor = scanner.nextInt();</b>
+<b class="nc">&nbsp;                        if (chooseVendor &gt; 0 &amp;&amp; chooseVendor &lt;= counterservice) {</b>
+<b class="nc">&nbsp;                            Balance -= printedPrice.get(chooseVendor - 1) * Integer.parseInt(AllEvent.get(choice-1).getBookingTime());</b>
+<b class="nc">&nbsp;                            Vendors.add(printedVendors.get(chooseVendor - 1));</b>
+<b class="nc">&nbsp;                            logger.info(&quot;Do You Want Choose Another Vendor : \n&quot; +</b>
+&nbsp;                                    &quot;1- Yes\n&quot; +
+&nbsp;                                    &quot;2- No&quot;);
+&nbsp;                            int choise;
+<b class="nc">&nbsp;                            choise = scanner.nextInt();</b>
+<b class="nc">&nbsp;                            if (choise == 1) {</b>
+<b class="nc">&nbsp;                                f=true;</b>
+<b class="nc">&nbsp;                                break;</b>
+&nbsp;                            } else
+&nbsp;                                break;
+&nbsp;
+&nbsp;                        } else {
+<b class="nc">&nbsp;                            logger.severe(&quot;Invalid Input\n&quot;);</b>
+<b class="nc">&nbsp;                            continue;</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    if(f)</b>
+&nbsp;                    {
+&nbsp;
+<b class="nc">&nbsp;                        continue;</b>
+&nbsp;                    }
+&nbsp;
+&nbsp;                    else
+&nbsp;                        break;
+&nbsp;
+&nbsp;
+&nbsp;                }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                Event accpetevent = new Event(conn.getCon());</b>
+<b class="nc">&nbsp;                accpetevent.setDate(date);</b>
+<b class="nc">&nbsp;                accpetevent.setDescription(Description);</b>
+<b class="nc">&nbsp;                accpetevent.setTime(ChosenTime);</b>
+<b class="nc">&nbsp;                accpetevent.setAttendeeCount(String.valueOf(AttendeeCount));</b>
+<b class="nc">&nbsp;                accpetevent.setServiceTitle(AllEvent.get(choice-1).getTitle());</b>
+<b class="nc">&nbsp;                accpetevent.setServiceId(AllEvent.get(choice-1).getId());</b>
+<b class="nc">&nbsp;                accpetevent.setBalance(String.valueOf(StoreBalance));</b>
+<b class="nc">&nbsp;                accpetevent.setGuestList(GuestList);</b>
+<b class="nc">&nbsp;                accpetevent.setImages(images);</b>
+<b class="nc">&nbsp;                accpetevent.setVendors(Vendors);</b>
+<b class="nc">&nbsp;                accpetevent.setUsername(UserSession.getCurrentUser().getUsername());</b>
+<b class="nc">&nbsp;                eventManipulation.bookEvent(accpetevent);</b>
+&nbsp;
+<b class="nc">&nbsp;                logger.severe(eventManipulation.getStatus());</b>
+<b class="nc">&nbsp;                logger.severe(&quot;Remaining Balance is : &quot; + Balance + &quot;\n&quot;);</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                break;</b>
+&nbsp;
+&nbsp;
+&nbsp;            }
+&nbsp;
+&nbsp;            else {
+<b class="nc">&nbsp;                logger.info(&quot;Enter A Valid Number\n&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private static List&lt;AVendorBooking&gt; ALLNotAvailableVendors()
+&nbsp;    {
+<b class="nc">&nbsp;        DB_Connection conn = new DB_Connection(5432,&quot;Event_Planner&quot;,&quot;postgres&quot;,&quot;admin&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        Statement stmt = null;</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;AVendorBooking&gt; vbs = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            stmt = conn.getCon().createStatement();</b>
+<b class="nc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Vendor_NotAvailable\&quot;;&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="nc">&nbsp;            while (rs.next())</b>
+&nbsp;            {
+<b class="nc">&nbsp;                AVendorBooking vb = new AVendorBooking();</b>
+<b class="nc">&nbsp;               vb.setVendor_user_name(rs.getString(&quot;Vendor_UN&quot;));</b>
+<b class="nc">&nbsp;               vb.setBooking_date(rs.getString(&quot;Date&quot;));</b>
+<b class="nc">&nbsp;               vb.setStart_time(rs.getString(&quot;Time&quot;));</b>
+<b class="nc">&nbsp;               vbs.add(vb);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            }</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (SQLException e) {</b>
+<b class="nc">&nbsp;            logger.severe(&quot;Error DataBase&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return vbs;</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    private static List&lt;VendorService&gt; ALLVendorServices()
+&nbsp;    {
+<b class="nc">&nbsp;        DB_Connection conn = new DB_Connection(5432,&quot;Event_Planner&quot;,&quot;postgres&quot;,&quot;admin&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        Statement stmt = null;</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;VendorService&gt; vss = new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            stmt = conn.getCon().createStatement();</b>
+<b class="nc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Vendor_Service\&quot;;&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="nc">&nbsp;            while (rs.next())</b>
+&nbsp;            {
+<b class="nc">&nbsp;                VendorService vs = new VendorService();</b>
+&nbsp;
+<b class="nc">&nbsp;                vs.setVendorUserName(rs.getString(&quot;Vendor_User_Name&quot;));</b>
+<b class="nc">&nbsp;                vs.setServiceDescription(rs.getString(&quot;Description&quot;));</b>
+<b class="nc">&nbsp;                vs.setServicePrice(rs.getString(&quot;Price&quot;));</b>
+<b class="nc">&nbsp;                vs.setServiceType(rs.getString(&quot;Type&quot;));</b>
+<b class="nc">&nbsp;                vs.setAverageRating(Integer.parseInt(rs.getString(&quot;Average_Rating&quot;)));</b>
+&nbsp;
+<b class="nc">&nbsp;                vss.add(vs);</b>
+&nbsp;
+<b class="nc">&nbsp;            }</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (SQLException e) {</b>
+<b class="nc">&nbsp;            logger.severe(&quot;Error DataBase&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return vss;</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void serviceproviderpage() throws IOException, SQLException {
+<b class="nc">&nbsp;        logger.info(&quot;***************************ServiceProvider Page***************************\n&quot;);</b>
+&nbsp;        int ch;
+<b class="nc">&nbsp;        boolean continueloopbig = true;</b>
+<b class="nc">&nbsp;        while(continueloopbig) {</b>
+<b class="nc">&nbsp;            logger.info(&quot;&quot;&quot;</b>
+&nbsp;                    1- Event Service Management
+&nbsp;                    2- Venue Management
+&nbsp;                    3- Check Requests
+&nbsp;                    4- Log out&quot;&quot;&quot;);
+<b class="nc">&nbsp;            ch = scanner.nextInt();</b>
+<b class="nc">&nbsp;            if (ch == 1) {</b>
+<b class="nc">&nbsp;                logger.info(&quot;***************************Event Service Management***************************\n&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                boolean continueloop = true;</b>
+<b class="nc">&nbsp;                while (continueloop) {</b>
+&nbsp;                    int che;
+<b class="nc">&nbsp;                    logger.info(&quot;1- Add EventService\n&quot; +</b>
+&nbsp;                            &quot;2- Edit EventService\n&quot; +
+&nbsp;                            &quot;3- Delete EventService&quot;);
+<b class="nc">&nbsp;                    che = scanner.nextInt();</b>
+<b class="nc">&nbsp;                    if (che == 1) {</b>
+<b class="nc">&nbsp;                        addeventservice();</b>
+&nbsp;                        return;
+&nbsp;
+<b class="nc">&nbsp;                    } else if (che == 2) {</b>
+<b class="nc">&nbsp;                        editeventservice();</b>
+&nbsp;                        return;
+&nbsp;
+<b class="nc">&nbsp;                    } else if (che == 3) {</b>
+<b class="nc">&nbsp;                        deleteeventservice();</b>
+&nbsp;                        return;
+&nbsp;
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    else if(che==4)</b>
+&nbsp;                    {
+<b class="nc">&nbsp;                        menu();</b>
+&nbsp;                        return;
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        logger.info(&quot;You should choose number above&quot;);</b>
+<b class="nc">&nbsp;                        logger.info(&quot;Do you want to continue? (yes/no)&quot;);</b>
+<b class="nc">&nbsp;                        String userInput = reader.readLine();</b>
+<b class="nc">&nbsp;                        continueloop = userInput.equals(&quot;yes&quot;);</b>
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                }</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            } else if (ch == 2) {</b>
+<b class="nc">&nbsp;                logger.info(&quot;***************************Venue Management***************************\n&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                boolean continueloop = true;</b>
+<b class="nc">&nbsp;                while (continueloop) {</b>
+&nbsp;                    int che;
+<b class="nc">&nbsp;                    logger.info(&quot;1- Add Venue\n&quot;);</b>
+<b class="nc">&nbsp;                    che = scanner.nextInt();</b>
+<b class="nc">&nbsp;                    if (che == 1) {</b>
+<b class="nc">&nbsp;                        addvenu();</b>
+&nbsp;                        return;
+&nbsp;
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        logger.info(&quot;You should choose number above&quot;);</b>
+<b class="nc">&nbsp;                        logger.info(&quot;Do you want to continue? (yes/no)&quot;);</b>
+<b class="nc">&nbsp;                        String userInput = reader.readLine();</b>
+<b class="nc">&nbsp;                        continueloop = userInput.equals(&quot;yes&quot;);</b>
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                }</b>
+&nbsp;
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            else if(ch==3)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                RequestsPage();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;
+&nbsp;            else {
+<b class="nc">&nbsp;                logger.info(&quot;You should choose number above&quot;);</b>
+<b class="nc">&nbsp;                logger.info(&quot;Do you want to continue? (yes/no)&quot;);</b>
+<b class="nc">&nbsp;                String userInput = reader.readLine();</b>
+<b class="nc">&nbsp;                continueloopbig = userInput.equals(&quot;yes&quot;);</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void RequestsPage() throws SQLException, IOException {
+<b class="nc">&nbsp;        logger.info(&quot;***************************Requests Page***************************\n&quot;);</b>
+<b class="nc">&nbsp;        List&lt;Event&gt; events = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;String&gt; status = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        status = SelectAllStatus();</b>
+<b class="nc">&nbsp;        events = SelectAllRequests();</b>
+<b class="nc">&nbsp;        logger.info(format(&quot;%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n&quot;,</b>
+&nbsp;                &quot;Number&quot;, &quot;Date&quot;, &quot;Time&quot;, &quot;Description&quot;, &quot;Attendee_Count&quot;, &quot;Balance&quot; , &quot;Status&quot;));
+&nbsp;
+<b class="nc">&nbsp;        int counter = 0;</b>
+<b class="nc">&nbsp;        for(Event e : events)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            logger.info(format(&quot;%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n&quot;,</b>
+<b class="nc">&nbsp;                    ++counter, e.getDate(), e.getTime(),</b>
+<b class="nc">&nbsp;                    e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;        while(true)
+&nbsp;        {
+<b class="nc">&nbsp;            logger.info(&quot;Enter Event Number You Want To Accept/Refuse it : &quot;);</b>
+&nbsp;
+&nbsp;            int ch1;
+<b class="nc">&nbsp;            ch1=scanner.nextInt();</b>
+<b class="nc">&nbsp;            if(ch1&gt;0 &amp;&amp; ch1&lt;=counter)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                logger.info(&quot;Status\n&quot; +</b>
+&nbsp;                            &quot;1- Accept\n&quot; +
+&nbsp;                            &quot;2- Refuse&quot;);
+&nbsp;                int ch2;
+<b class="nc">&nbsp;                ch2 = scanner.nextInt();</b>
+<b class="nc">&nbsp;                if (ch2==1)</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    updateStatus(&quot;accept&quot;,events.get(ch1-1).getId());</b>
+<b class="nc">&nbsp;                    delete_event(events.get(ch1-1).getId());</b>
+&nbsp;
+&nbsp;                }
+<b class="nc">&nbsp;                else if(ch2==2)</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    updateStatus(&quot;refuse&quot;,events.get(ch1-1).getId());</b>
+&nbsp;
+&nbsp;                }
+&nbsp;
+&nbsp;                else{
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;
+&nbsp;                break;
+&nbsp;            }
+&nbsp;
+&nbsp;            else{
+&nbsp;
+<b class="nc">&nbsp;                logger.info(&quot;Invalid Input\n&quot;);</b>
+&nbsp;
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;Do You Want To Return To Main Page : \n&quot; +</b>
+&nbsp;                    &quot;1- Yes\n&quot; +
+&nbsp;                    &quot;2- No&quot;);
+&nbsp;
+&nbsp;        while (true)
+&nbsp;        {
+&nbsp;            int ch;
+<b class="nc">&nbsp;            ch = scanner.nextInt();</b>
+<b class="nc">&nbsp;            if(ch==1)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                serviceproviderpage();</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            else if(ch==2)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                exit(0);</b>
+&nbsp;            }
+&nbsp;            else{
+<b class="nc">&nbsp;                logger.info(&quot;Enter Valid Input\n&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static List&lt;Event&gt; SelectAllRequests() {
+<b class="nc">&nbsp;        Statement stmt = null;</b>
+<b class="nc">&nbsp;        List&lt;Event&gt; events = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;String&gt; users = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Integer&gt; EventsIDs = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            stmt = conn.getCon().createStatement();</b>
+<b class="nc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Requests\&quot;;&quot;;</b>
+<b class="nc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="nc">&nbsp;            while (rs.next())</b>
+&nbsp;            {
+<b class="nc">&nbsp;                EventsIDs.add(rs.getInt(&quot;Event Id&quot;));</b>
+<b class="nc">&nbsp;                users.add(rs.getString(&quot;UserName&quot;));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            for(int i=0 ; i &lt; EventsIDs.size();i++)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                String query2 = &quot;select * from \&quot;Event\&quot; where \&quot;Event_id\&quot; = &quot;+EventsIDs.get(i)+&quot;;&quot;;</b>
+<b class="nc">&nbsp;                ResultSet rs1 = stmt.executeQuery(query2);</b>
+<b class="nc">&nbsp;                while(rs1.next())</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    Event event = new Event(conn.getCon());</b>
+<b class="nc">&nbsp;                    event.setId(rs1.getInt(&quot;Event_id&quot;));</b>
+<b class="nc">&nbsp;                    event.setDate(rs1.getString(&quot;Date&quot;));</b>
+<b class="nc">&nbsp;                    event.setDescription(rs1.getString(&quot;Description&quot;));</b>
+<b class="nc">&nbsp;                    event.setTime(rs1.getString(&quot;Time&quot;));</b>
+<b class="nc">&nbsp;                    event.setAttendeeCount(rs1.getString(&quot;Attendee_Count&quot;));</b>
+<b class="nc">&nbsp;                    event.setServiceId(rs1.getInt(&quot;EventService_id&quot;));</b>
+<b class="nc">&nbsp;                    event.setBalance(rs1.getString(&quot;Balance&quot;));</b>
+<b class="nc">&nbsp;                    event.setUsername(users.get(i));</b>
+<b class="nc">&nbsp;                    events.add(event);</b>
+&nbsp;
+<b class="nc">&nbsp;                }</b>
+&nbsp;
+&nbsp;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;        } catch (SQLException e) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return events;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static List&lt;String&gt; SelectAllStatus() {
+<b class="nc">&nbsp;        Statement stmt = null;</b>
+<b class="nc">&nbsp;        List&lt;String&gt; statuses = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            stmt = conn.getCon().createStatement();</b>
+<b class="nc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Requests\&quot; ;&quot;;</b>
+<b class="nc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="nc">&nbsp;            while (rs.next())</b>
+&nbsp;            {
+<b class="nc">&nbsp;                statuses.add(rs.getString(&quot;Status&quot;));</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }catch (Exception e){</b>
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return statuses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public static boolean delete_event(int id) {
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            conn.getCon().setAutoCommit(false);</b>
+<b class="nc">&nbsp;            String query = &quot;delete from \&quot;Event\&quot; where \&quot;Event_id\&quot; = ?;&quot;;</b>
+<b class="nc">&nbsp;            PreparedStatement preparedStmt = conn.getCon().prepareStatement(query);</b>
+<b class="nc">&nbsp;            preparedStmt.setInt(1,id);</b>
+<b class="nc">&nbsp;            preparedStmt.execute();</b>
+<b class="nc">&nbsp;            conn.getCon().commit();</b>
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+&nbsp;
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public static boolean updateStatus(String Status , int id) {
+&nbsp;        try {
+<b class="nc">&nbsp;            conn.getCon().setAutoCommit(false);</b>
+<b class="nc">&nbsp;            String query = &quot;update \&quot;Requests\&quot; set \&quot;Status\&quot;= ? where \&quot;Event Id\&quot;=?&quot;;</b>
+<b class="nc">&nbsp;            PreparedStatement preparedStmt = conn.getCon().prepareStatement(query);</b>
+<b class="nc">&nbsp;            preparedStmt.setString(1,Status);</b>
+<b class="nc">&nbsp;            preparedStmt.setInt(2,id);</b>
+&nbsp;
+<b class="nc">&nbsp;            int rowsUpdated = preparedStmt.executeUpdate();</b>
+<b class="nc">&nbsp;            if (rowsUpdated &gt; 0) {</b>
+<b class="nc">&nbsp;                conn.getCon().commit();</b>
+<b class="nc">&nbsp;                return true;</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                conn.getCon().rollback();</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                conn.getCon().rollback();</b>
+<b class="nc">&nbsp;            } catch (SQLException rollbackException) {</b>
+<b class="nc">&nbsp;                rollbackException.printStackTrace();</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    private static void addvenu() throws IOException, SQLException {
+&nbsp;
+&nbsp;
+&nbsp;        String Name;
+&nbsp;        String Capacity;
+&nbsp;        String Amenities;
+<b class="nc">&nbsp;        Places place = new Places();</b>
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;Enter Venue Name  : &quot;);</b>
+<b class="nc">&nbsp;       Name = reader.readLine();</b>
+<b class="nc">&nbsp;        logger.info(&quot;Enter Capacity  : &quot;);</b>
+<b class="nc">&nbsp;        Capacity = reader.readLine();</b>
+<b class="nc">&nbsp;        logger.info(&quot;Enter Amenities  : &quot;);</b>
+<b class="nc">&nbsp;        Amenities = reader.readLine();</b>
+&nbsp;
+<b class="nc">&nbsp;        place.setName(Name);</b>
+<b class="nc">&nbsp;        place.setCapacity(Capacity);</b>
+<b class="nc">&nbsp;        place.setAmenities(Amenities);</b>
+<b class="nc">&nbsp;        eventManipulation.addvenue(place);</b>
+<b class="nc">&nbsp;        logger.info(eventManipulation.getStatus());</b>
+<b class="nc">&nbsp;        serviceproviderpage();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void deleteeventservice() throws SQLException, IOException {
+<b class="nc">&nbsp;        List&lt;EventService&gt; AllEvent = retrieve.retrieveAllEventServices();</b>
+&nbsp;
+<b class="nc">&nbsp;        logger.info(format(&quot;%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n&quot;,</b>
+&nbsp;                &quot;Id&quot;, &quot;Title&quot;, &quot;Details&quot;, &quot;EventCategory&quot;, &quot;Price&quot;, &quot;Place&quot;, &quot;StartTime&quot;, &quot;EndTime&quot;, &quot;BookingTime&quot;));
+<b class="nc">&nbsp;        for (EventService eventService : AllEvent) {</b>
+<b class="nc">&nbsp;            logger.info(format(&quot;%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n&quot;,</b>
+<b class="nc">&nbsp;                    eventService.getId(), eventService.getTitle(), eventService.getDetails(),</b>
+<b class="nc">&nbsp;                    eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),</b>
+<b class="nc">&nbsp;                    eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        int event_id;
+<b class="nc">&nbsp;        logger.info(&quot;Enter The Event_Id you want To Delete : &quot;);</b>
+<b class="nc">&nbsp;        event_id = scanner.nextInt();</b>
+<b class="nc">&nbsp;        EventService es = new EventService();</b>
+<b class="nc">&nbsp;        es.setId(event_id);</b>
+<b class="nc">&nbsp;        eventManipulation.deleteEventService(es);</b>
+<b class="nc">&nbsp;        if(Objects.equals(eventManipulation.getStatus(), &quot;Event service deleted successfully&quot;))</b>
+&nbsp;        {
+<b class="nc">&nbsp;            logger.info(eventManipulation.getStatus());</b>
+<b class="nc">&nbsp;            serviceproviderpage();</b>
+&nbsp;
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void editeventservice() throws IOException, SQLException {
+&nbsp;        EventService es;
+&nbsp;
+&nbsp;        String title;
+&nbsp;        String details;
+&nbsp;        String eventCategory;
+&nbsp;        String price;
+&nbsp;        String place;
+&nbsp;        String startTime;
+&nbsp;        String endTime;
+&nbsp;        String bookingTime;
+&nbsp;
+<b class="nc">&nbsp;        List&lt;EventService&gt; AllEvent = retrieve.retrieveAllEventServices();</b>
+&nbsp;
+<b class="nc">&nbsp;        logger.info(format(&quot;%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n&quot;,</b>
+&nbsp;                &quot;Id&quot;, &quot;Title&quot;, &quot;Details&quot;, &quot;EventCategory&quot;, &quot;Price&quot;, &quot;Place&quot;, &quot;StartTime&quot;, &quot;EndTime&quot;, &quot;BookingTime&quot;));
+<b class="nc">&nbsp;        for (EventService eventService : AllEvent) {</b>
+<b class="nc">&nbsp;            logger.info(format(&quot;%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n&quot;,</b>
+<b class="nc">&nbsp;                    eventService.getId(), eventService.getTitle(), eventService.getDetails(),</b>
+<b class="nc">&nbsp;                    eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),</b>
+<b class="nc">&nbsp;                    eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        int id;
+<b class="nc">&nbsp;        logger.info(&quot;Enter Event Id Which you want to Edit : &quot;);</b>
+<b class="nc">&nbsp;        id = scanner.nextInt();</b>
+<b class="nc">&nbsp;        logger.info(&quot;Enter Title : &quot;);</b>
+<b class="nc">&nbsp;        title = reader.readLine();</b>
+<b class="nc">&nbsp;        logger.info(&quot;Enter Details : &quot;);</b>
+<b class="nc">&nbsp;        details = reader.readLine();</b>
+<b class="nc">&nbsp;        logger.info(&quot;Enter EventCategory : &quot;);</b>
+<b class="nc">&nbsp;        eventCategory = reader.readLine();</b>
+<b class="nc">&nbsp;        logger.info(&quot;Enter Price : &quot;);</b>
+<b class="nc">&nbsp;        price = reader.readLine();</b>
+<b class="nc">&nbsp;        logger.info(&quot;Enter Place : &quot;);</b>
+<b class="nc">&nbsp;        place = reader.readLine();</b>
+<b class="nc">&nbsp;        logger.info(&quot;Enter StartTime : &quot;);</b>
+<b class="nc">&nbsp;        startTime = reader.readLine();</b>
+<b class="nc">&nbsp;        logger.info(&quot;Enter EndTime : &quot;);</b>
+<b class="nc">&nbsp;        endTime = reader.readLine();</b>
+<b class="nc">&nbsp;        logger.info(&quot;Enter BookingTime : &quot;);</b>
+<b class="nc">&nbsp;        bookingTime = reader.readLine();</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        es=new EventService(title,details,eventCategory,price,place,startTime,endTime,bookingTime);</b>
+<b class="nc">&nbsp;        es.setId(id);</b>
+&nbsp;
+<b class="nc">&nbsp;        eventManipulation.editEventService(es);</b>
+<b class="nc">&nbsp;        logger.info(eventManipulation.getStatus());</b>
+&nbsp;
+<b class="nc">&nbsp;        serviceproviderpage();</b>
+&nbsp;
+&nbsp;
+&nbsp;        
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void addeventservice() throws IOException, SQLException {
+<b class="nc">&nbsp;        boolean continueLoop = true;</b>
+&nbsp;        EventService eventService;
+&nbsp;
+&nbsp;         String title;
+&nbsp;         String details;
+&nbsp;         String eventCategory;
+&nbsp;         String price;
+&nbsp;         String place;
+&nbsp;         String startTime;
+&nbsp;         String endTime;
+&nbsp;         String bookingTime;
+&nbsp;
+<b class="nc">&nbsp;        while (continueLoop) {</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter Title : &quot;);</b>
+<b class="nc">&nbsp;            title = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter Details : &quot;);</b>
+<b class="nc">&nbsp;            details = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter EventCategory : &quot;);</b>
+<b class="nc">&nbsp;            eventCategory = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter Price : &quot;);</b>
+<b class="nc">&nbsp;            price = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter Place : &quot;);</b>
+<b class="nc">&nbsp;            place = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter StartTime : &quot;);</b>
+<b class="nc">&nbsp;            startTime = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter EndTime : &quot;);</b>
+<b class="nc">&nbsp;            endTime = reader.readLine();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Enter BookingTime : &quot;);</b>
+<b class="nc">&nbsp;            bookingTime = reader.readLine();</b>
+&nbsp;
+<b class="nc">&nbsp;            eventService=new EventService(title,details,eventCategory,price,place,startTime,endTime,bookingTime);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            eventManipulation.addEventService(eventService);</b>
+<b class="nc">&nbsp;            if(Objects.equals(eventManipulation.getStatus(), &quot;Event added successfully&quot;))</b>
+&nbsp;            {
+<b class="nc">&nbsp;                logger.info(eventManipulation.getStatus());</b>
+<b class="nc">&nbsp;                serviceproviderpage();</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                logger.info(eventManipulation.getStatus());</b>
+<b class="nc">&nbsp;                logger.info(&quot;Do you want to continue? (yes/no)&quot;);</b>
+<b class="nc">&nbsp;                String userInput = reader.readLine();</b>
+<b class="nc">&nbsp;                continueLoop = userInput.equals(&quot;yes&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            }</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;        }
+<b class="nc">&nbsp;        exit(0);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void adminpage() {
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;&quot;&quot;</b>
+&nbsp;                Choose Number
+&nbsp;                1- All Users Report\s
+&nbsp;                2- All Events Report
+&nbsp;                3- All EventService Report
+&nbsp;                4- Delete User&quot;&quot;&quot;);
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public static String chooseImagePath() {
+<b class="nc">&nbsp;        fileChooser.setDialogTitle(&quot;Select Image&quot;);</b>
+<b class="nc">&nbsp;        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);</b>
+<b class="nc">&nbsp;        fileChooser.setFileFilter(new FileFilter() {</b>
+&nbsp;            @Override
+&nbsp;            public boolean accept(File file) {
+<b class="nc">&nbsp;                if (file.isDirectory()) {</b>
+<b class="nc">&nbsp;                    return true;</b>
+&nbsp;                }
+<b class="nc">&nbsp;                String extension = getExtension(file);</b>
+<b class="nc">&nbsp;                return extension != null &amp;&amp; isSupportedExtension(extension);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            @Override
+&nbsp;            public String getDescription() {
+<b class="nc">&nbsp;                return &quot;Image files (*.png, *.jpg, *.jpeg, *.gif, *.bmp)&quot;;</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;
+<b class="nc">&nbsp;        int result = fileChooser.showOpenDialog(null);</b>
+<b class="nc">&nbsp;        if (result == JFileChooser.APPROVE_OPTION) {</b>
+<b class="nc">&nbsp;            return fileChooser.getSelectedFile().getAbsolutePath();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private static String getExtension(File file) {
+<b class="nc">&nbsp;        String fileName = file.getName();</b>
+<b class="nc">&nbsp;        int dotIndex = fileName.lastIndexOf(&#39;.&#39;);</b>
+<b class="nc">&nbsp;        if (dotIndex &gt; 0 &amp;&amp; dotIndex &lt; fileName.length() - 1) {</b>
+<b class="nc">&nbsp;            return fileName.substring(dotIndex + 1).toLowerCase();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static boolean isSupportedExtension(String extension) {
+<b class="nc">&nbsp;        return extension.equals(&quot;png&quot;) ||</b>
+<b class="nc">&nbsp;                extension.equals(&quot;jpg&quot;) ||</b>
+<b class="nc">&nbsp;                extension.equals(&quot;jpeg&quot;) ||</b>
+<b class="nc">&nbsp;                extension.equals(&quot;gif&quot;) ||</b>
+<b class="nc">&nbsp;                extension.equals(&quot;bmp&quot;);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-25 21:40</div>
+</div>
+</body>
+</html>

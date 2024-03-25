@@ -43,6 +43,7 @@ public class EventManipulation {
     public void deleteEventService(EventService es) {
         boolean b = delete.delete_event(es);
 
+
         setStatus(delete.getStatus());
 
     }

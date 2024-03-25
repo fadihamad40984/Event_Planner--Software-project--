@@ -11,7 +11,7 @@ Feature: Event Creation And Management
     And I am fills in 'endTime' with "<EndTime>"
     And I am fills in 'bookingTime' with "<BookingTime>"
     And I am click add
-    Then A "<Message>" should appear
+    Then "<Message>" should appear
 
     Examples:
       | Title        | Details | EventCategory | Price | Place        | StartTime | EndTime | BookingTime | Message                                                                                                             |
@@ -27,6 +27,9 @@ Feature: Event Creation And Management
       | new event    | enjoy   | Birthdays     | 3000  | Jawhara      | 14:00     | 7:00    | 2           | End time should be after at least BookingTime hours from start time                                                 |
       | new event    | enjoy   | Birthdays     | omar  | Jawhara      | 14:00     | 18:00   | 2           | Price should be integer value                                                                                       |
       | new event    | enjoy   | Birthdays     | 3000  | Jawhara      | 14:00     | 18:00   | omar        | Booking time should be integer value                                                                                |
-      | Second event | on fire | Birthdays     | 2000  | Paris Palace | 10:00     | 16:00   | 2           | Schedule conflicts between the time interval of the event service and the time interval of the other event services |
+      | second event | on fire | Birthdays     | 2000  | Paris Palace | 10:00     | 16:00   | 2           | Schedule conflicts between the time interval of the event service and the time interval of the other event services |
+      | second event | on fire | Birthdays     | 2000  | nablus       | 14:00     | 18:00   | 2           | Event added successfully                                                                                            |
+      | third event  | on fire | Birthdays     | 2000  | nablus       | 20:00     | 22:00   | 2           | Event added successfully                                                                                            |
+
 
 

@@ -1,0 +1,610 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1256"> 
+  <title>Coverage Report > retrieve</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">software_project.DataBase.retrieve</a>
+</div>
+
+<h1>Coverage Summary for Class: retrieve (software_project.DataBase.retrieve)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">retrieve</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    62.5%
+  </span>
+  <span class="absValue">
+    (10/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    53.3%
+  </span>
+  <span class="absValue">
+    (144/270)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package software_project.DataBase.retrieve;
+&nbsp;
+&nbsp;import software_project.EventManagement.Event;
+&nbsp;import software_project.EventManagement.EventService;
+&nbsp;import software_project.EventManagement.Places;
+&nbsp;import software_project.UserManagement.User;
+&nbsp;import software_project.Vendor.AVendorBooking;
+&nbsp;import software_project.Vendor.VendorService;
+&nbsp;import software_project.helper.Generator;
+&nbsp;
+&nbsp;import java.sql.*;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import static java.lang.Math.abs;
+&nbsp;
+&nbsp;public class retrieve {
+&nbsp;
+&nbsp;    private Connection con;
+&nbsp;    private String status;
+&nbsp;
+<b class="fc">&nbsp;    public retrieve(Connection con) {</b>
+<b class="fc">&nbsp;        this.con = con;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStatus() {
+<b class="nc">&nbsp;        return status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStatus(String status) {
+<b class="fc">&nbsp;        this.status = status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;EventService&gt; selectEventServicesOfParticularPlace(String place_name) {
+<b class="fc">&nbsp;        List&lt;EventService&gt; EventServices = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        Statement stmt = null;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            stmt = con.createStatement();</b>
+<b class="fc">&nbsp;            String query = &quot;SELECT \&quot;iD\&quot; FROM \&quot;Places\&quot; where \&quot;Name\&quot; = \&#39;&quot; + place_name + &quot;\&#39;;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="fc">&nbsp;            int place_id = 0;</b>
+<b class="fc">&nbsp;            while (rs.next())</b>
+<b class="fc">&nbsp;                place_id = rs.getInt(&quot;iD&quot;);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;            String query2 = &quot;SELECT \&quot;ID_EventService\&quot; FROM \&quot;Place_EventServices\&quot; where \&quot;ID_Place\&quot; = &quot; + place_id + &quot;;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            ResultSet rs2 = stmt.executeQuery(query2);</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;Integer&gt; ids = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;            while (rs2.next()) {</b>
+<b class="fc">&nbsp;                ids.add(rs2.getInt(&quot;ID_EventService&quot;));</b>
+&nbsp;            }
+<b class="fc">&nbsp;            for (int i = 0; i &lt; ids.size(); i++) {</b>
+<b class="fc">&nbsp;                String query3 = &quot;SELECT * FROM \&quot;Event_Service\&quot; where \&quot;Id\&quot; = &quot; + ids.get(i) + &quot;;&quot;;</b>
+<b class="fc">&nbsp;                ResultSet rs3 = stmt.executeQuery(query3);</b>
+<b class="fc">&nbsp;                while (rs3 != null &amp;&amp; rs3.next()) {</b>
+<b class="fc">&nbsp;                    EventService es = new EventService();</b>
+<b class="fc">&nbsp;                    es.setId(rs3.getInt(&quot;Id&quot;));</b>
+<b class="fc">&nbsp;                    es.setTitle(rs3.getString(&quot;Title&quot;));</b>
+<b class="fc">&nbsp;                    es.setDetails(rs3.getString(&quot;Details&quot;));</b>
+<b class="fc">&nbsp;                    es.setEventCategory(rs3.getString(&quot;Event_Category&quot;));</b>
+<b class="fc">&nbsp;                    es.setPrice(rs3.getString(&quot;Price&quot;));</b>
+<b class="fc">&nbsp;                    es.setPlace(rs3.getString(&quot;Place&quot;));</b>
+<b class="fc">&nbsp;                    es.setStartTime(rs3.getString(&quot;Start_Time&quot;));</b>
+<b class="fc">&nbsp;                    es.setEndTime(rs3.getString(&quot;End_Time&quot;));</b>
+<b class="fc">&nbsp;                    es.setBookingTime(rs3.getString(&quot;Booking_Time&quot;));</b>
+<b class="fc">&nbsp;                    EventServices.add(es);</b>
+<b class="fc">&nbsp;                }</b>
+&nbsp;            }
+<b class="fc">&nbsp;            setStatus(&quot;Retrieving event services for the place successfully&quot;);</b>
+<b class="fc">&nbsp;            return EventServices;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            setStatus(&quot;Error while retrieving event services for the place from database&quot;);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        } finally {
+<b class="nc">&nbsp;            try {</b>
+<b class="fc">&nbsp;                if (stmt != null) stmt.close();</b>
+<b class="nc">&nbsp;            } catch (Exception e) {</b>
+<b class="fc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public Places retriveplace(String place_name) throws SQLException {
+<b class="fc">&nbsp;        Statement stmt = null;</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        Places place = new Places();</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            stmt = con.createStatement();</b>
+<b class="fc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Places\&quot; where \&quot;Name\&quot; = \&#39;&quot; + place_name + &quot;\&#39;;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="fc">&nbsp;            while (rs.next())</b>
+&nbsp;            {
+<b class="fc">&nbsp;                place.setId(rs.getInt(&quot;iD&quot;));</b>
+<b class="fc">&nbsp;                place.setName(rs.getString(&quot;Name&quot;));</b>
+<b class="fc">&nbsp;                place.setCapacity(rs.getString(&quot;Capacity&quot;));</b>
+<b class="fc">&nbsp;                place.setAmenities(rs.getString(&quot;Amenities&quot;));</b>
+&nbsp;
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            return place;</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        } catch (SQLException e) {</b>
+<b class="nc">&nbsp;            setStatus(&quot;Error while retrieving placeID for the place from database&quot;);</b>
+&nbsp;
+&nbsp;        }
+<b class="nc">&nbsp;        return place;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public static int retriveeventIID(Connection con2) throws SQLException {
+<b class="nc">&nbsp;        Statement stmt = null;</b>
+<b class="nc">&nbsp;        int event_id = 0;</b>
+&nbsp;
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            stmt = con2.createStatement();</b>
+<b class="nc">&nbsp;            stmt.execute(&quot;SELECT nextval(&#39;public.\&quot;Event_Event_id_seq\&quot;&#39;);&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            String query = &quot;SELECT currval(&#39;public.\&quot;Event_Event_id_seq\&quot;&#39;) as \&quot;ii\&quot;;&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="nc">&nbsp;            while (rs.next())</b>
+<b class="nc">&nbsp;                event_id = rs.getInt(&quot;ii&quot;);</b>
+<b class="nc">&nbsp;            return event_id-1;</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        } catch (SQLException e) {</b>
+&nbsp;
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return event_id-1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public int retriveeventid(String title) throws SQLException {
+<b class="fc">&nbsp;        Statement stmt = null;</b>
+<b class="fc">&nbsp;        int event_id = 0;</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            stmt = con.createStatement();</b>
+<b class="fc">&nbsp;            String query = &quot;SELECT \&quot;Id\&quot; FROM \&quot;Event_Service\&quot; where \&quot;Title\&quot; = \&#39;&quot; + title + &quot;\&#39;;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="fc">&nbsp;            while (rs.next())</b>
+<b class="fc">&nbsp;                event_id = rs.getInt(&quot;Id&quot;);</b>
+<b class="fc">&nbsp;            return event_id;</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        } catch (SQLException e) {</b>
+<b class="nc">&nbsp;            setStatus(&quot;Error while retrieving event_id for the EventServices from database&quot;);</b>
+&nbsp;
+&nbsp;        }
+<b class="nc">&nbsp;        return event_id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public List&lt;EventService&gt; retrieveAllEventServices()
+&nbsp;    {
+<b class="nc">&nbsp;        Statement stmt = null;</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;EventService&gt; eventServices = new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            stmt = con.createStatement();</b>
+<b class="nc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Event_Service\&quot;;&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="nc">&nbsp;            while (rs.next())</b>
+&nbsp;            {
+<b class="nc">&nbsp;                EventService eventService = new EventService(rs.getString(2) , rs.getString(3) ,rs.getString(4) , rs.getString(5),rs.getString(6) , rs.getString(7) ,rs.getString(8),rs.getString(9));</b>
+<b class="nc">&nbsp;                eventService.setId(rs.getInt(1));</b>
+<b class="nc">&nbsp;                eventServices.add(eventService);</b>
+&nbsp;
+<b class="nc">&nbsp;            }</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (SQLException e) {</b>
+<b class="nc">&nbsp;            setStatus(&quot;Error while retrieving EventServices from database&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return  eventServices;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public EventService selectEventServicesOfParticularName(String serviceTitle) throws SQLException {
+<b class="fc">&nbsp;        Statement stmt = null;</b>
+<b class="fc">&nbsp;        EventService es = new EventService();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            stmt = con.createStatement();</b>
+<b class="fc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Event_Service\&quot; where \&quot;Title\&quot; = \&#39;&quot; + serviceTitle + &quot;\&#39;;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+&nbsp;
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="fc">&nbsp;                es.setId(rs.getInt(&quot;Id&quot;));</b>
+<b class="fc">&nbsp;                es.setTitle(rs.getString(&quot;Title&quot;));</b>
+<b class="fc">&nbsp;                es.setDetails(rs.getString(&quot;Details&quot;));</b>
+<b class="fc">&nbsp;                es.setEventCategory(rs.getString(&quot;Event_Category&quot;));</b>
+<b class="fc">&nbsp;                es.setPrice(rs.getString(&quot;Price&quot;));</b>
+<b class="fc">&nbsp;                es.setPlace(rs.getString(&quot;Place&quot;));</b>
+<b class="fc">&nbsp;                es.setStartTime(rs.getString(&quot;Start_Time&quot;));</b>
+<b class="fc">&nbsp;                es.setEndTime(rs.getString(&quot;End_Time&quot;));</b>
+<b class="fc">&nbsp;                es.setBookingTime(rs.getString(&quot;Booking_Time&quot;));</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            setStatus(&quot;Retrieving event successfully&quot;);</b>
+<b class="fc">&nbsp;            return es;</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            setStatus(&quot;Error while retrieving event from database&quot;);</b>
+<b class="nc">&nbsp;            return es;</b>
+&nbsp;        } finally {
+<b class="nc">&nbsp;            try {</b>
+<b class="fc">&nbsp;                if (stmt != null) stmt.close();</b>
+<b class="nc">&nbsp;            } catch (Exception e) {</b>
+<b class="fc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public String selectEventServicesOfParticularid(int id) throws SQLException {
+<b class="fc">&nbsp;        Statement stmt = null;</b>
+<b class="fc">&nbsp;        String title = &quot;&quot;;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            stmt = con.createStatement();</b>
+<b class="fc">&nbsp;            String query = &quot;SELECT \&quot;Title\&quot; FROM \&quot;Event_Service\&quot; where \&quot;Id\&quot; = &quot; + id + &quot;;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+&nbsp;
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="fc">&nbsp;                title = rs.getString(&quot;Title&quot;);</b>
+&nbsp;
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            setStatus(&quot;Retrieving event successfully&quot;);</b>
+<b class="fc">&nbsp;            return title;</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            setStatus(&quot;Error while retrieving event from database&quot;);</b>
+<b class="nc">&nbsp;            return title;</b>
+&nbsp;        } finally {
+<b class="nc">&nbsp;            try {</b>
+<b class="fc">&nbsp;                if (stmt != null) stmt.close();</b>
+<b class="nc">&nbsp;            } catch (Exception e) {</b>
+<b class="fc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Event&gt; selectEventOfParticularDateAndServiceId(String date, int service_id) {
+<b class="fc">&nbsp;        List&lt;Event&gt; Events = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        Statement stmt = null;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            stmt = con.createStatement();</b>
+<b class="fc">&nbsp;            String query =&quot;SELECT * FROM \&quot;Event\&quot; where \&quot;Date\&quot; = \&#39;&quot; + date + &quot;\&#39; and \&quot;EventService_id\&quot; = &quot; + service_id + &quot;;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            String query1 = &quot;SELECT \&quot;Title\&quot; FROM \&quot;Event_Service\&quot; where \&quot;Id\&quot; = &quot; + service_id +&quot;;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            ResultSet rs1 = stmt.executeQuery(query1);</b>
+<b class="fc">&nbsp;            String service_title = &quot;&quot;;</b>
+<b class="fc">&nbsp;            while (rs1.next()) {</b>
+<b class="fc">&nbsp;                service_title = rs1.getString(&quot;Title&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="nc">&nbsp;                Event e = new Event(con);</b>
+<b class="nc">&nbsp;                e.setId(rs.getInt(&quot;Event_id&quot;));</b>
+<b class="nc">&nbsp;                e.setServiceId(rs.getInt(&quot;EventService_id&quot;));</b>
+<b class="nc">&nbsp;                e.setServiceTitle(service_title);</b>
+<b class="nc">&nbsp;                e.setDate(rs.getString(&quot;Date&quot;));</b>
+<b class="nc">&nbsp;                e.setTime(rs.getString(&quot;Time&quot;));</b>
+<b class="nc">&nbsp;                e.setDescription(rs.getString(&quot;Description&quot;));</b>
+<b class="nc">&nbsp;                e.setAttendeeCount(String.valueOf(rs.getInt(&quot;Attendee_Count&quot;)));</b>
+<b class="nc">&nbsp;                Events.add(e);</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;
+<b class="fc">&nbsp;            setStatus(&quot;Retrieving events for the given date successfully&quot;);</b>
+<b class="fc">&nbsp;            return Events;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            setStatus(&quot;Error while retrieving events for the date from database&quot;);</b>
+<b class="nc">&nbsp;            return Events;</b>
+&nbsp;        } finally {
+<b class="nc">&nbsp;            try {</b>
+<b class="fc">&nbsp;                if (stmt != null) stmt.close();</b>
+<b class="nc">&nbsp;            } catch (Exception e) {</b>
+<b class="fc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public VendorService selectVendorServiceOfParticularName(String vendorName) throws SQLException {
+<b class="fc">&nbsp;        Statement stmt = null;</b>
+<b class="fc">&nbsp;        VendorService vs = new VendorService();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            stmt = con.createStatement();</b>
+<b class="fc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Vendor_Service\&quot; where \&quot;Vendor_User_Name\&quot; = \&#39;&quot; + vendorName + &quot;\&#39;;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+&nbsp;
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="fc">&nbsp;                vs.setVendorUserName(rs.getString(&quot;Vendor_User_Name&quot;));</b>
+<b class="fc">&nbsp;                vs.setServiceType(rs.getString(&quot;Type&quot;));</b>
+<b class="fc">&nbsp;                vs.setServiceDescription(rs.getString(&quot;Description&quot;));</b>
+<b class="fc">&nbsp;                vs.setServicePrice(rs.getString(&quot;Price&quot;));</b>
+<b class="fc">&nbsp;                vs.setServiceAvailability(rs.getString(&quot;Availability&quot;));</b>
+<b class="fc">&nbsp;                vs.setAverageRating(rs.getInt(&quot;Average_Rating&quot;));</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            setStatus(&quot;Retrieving vendor service successfully&quot;);</b>
+<b class="fc">&nbsp;            return vs;</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            setStatus(&quot;Error while retrieving vendor service from database&quot;);</b>
+<b class="nc">&nbsp;            return vs;</b>
+&nbsp;        } finally {
+<b class="nc">&nbsp;            try {</b>
+<b class="fc">&nbsp;                if (stmt != null) stmt.close();</b>
+<b class="nc">&nbsp;            } catch (Exception e) {</b>
+<b class="fc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;AVendorBooking&gt; selectVendorBookingOfParticularName(String s) {
+<b class="fc">&nbsp;        Statement stmt = null;</b>
+<b class="fc">&nbsp;        List&lt;AVendorBooking&gt; vbs = new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            stmt = con.createStatement();</b>
+<b class="fc">&nbsp;            String query = &quot;SELECT * FROM \&quot;Vendor_Bookings\&quot; where \&quot;Vendor_UN\&quot; = \&#39;&quot; + s + &quot;\&#39;;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+&nbsp;
+<b class="fc">&nbsp;            String vendorUN = s;</b>
+<b class="fc">&nbsp;            List&lt;Integer&gt; eventIDs = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="fc">&nbsp;                eventIDs.add(rs.getInt(&quot;Event_id&quot;));</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            for(int i = 0; i &lt; eventIDs.size(); i++) {</b>
+&nbsp;
+<b class="fc">&nbsp;                String query2 = &quot;SELECT * FROM \&quot;Event\&quot; where \&quot;Event_id\&quot; = &quot; + eventIDs.get(i) + &quot;;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;                ResultSet rs1 = stmt.executeQuery(query2);</b>
+&nbsp;
+<b class="fc">&nbsp;                AVendorBooking vb = new AVendorBooking();</b>
+<b class="fc">&nbsp;                Event e = new Event(con);</b>
+<b class="fc">&nbsp;                String serviceTitle = &quot;&quot;;</b>
+<b class="fc">&nbsp;                int ServiceId = 0;</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;                while (rs1.next()) {</b>
+<b class="fc">&nbsp;                    ServiceId = rs1.getInt(&quot;EventService_id&quot;);</b>
+<b class="fc">&nbsp;                    vb.setBooking_date(rs1.getString(&quot;Date&quot;));</b>
+<b class="fc">&nbsp;                    vb.setStart_time(rs1.getString(&quot;Time&quot;));</b>
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;               serviceTitle =  this.selectEventServicesOfParticularid(ServiceId);</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;                vb.setBooking_time(this.selectEventServicesOfParticularName(serviceTitle).getBookingTime());</b>
+<b class="fc">&nbsp;                vb.setVendor_user_name(s);</b>
+&nbsp;
+<b class="fc">&nbsp;                vbs.add(vb);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            setStatus(&quot;Retrieving vendor booking successfully&quot;);</b>
+<b class="fc">&nbsp;            return vbs;</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            setStatus(&quot;Error while retrieving vendor booking from database&quot;);</b>
+<b class="nc">&nbsp;            return vbs;</b>
+&nbsp;        } finally {
+<b class="nc">&nbsp;            try {</b>
+<b class="fc">&nbsp;                if (stmt != null) stmt.close();</b>
+<b class="nc">&nbsp;            } catch (Exception e) {</b>
+<b class="fc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    private static void incrementCount(Map&lt;String, Integer&gt; map, String date) {
+<b class="nc">&nbsp;        map.put(date, map.getOrDefault(date, 0) + 1);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public Map&lt;Integer,Boolean&gt; CheckDays(int year , int month ,EventService eventService) {
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, Integer&gt; dateCountMap = new HashMap&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;Integer, Boolean&gt; DateAvalability = new HashMap&lt;&gt;();</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        List&lt;Event&gt; events = this.selectEventOfParticularServiceId(eventService);</b>
+&nbsp;
+<b class="nc">&nbsp;        int TimeDiff = abs(Generator.getTimeDifference(eventService.getStartTime(), eventService.getEndTime()));</b>
+<b class="nc">&nbsp;        int BookingTime = Integer.parseInt(eventService.getBookingTime()) * 60;</b>
+&nbsp;
+<b class="nc">&nbsp;        int NumberOfEvents = TimeDiff / BookingTime;</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        for (Event event : events) {</b>
+<b class="nc">&nbsp;            incrementCount(dateCountMap, event.getDate());</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        for (Map.Entry&lt;String, Integer&gt; entry : dateCountMap.entrySet()) {</b>
+<b class="nc">&nbsp;            String key = entry.getKey();</b>
+<b class="nc">&nbsp;            Integer value = entry.getValue();</b>
+&nbsp;
+<b class="nc">&nbsp;            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;dd-MM-yyyy&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            LocalDate date = LocalDate.parse(key, formatter);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            int Day = date.getDayOfMonth();</b>
+<b class="nc">&nbsp;            int Month = date.getMonthValue();</b>
+<b class="nc">&nbsp;            int Year = date.getYear();</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            if (year == Year &amp;&amp; month == Month) {</b>
+<b class="nc">&nbsp;                if (value == NumberOfEvents) {</b>
+<b class="nc">&nbsp;                    DateAvalability.put(Day, false);</b>
+&nbsp;
+&nbsp;                }
+&nbsp;
+&nbsp;            }
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return DateAvalability;</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public List&lt;Event&gt; selectEventOfParticularServiceId(EventService eventService) {
+<b class="nc">&nbsp;        List&lt;Event&gt; Events = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        Statement stmt = null;</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            stmt = con.createStatement();</b>
+<b class="nc">&nbsp;            String query =&quot;SELECT * FROM \&quot;Event\&quot; where \&quot;EventService_id\&quot; = &quot; + eventService.getId() + &quot;;&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            ResultSet rs = stmt.executeQuery(query);</b>
+<b class="nc">&nbsp;            while (rs.next()) {</b>
+<b class="nc">&nbsp;                Event e = new Event(con);</b>
+<b class="nc">&nbsp;                e.setId(rs.getInt(&quot;Event_id&quot;));</b>
+<b class="nc">&nbsp;                e.setServiceId(rs.getInt(&quot;EventService_id&quot;));</b>
+<b class="nc">&nbsp;                e.setServiceTitle(eventService.getTitle());</b>
+<b class="nc">&nbsp;                e.setDate(rs.getString(&quot;Date&quot;));</b>
+<b class="nc">&nbsp;                e.setTime(rs.getString(&quot;Time&quot;));</b>
+<b class="nc">&nbsp;                e.setDescription(rs.getString(&quot;Description&quot;));</b>
+<b class="nc">&nbsp;                e.setAttendeeCount(String.valueOf(rs.getInt(&quot;Attendee_Count&quot;)));</b>
+<b class="nc">&nbsp;                Events.add(e);</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            return Events;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+&nbsp;
+<b class="nc">&nbsp;            return Events;</b>
+&nbsp;        } finally {
+<b class="nc">&nbsp;            try {</b>
+<b class="nc">&nbsp;                if (stmt != null) stmt.close();</b>
+<b class="nc">&nbsp;            } catch (Exception e) {</b>
+&nbsp;
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-25 21:40</div>
+</div>
+</body>
+</html>
