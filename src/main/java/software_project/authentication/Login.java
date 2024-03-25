@@ -27,7 +27,7 @@ public class Login {
     public boolean loginUser(String username, String password) {
         List<User> allUsers = usersRetriever.findUserByUsername(username.toLowerCase());
         if (allUsers != null && !allUsers.isEmpty()) {
-            User tmpUser = allUsers.getFirst();
+            User tmpUser = allUsers.get(0);
             if (tmpUser.getPassword().equals(password)) {
                 setStatus("Valid username and password");
                 user_type = tmpUser.getUserType();
