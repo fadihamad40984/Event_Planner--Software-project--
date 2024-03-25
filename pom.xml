@@ -99,7 +99,7 @@
     </properties>
 
     <build>
-      <plugins>
+        <plugins>
         <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
@@ -107,7 +107,7 @@
             <configuration>
 
                 <excludes>
-                    <exclude>**software_project/Main.class</exclude>
+                    <exclude>**car_accessories/MainClass.class</exclude>
                 </excludes>
             </configuration>
             <executions>
