@@ -1,0 +1,155 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1256"> 
+  <title>Coverage Report > UserSession</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">software_project.helper</a>
+</div>
+
+<h1>Coverage Summary for Class: UserSession (software_project.helper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserSession</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package software_project.helper;
+&nbsp;
+&nbsp;
+&nbsp;import javafx.event.ActionEvent;
+&nbsp;import javafx.scene.control.ButtonType;
+&nbsp;import software_project.UserManagement.User;
+&nbsp;import software_project.authentication.UserSessionManager;
+&nbsp;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+<b class="nc">&nbsp;public class UserSession {</b>
+&nbsp;    private static String sessionId;
+&nbsp;    private static User currentUser;
+&nbsp;    private static User userToDisplay;
+&nbsp;
+&nbsp;
+&nbsp;    public static String getSessionId() {
+<b class="nc">&nbsp;        return sessionId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void setSessionId(String sessionId) {
+<b class="nc">&nbsp;        UserSession.sessionId = sessionId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static User getCurrentUser() {
+<b class="nc">&nbsp;        return new User(currentUser);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void setCurrentUser(User currentUser) {
+<b class="nc">&nbsp;        UserSession.currentUser = new User(currentUser);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static User getUserToDisplay() {
+<b class="nc">&nbsp;        return userToDisplay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void setUserToDisplay(User userToDisplay) {
+<b class="nc">&nbsp;        UserSession.userToDisplay = userToDisplay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return &quot;Classes.UserSession{&quot; + currentUser.getUsername() + &quot;: &quot; +</b>
+&nbsp;                &quot;sessionId=&#39;&quot; + sessionId + &#39;\&#39;&#39; +
+&nbsp;                &#39;}&#39;;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-25 17:31</div>
+</div>
+</body>
+</html>
