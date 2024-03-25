@@ -34,7 +34,7 @@ import java.util.logging.*;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.log;
-import static java.lang.String.*;
+import static java.lang.String.format;
 import static java.lang.System.exit;
 
 
@@ -989,10 +989,10 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 accpetevent.setDate(date);
                 accpetevent.setDescription(Description);
                 accpetevent.setTime(ChosenTime);
-                accpetevent.setAttendeeCount(valueOf(AttendeeCount));
+                accpetevent.setAttendeeCount(String.valueOf(AttendeeCount));
                 accpetevent.setServiceTitle(AllEvent.get(choice-1).getTitle());
                 accpetevent.setServiceId(AllEvent.get(choice-1).getId());
-                accpetevent.setBalance(valueOf(StoreBalance));
+                accpetevent.setBalance(String.valueOf(StoreBalance));
                 accpetevent.setGuestList(GuestList);
                 accpetevent.setImages(images);
                 accpetevent.setVendors(Vendors);
