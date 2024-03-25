@@ -1,0 +1,181 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1256"> 
+  <title>Coverage Report > VendorService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">software_project.Vendor</a>
+</div>
+
+<h1>Coverage Summary for Class: VendorService (software_project.Vendor)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">VendorService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (19/19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package software_project.Vendor;
+&nbsp;
+&nbsp;import java.sql.Connection;
+&nbsp;import java.sql.SQLException;
+&nbsp;import java.util.ArrayList;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;public class VendorService {
+&nbsp;    private String vendorUserName;
+&nbsp;    private String serviceType;
+&nbsp;    private String serviceDescription;
+&nbsp;    private String servicePrice;
+&nbsp;    private String serviceAvailability;
+&nbsp;    private int averageRating;
+&nbsp;
+<b class="fc">&nbsp;    public VendorService() {</b>
+<b class="fc">&nbsp;        this.averageRating = 0;</b>
+<b class="fc">&nbsp;        this.vendorUserName = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.serviceType = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.serviceDescription = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.servicePrice = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.serviceAvailability = &quot;&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getVendorUserName() {
+<b class="fc">&nbsp;        return vendorUserName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setVendorUserName(String vendorUserName) {
+<b class="fc">&nbsp;        this.vendorUserName = vendorUserName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getServiceType() {
+<b class="fc">&nbsp;        return serviceType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setServiceType(String serviceType) {
+<b class="fc">&nbsp;        this.serviceType = serviceType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getServiceDescription() {
+<b class="fc">&nbsp;        return serviceDescription;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setServiceDescription(String serviceDescription) {
+<b class="fc">&nbsp;        this.serviceDescription = serviceDescription;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getServicePrice() {
+<b class="fc">&nbsp;        return servicePrice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setServicePrice(String servicePrice) {
+<b class="fc">&nbsp;        this.servicePrice = servicePrice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getServiceAvailability() {
+<b class="fc">&nbsp;        return serviceAvailability;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setServiceAvailability(String serviceAvailability) {
+<b class="fc">&nbsp;        this.serviceAvailability = serviceAvailability;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getAverageRating() {
+<b class="fc">&nbsp;        return averageRating;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAverageRating(int averageRating) {
+<b class="fc">&nbsp;        this.averageRating = averageRating;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-25 21:40</div>
+</div>
+</body>
+</html>

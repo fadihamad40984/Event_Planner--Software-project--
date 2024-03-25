@@ -23,8 +23,8 @@ public class EditEventTCs {
 
     }
 
-    @When("I am fills in {string} with {string}")
-    public void i_am_fills_in_with(String string, String string2) {
+    @When("I am fill in {string} with {string}")
+    public void i_am_fill_in_with(String string, String string2) {
         switch (string) {
             case "id"-> es.setId(Integer.parseInt(string2));
             case "title" -> es.setTitle(string2);

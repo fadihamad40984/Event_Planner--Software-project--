@@ -11,8 +11,10 @@ Feature: Review Vendor
 
 
     Examples:
-      | VendorUserName | CustomerUserName | Rating         | FeedBackText    | Message                              |
-      | mohammad12      | fadi21           | *****          | beautiful voice | vendor review confirmed successfully |
+      | VendorUserName | CustomerUserName | Rating | FeedBackText    | Message                              |
+      | mohammad12     | fadi21           | *****  | beautiful voice | vendor review confirmed successfully |
+      | ahmad1999      | fadi21           | *      | beautiful voice | vendor review confirmed successfully |
+
 
     # rating will be given as choices in the menu
   # FeedBackText is optional

@@ -12,6 +12,7 @@ Feature: Venue Management
     Examples:
       | venue_name        | capacity | amenities                    | Message                             |
       | Paris Palace      | 40       | WiFi,DJ, Catering,Cake       | Venue added successfully            |
+      | nablus            | 40       | WiFi,DJ, Catering,Cake       | Venue added successfully            |
       |                   | 150      | WiFi,Cake,Catering           | venue name can't be empty           |
       | gold hotel        |          | WiFi,DJ, Catering            | capacity can't be empty             |
       | community center  | 200      |                              | amenities can't be empty            |

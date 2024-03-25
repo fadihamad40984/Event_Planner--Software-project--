@@ -5,6 +5,7 @@ import software_project.EventManagement.EventService;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 
 public class deleteEvent {
@@ -28,6 +29,7 @@ public class deleteEvent {
         try {
             conn.setAutoCommit(false);
             String query = "delete from \"Event_Service\" where \"Id\" = ?;";
+
             try (PreparedStatement preparedStmt = conn.prepareStatement(query)) {
                 preparedStmt.setInt(1, ES.getId());
                 preparedStmt.execute();

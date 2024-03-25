@@ -50,7 +50,7 @@ public class Generator {
 
 
     public static PreparedStatement userToPS(PreparedStatement preparedStmt, User user) throws SQLException {
-        preparedStmt.setString(1, Arrays.toString(user.getFirstName().toCharArray()));
+        preparedStmt.setString(1, user.getFirstName());
         preparedStmt.setString(2, user.getLastName());
         preparedStmt.setString(3, user.getUsername());
         preparedStmt.setString(4, user.getEmail());
