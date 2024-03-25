@@ -1,13 +1,11 @@
 package software_project.DataBase.delete;
 
 import software_project.EventManagement.EventService;
-import software_project.UserManagement.User;
-import software_project.helper.Generator;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Arrays;
+
 
 public class deleteEvent {
     private String status;
