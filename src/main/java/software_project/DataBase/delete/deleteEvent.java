@@ -30,9 +30,10 @@ public class deleteEvent {
         try {
             conn.setAutoCommit(false);
             String query = "delete from \"Event_Service\" where \"Id\" = ?;";
-            PreparedStatement preparedStmt = conn.prepareStatement(query);
-            preparedStmt.setInt(1,ES.getId());
-            preparedStmt.execute();
+            try (PreparedStatement preparedStmt = conn.prepareStatement(query)) {
+                preparedStmt.setInt(1, ES.getId());
+                preparedStmt.execute();
+            }
             setStatus("Event service deleted successfully");
             conn.commit();
             return true;
@@ -50,9 +51,10 @@ public class deleteEvent {
         try {
             conn.setAutoCommit(false);
             String query = "delete from \"users\" where \"User_Name\" = ?;";
-            PreparedStatement preparedStmt = conn.prepareStatement(query);
-            preparedStmt.setString(1,username);
-            preparedStmt.execute();
+            try (PreparedStatement preparedStmt = conn.prepareStatement(query)) {
+                preparedStmt.setString(1, username);
+                preparedStmt.execute();
+            }
             setStatus("user deleted successfully");
             conn.commit();
             return true;
