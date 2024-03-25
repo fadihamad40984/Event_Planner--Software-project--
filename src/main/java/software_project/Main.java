@@ -34,6 +34,7 @@ import java.util.logging.*;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.log;
+import static java.lang.String.*;
 import static java.lang.System.exit;
 
 
@@ -273,13 +274,13 @@ private static final JFileChooser fileChooser = new JFileChooser();
             {
                 events = ShowUpcomingEventsForParticularVendor(UserSession.getCurrentUser().getUsername());
 
-                logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%n",
+                logger.info(format("%-15s%-15s%-15s%-30s%-15s%n",
                         "Number", "Date", "Time", "Description", "Attendee_Count"));
 
                 int counter = 0;
                 for(Event e : events)
                 {
-                    logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%n",
+                    logger.info(format("%-15s%-15s%-15s%-30s%-15s%n",
                             ++counter, e.getDate(), e.getTime(),
                             e.getDescription(), e.getAttendeeCount()));
                 }
@@ -385,13 +386,13 @@ private static final JFileChooser fileChooser = new JFileChooser();
     private static void ShowCalendarPage() throws SQLException, IOException {  logger.info("Choose The Event You Want To Cancel :");
         List<Event> events = new ArrayList<>();
         events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
-        logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
+        logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
                 "Number", "Date", "Time", "Description", "Attendee_Count", "Balance"));
 
         int counter = 0;
         for(Event e : events)
         {
-            logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
+            logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
                     ++counter, e.getDate(), e.getTime(),
                     e.getDescription(), e.getAttendeeCount(), e.getBalance()));
         }
@@ -415,13 +416,13 @@ private static final JFileChooser fileChooser = new JFileChooser();
         List<String> status = new ArrayList<>();
         status = SelectStatusOfParticularUserName(UserSession.getCurrentUser().getUsername());
         events = SelectAllRequestOfParticualrUserName(UserSession.getCurrentUser().getUsername());
-        logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
+        logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
                 "Number", "Date", "Time", "Description", "Attendee_Count", "Balance" , "Status"));
 
         int counter = 0;
         for(Event e : events)
         {
-            logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
+            logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
                     ++counter, e.getDate(), e.getTime(),
                     e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));
         }
@@ -457,13 +458,13 @@ private static final JFileChooser fileChooser = new JFileChooser();
         logger.info("Choose The Event You Want To Cancel :");
        List<Event> events = new ArrayList<>();
         events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
-        logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
+        logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
                 "Number", "Date", "Time", "Description", "Attendee_Count", "Balance"));
 
       int counter = 0;
         for(Event e : events)
         {
-              logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
+              logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
                 ++counter, e.getDate(), e.getTime(),
                 e.getDescription(), e.getAttendeeCount(), e.getBalance()));
         }
@@ -664,13 +665,13 @@ private static final JFileChooser fileChooser = new JFileChooser();
         StoreBalance = Balance;
 
 
-        logger.info(String.format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
+        logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
                 "Number", "Title", "Details", "EventCategory", "Price", "Place", "StartTime", "EndTime", "BookingTime"));
         for (EventService eventService : AllEvent) {
             if (Integer.parseInt(eventService.getPrice()) <= Balance) {
 
 
-                logger.info(String.format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
+                logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
                         ++counter, eventService.getTitle(), eventService.getDetails(),
                         eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
                         eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
@@ -751,11 +752,11 @@ private static final JFileChooser fileChooser = new JFileChooser();
                     if (events.isEmpty()) {
                         logger.info("There Is No Events. You Can Request To Book An Event In This Day!");
                     } else {
-                        logger.info(String.format("%-15s%-15s%-15s%n",
+                        logger.info(format("%-15s%-15s%-15s%n",
                                 "StartTime", "EndTime", "Description"));
                         for (Event e : events) {
                             int c = (abs(Generator.getTimeDifference(e.getTime(), "00:00")) / 60) + Integer.parseInt(AllEvent.get(choice - 1).getBookingTime());
-                            logger.info(String.format("%-15s%-15s%-15s%n",
+                            logger.info(format("%-15s%-15s%-15s%n",
 
                                     e.getTime(), c + ":00", e.getDescription()));
                         }
@@ -891,7 +892,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
                     boolean cont = false;
 
 
-                    logger.info(String.format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
+                    logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
                             "Number", "Vendor_User_Name", "Description", "Price/H", "Type", "Rating"));
 
                     List<String> printedVendors = new ArrayList<>();
@@ -923,7 +924,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
                             if (Integer.parseInt(vs.getServicePrice()) <= Balance) {
                                 printedVendors.add(vs.getVendorUserName());
                                 printedPrice.add(Integer.parseInt(vs.getServicePrice()));
-                                logger.info(String.format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
+                                logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
                                         ++counterservice, vs.getVendorUserName(), description,
                                         vs.getServicePrice(), vs.getServiceType(), rate));
                             } else
@@ -988,10 +989,10 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 accpetevent.setDate(date);
                 accpetevent.setDescription(Description);
                 accpetevent.setTime(ChosenTime);
-                accpetevent.setAttendeeCount(String.valueOf(AttendeeCount));
+                accpetevent.setAttendeeCount(valueOf(AttendeeCount));
                 accpetevent.setServiceTitle(AllEvent.get(choice-1).getTitle());
                 accpetevent.setServiceId(AllEvent.get(choice-1).getId());
-                accpetevent.setBalance(String.valueOf(StoreBalance));
+                accpetevent.setBalance(valueOf(StoreBalance));
                 accpetevent.setGuestList(GuestList);
                 accpetevent.setImages(images);
                 accpetevent.setVendors(Vendors);
@@ -1189,13 +1190,13 @@ private static final JFileChooser fileChooser = new JFileChooser();
         List<String> status = new ArrayList<>();
         status = SelectAllStatus();
         events = SelectAllRequests();
-        logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
+        logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
                 "Number", "Date", "Time", "Description", "Attendee_Count", "Balance" , "Status"));
 
         int counter = 0;
         for(Event e : events)
         {
-            logger.info(String.format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
+            logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
                     ++counter, e.getDate(), e.getTime(),
                     e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));
         }
@@ -1410,10 +1411,10 @@ private static final JFileChooser fileChooser = new JFileChooser();
     private static void deleteeventservice() throws SQLException, IOException {
         List<EventService> AllEvent = retrieve.retrieveAllEventServices();
 
-        logger.info(String.format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
+        logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
                 "Id", "Title", "Details", "EventCategory", "Price", "Place", "StartTime", "EndTime", "BookingTime"));
         for (EventService eventService : AllEvent) {
-            logger.info(String.format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
+            logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
                     eventService.getId(), eventService.getTitle(), eventService.getDetails(),
                     eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
                     eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
@@ -1448,10 +1449,10 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
         List<EventService> AllEvent = retrieve.retrieveAllEventServices();
 
-        logger.info(String.format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
+        logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
                 "Id", "Title", "Details", "EventCategory", "Price", "Place", "StartTime", "EndTime", "BookingTime"));
         for (EventService eventService : AllEvent) {
-            logger.info(String.format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
+            logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
                     eventService.getId(), eventService.getTitle(), eventService.getDetails(),
                     eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
                     eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
