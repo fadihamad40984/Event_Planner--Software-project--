@@ -1,4 +1,4 @@
-@Feature2
+@order2
 Feature: Login
   Scenario Outline: login scenarios
     Given user is connected to the database

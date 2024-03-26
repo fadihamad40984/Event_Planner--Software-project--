@@ -1,4 +1,4 @@
-@Feature3
+@order3
 Feature: Send Email
 
       Scenario: Sending an email

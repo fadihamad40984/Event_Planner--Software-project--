@@ -1,4 +1,4 @@
-@Feature1
+@order1
 Feature: sign-Up
 
   Scenario Outline: sign-up with various inputs
