@@ -5,7 +5,7 @@ import io.cucumber.junit.CucumberOptions;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = "html:outputTesting/VendorTester.html" , features = {"Vendor_Management_Features/vendorService.feature"},
+@CucumberOptions(plugin = "html:outputTesting/VendorTester.html" , features = {"Vendor_Management_Features/fvendorService.feature"},
         monochrome = true,snippets = CucumberOptions.SnippetType.CAMELCASE, glue = {"Vendor"})
 
 
