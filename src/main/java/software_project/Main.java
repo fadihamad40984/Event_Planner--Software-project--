@@ -1447,6 +1447,8 @@ private static final JFileChooser fileChooser = new JFileChooser();
         String endTime;
         String bookingTime;
 
+
+
         List<EventService> AllEvent = retrieve.retrieveAllEventServices();
 
         logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
