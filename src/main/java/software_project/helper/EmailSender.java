@@ -18,7 +18,7 @@ public class EmailSender {
     String to;
     String from;
     SecureRandom random;
-   public int verificationCode;
+    public int verificationCode;
 
     public EmailSender(String to){
         this.to = to;
@@ -57,7 +57,7 @@ public class EmailSender {
             ppp.printStackTrace();
 
             setStatus("Email doesnt Send Successfully");
-           setValidEmail(false);
+            setValidEmail(false);
         }
 
     }
@@ -87,5 +87,12 @@ public class EmailSender {
 
     public void setValidEmail(boolean validEmail) {
         this.validEmail = validEmail;
+    }
+
+
+    public static void main(String args[])
+    {
+        EmailSender em=new EmailSender("esawiaburakan@gmail.com");
+        em.sendEmail("hhhhh","hi");
     }
 }

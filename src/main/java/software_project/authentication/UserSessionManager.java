@@ -4,7 +4,6 @@ import software_project.helper.UserSession;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UserSessionManager {
@@ -24,10 +23,9 @@ public class UserSessionManager {
         UserSessionManager.status = status;
     }
 
-    public static String createSession(String username) {
+    public static String createSession() {
         String sessionId = generateSessionId();
         activeSessions.add(sessionId);
-       // Main.logger.log(Level.INFO, "Session created for user: {0}, Session ID: {1}", new Object[]{username, sessionId});
         return sessionId;
     }
 
@@ -41,12 +39,12 @@ public class UserSessionManager {
 
     public static void invalidateSession(String sessionId) {
         activeSessions.remove(sessionId);
-        setStatus("Session invalidated for Session ID:" + sessionId);
+       logger.info("Session invalidated for Session ID: " + sessionId);
     }
 
     public static void logoutUser() {
         UserSessionManager.invalidateSession(UserSession.getSessionId());
         UserSession.setSessionId(null);
-        setStatus("Logged out");
+        logger.info("Logged out");
     }
 }

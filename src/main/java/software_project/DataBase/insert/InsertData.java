@@ -1,7 +1,6 @@
 package software_project.DataBase.insert;
 
-import software_project.DataBase.DB_Connection;
-import software_project.DataBase.retrieve.retrieve;
+import software_project.DataBase.retrieve.Retrieve;
 import software_project.EventManagement.Event;
 import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
@@ -11,18 +10,16 @@ import software_project.Vendor.VendorService;
 import software_project.helper.Generator;
 
 import java.sql.*;
-import java.util.Arrays;
-import java.util.List;
 
-public class insertData {
+public class InsertData {
     private String status;
-    private Connection conn;
+    private final Connection conn;
 
-    retrieve retrive;
+    Retrieve retrieve;
 
-    public insertData(Connection conn) {
+    public InsertData(Connection conn) {
         this.conn = conn;
-        retrive = new retrieve(conn);
+        retrieve = new Retrieve(conn);
     }
 
     public String getStatus() {
@@ -33,7 +30,7 @@ public class insertData {
         this.status = status;
     }
 
-    public boolean insertUser(User user) {
+    public void insertUser(User user) {
 
         try {
             conn.setAutoCommit(false);
@@ -43,12 +40,10 @@ public class insertData {
             preparedStmt.execute();
             setStatus("User was inserted successfully");
             conn.commit();
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
             setStatus("Couldn't insert user");
 
-            return false;
         }
 
     }
@@ -71,15 +66,16 @@ public class insertData {
 
     }
 
-    public boolean insertEventService_Place(EventService es) {
+    public boolean insertEventServicePlace(EventService es) {
         try {
             conn.setAutoCommit(false);
             String query = "insert into \"Place_EventServices\" values (?, ?);";
-            PreparedStatement preparedStmt = conn.prepareStatement(query);
-            preparedStmt.setInt(1,retrive.retriveplace(es.getPlace()).getId());
-            preparedStmt.setInt(2,retrive.retriveeventid(es.getTitle()));
+            try (PreparedStatement preparedStmt = conn.prepareStatement(query)) {
+                preparedStmt.setInt(1, retrieve.retriveplace(es.getPlace()).getId());
+                preparedStmt.setInt(2, retrieve.retriveeventid(es.getTitle()));
 
-            preparedStmt.execute();
+                preparedStmt.execute();
+            }
             setStatus("Event_Place added successfully");
             conn.commit();
             return true;
@@ -117,11 +113,12 @@ public class insertData {
             conn.setAutoCommit(false);
             String query = "insert into \"Vendor_NotAvailable\" (\"Vendor_UN\",\"Date\" , \"Time\") values (?,?,?);";
             for(String s: ee.getVendors()) {
-                PreparedStatement preparedStmt2 = conn.prepareStatement(query);
-                preparedStmt2.setString(1,s);
-                preparedStmt2.setString(2,ee.getDate());
-                preparedStmt2.setString(3,ee.getTime());
-                preparedStmt2.execute();
+                try (PreparedStatement preparedStmt2 = conn.prepareStatement(query)) {
+                    preparedStmt2.setString(1, s);
+                    preparedStmt2.setString(2, ee.getDate());
+                    preparedStmt2.setString(3, ee.getTime());
+                    preparedStmt2.execute();
+                }
                 conn.commit();
                 conn.setAutoCommit(false);
             }
@@ -130,6 +127,8 @@ public class insertData {
 
 
         }catch (Exception e){
+
+            e.printStackTrace();
 
         }
     }
@@ -149,7 +148,7 @@ public class insertData {
             conn.commit();
             conn.setAutoCommit(false);
 
-            int id = retrieve.retriveeventIID(conn);
+            int id = software_project.DataBase.retrieve.Retrieve.retriveeventIID(conn);
 
             for(String s: e.getVendors()) {
                 PreparedStatement preparedStmt2 = conn.prepareStatement(query4);
@@ -176,10 +175,11 @@ public class insertData {
 
             }
 
-            PreparedStatement preparedStmt5 = conn.prepareStatement(query5);
-            preparedStmt5.setString(1,e.getUsername());
-            preparedStmt5.setInt(2,id);
-            preparedStmt5.execute();
+            try (PreparedStatement preparedStmt5 = conn.prepareStatement(query5)) {
+                preparedStmt5.setString(1, e.getUsername());
+                preparedStmt5.setInt(2, id);
+                preparedStmt5.execute();
+            }
             conn.commit();
             conn.setAutoCommit(false);
 
@@ -200,15 +200,16 @@ public class insertData {
         try {
             conn.setAutoCommit(false);//                                       avgRating
             String query = "insert into \"Vendor_Service\" (\"Vendor_User_Name\",\"Type\",\"Description\",\"Price\",\"Availability\",\"Average_Rating\") values (?, CAST(? AS \"Vendor_Type\"), ?, ?, ?, ?);";//service id is serial
-            PreparedStatement preparedStmt = conn.prepareStatement(query);
-            preparedStmt.setString(1,vs.getVendorUserName());
-            preparedStmt.setString(2,vs.getServiceType());
-            preparedStmt.setString(3,vs.getServiceDescription());
-            preparedStmt.setString(4,vs.getServicePrice());
-            preparedStmt.setString(5,vs.getServiceAvailability());
-            preparedStmt.setInt(6,vs.getAverageRating());
+            try (PreparedStatement preparedStmt = conn.prepareStatement(query)) {
+                preparedStmt.setString(1, vs.getVendorUserName());
+                preparedStmt.setString(2, vs.getServiceType());
+                preparedStmt.setString(3, vs.getServiceDescription());
+                preparedStmt.setString(4, vs.getServicePrice());
+                preparedStmt.setString(5, vs.getServiceAvailability());
+                preparedStmt.setInt(6, vs.getAverageRating());
 
-            preparedStmt.execute();
+                preparedStmt.execute();
+            }
             setStatus("service confirmed to vendor successfully");
             conn.commit();
             return true;
@@ -218,23 +219,23 @@ public class insertData {
         }
     }
 
-    public boolean insertVendorReview(VendorReview vr) {
+    public boolean insertVendorReview(VendorReview vr) throws SQLException {
         Statement stmt = null;
         try {
             stmt = conn.createStatement();
             conn.setAutoCommit(false);
             String query = "insert into \"Vendor_Review\" (\"Vendor_User_Name\",\"Customer_User_Name\",\"Rating\",\"FeedBack_Text\") values (?, ?, ?, ?);";//review id is serial
-            PreparedStatement preparedStmt = conn.prepareStatement(query);
-            preparedStmt.setString(1,vr.getVendorUserName());
-            preparedStmt.setString(2,vr.getCustomerUserName());
-            preparedStmt.setString(3,vr.getRating());
-            preparedStmt.setString(4,vr.getFeedBackText());
+            try (PreparedStatement preparedStmt = conn.prepareStatement(query)) {
+                preparedStmt.setString(1, vr.getVendorUserName());
+                preparedStmt.setString(2, vr.getCustomerUserName());
+                preparedStmt.setString(3, vr.getRating());
+                preparedStmt.setString(4, vr.getFeedBackText());
 
-            preparedStmt.execute();
+                preparedStmt.execute();
+            }
 
             conn.commit();
             conn.setAutoCommit(false);
-            //return all reviews for this vendor then calculate the avg and update the avgReview in Vendor_Service table
 
             String query2 = "select \"Rating\" from \"Vendor_Review\" where \"Vendor_User_Name\" = \'" + vr.getVendorUserName() + "\' ;";
 
@@ -246,7 +247,11 @@ public class insertData {
                 ratingsCount++;
             }
 
-            avgRating /= ratingsCount;
+            if(ratingsCount!=0)
+            {
+                avgRating /= ratingsCount;
+            }
+
 
             String query3 = "update \"Vendor_Service\" set \"Average_Rating\" = \'" + avgRating + "\' where \"Vendor_User_Name\" = \'" + vr.getVendorUserName() + "\';";
             stmt.executeUpdate(query3);
@@ -262,6 +267,13 @@ public class insertData {
             e.printStackTrace();
 
             return false;
+        }
+        finally {
+            if(stmt!=null)
+            {
+                stmt.close();
+
+            }
         }
     }
 

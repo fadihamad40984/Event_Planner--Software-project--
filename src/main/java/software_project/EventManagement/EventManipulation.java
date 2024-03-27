@@ -1,9 +1,9 @@
 package software_project.EventManagement;
 
-import software_project.DataBase.delete.deleteEvent;
-import software_project.DataBase.insert.insertData;
-import software_project.DataBase.update.editEvent;
-import software_project.helper.validation;
+import software_project.DataBase.delete.DeleteEvent;
+import software_project.DataBase.insert.InsertData;
+import software_project.DataBase.update.EditEvent;
+import software_project.helper.Validation;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,14 +11,14 @@ import java.sql.SQLException;
 public class EventManipulation {
     public static final String VALID = "Valid";
     private String status;
-    private final insertData insertES;
+    private final InsertData insertES;
 
-    private final editEvent editEvent;
-    private final deleteEvent delete;
+    private final EditEvent editEvent;
+    private final DeleteEvent delete;
     public EventManipulation(Connection con){
-        insertES = new insertData(con);
-        delete = new deleteEvent(con);
-        editEvent = new editEvent(con);
+        insertES = new InsertData(con);
+        delete = new DeleteEvent(con);
+        editEvent = new EditEvent(con);
     }
 
     public String getStatus() {
@@ -29,26 +29,26 @@ public class EventManipulation {
         this.status = status;
     }
 
-    public void addEventService(EventService eventService) throws SQLException {
-        String st = validation.eventServiceValidationTest(eventService);
+    public void addEventService(EventService eventService)  {
+        String st = Validation.eventServiceValidationTest(eventService);
         setStatus(st);
         if(getStatus().equals(VALID)) {
             insertES.insertEventService(eventService);
-            insertES.insertEventService_Place(eventService);
+            insertES.insertEventServicePlace(eventService);
             setStatus("Event added successfully");
         }
     }
 
     public void deleteEventService(EventService es) {
-        delete.delete_event(es);
+        delete.deleteEvent(es);
 
 
         setStatus(delete.getStatus());
 
     }
 
-    public void addVenue(Places place) throws SQLException {
-        String st = validation.venueServiceValidationTest(place);
+    public void addVenue(Places place)  {
+        String st = Validation.venueServiceValidationTest(place);
         setStatus(st);
         if(getStatus().equals(VALID)) {
             insertES.insertVenue(place);
@@ -58,7 +58,7 @@ public class EventManipulation {
 
 
     public void bookEvent(Event e) throws SQLException {
-        String st = validation.eventValidationTest(e);
+        String st = Validation.eventValidationTest(e);
         setStatus(st);
         if(getStatus().equals(VALID)) {
             insertES.insertEvent(e);

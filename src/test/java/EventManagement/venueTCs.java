@@ -3,9 +3,8 @@ package EventManagement;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.DataBase.DB_Connection;
+import software_project.DataBase.DBConnection;
 import software_project.EventManagement.EventManipulation;
-import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
 
 import java.sql.SQLException;
@@ -17,11 +16,11 @@ public class venueTCs {
     private EventManipulation em;
     private Places p;
     private String status;
-    private DB_Connection conn;
+    private DBConnection conn;
     @Given("I am in the adding new venues page")
     public void i_am_in_the_adding_new_venues_page() {
 
-        conn = new DB_Connection(5432,"Event_Planner","postgres","admin");
+        conn = new DBConnection(5432,"Event_Planner","postgres","admin");
         em = new EventManipulation(conn.getCon());
         p = new Places();
 

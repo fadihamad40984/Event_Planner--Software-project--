@@ -1,13 +1,12 @@
 package software_project.helper;
 
 
-import javafx.event.ActionEvent;
-import javafx.scene.control.ButtonType;
+
 import software_project.UserManagement.User;
-import software_project.authentication.UserSessionManager;
 
 
-import java.util.Optional;
+
+
 
 public class UserSession {
     private static String sessionId;

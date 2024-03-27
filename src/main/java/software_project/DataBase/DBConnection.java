@@ -3,7 +3,7 @@ package software_project.DataBase;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class DB_Connection {
+public class DBConnection {
 
     private String databaseName;
     private String username;
@@ -12,7 +12,7 @@ public class DB_Connection {
     private int port;
     private Connection con;
 
-    public DB_Connection() {
+    public DBConnection() {
         setPort(5432);
         setDatabaseName("Event_Planner");
         setUsername("postgres");
@@ -20,7 +20,7 @@ public class DB_Connection {
         setCon();
     }
 
-    public DB_Connection(int port, String databaseName, String username, String password) {
+    public DBConnection(int port, String databaseName, String username, String password) {
         setPort(port);
         setDatabaseName(databaseName);
         setUsername(username);

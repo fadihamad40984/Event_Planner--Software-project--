@@ -1,18 +1,14 @@
 package software_project.DataBase.delete;
-
 import software_project.EventManagement.EventService;
-
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 
-public class deleteEvent {
+public class DeleteEvent {
     private String status;
     private final Connection conn;
 
-    public deleteEvent(Connection conn) {
+    public DeleteEvent(Connection conn) {
         this.conn = conn;
     }
 
@@ -24,23 +20,21 @@ public class deleteEvent {
         this.status = status;
     }
 
-    public boolean delete_event(EventService ES) {
+    public void deleteEvent(EventService es) {
 
         try {
             conn.setAutoCommit(false);
             String query = "delete from \"Event_Service\" where \"Id\" = ?;";
 
             try (PreparedStatement preparedStmt = conn.prepareStatement(query)) {
-                preparedStmt.setInt(1, ES.getId());
+                preparedStmt.setInt(1, es.getId());
                 preparedStmt.execute();
             }
             setStatus("Event service deleted successfully");
             conn.commit();
-            return true;
         } catch (Exception e) {
             setStatus("Couldn't delete the event service");
 
-            return false;
         }
 
 
@@ -48,7 +42,7 @@ public class deleteEvent {
     }
 
 
-    public boolean delete_user(String username) {
+    public boolean deleteUser(String username) {
 
         try {
             conn.setAutoCommit(false);

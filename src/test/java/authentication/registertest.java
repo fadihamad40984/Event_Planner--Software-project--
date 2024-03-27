@@ -3,7 +3,7 @@ package authentication;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.DataBase.DB_Connection;
+import software_project.DataBase.DBConnection;
 import software_project.UserManagement.User;
 import software_project.authentication.Login;
 import software_project.authentication.Register;
@@ -17,11 +17,11 @@ public class registertest {
 
     private Register userregister;
     private User user;
-   private DB_Connection conn;
+   private DBConnection conn;
     private String status;
     @When("user is in sign-up page")
     public void user_is_in_sign_up_page() {
-        conn = new DB_Connection(5432,"Event_Planner","postgres","admin");
+        conn = new DBConnection(5432,"Event_Planner","postgres","admin");
         userregister = new Register(conn.getCon());
         user= new User();
     }
