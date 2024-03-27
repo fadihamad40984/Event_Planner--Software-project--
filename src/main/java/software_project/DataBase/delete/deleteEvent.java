@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 
 public class deleteEvent {
     private String status;
-    private Connection conn;
+    private final Connection conn;
 
     public deleteEvent(Connection conn) {
         this.conn = conn;
