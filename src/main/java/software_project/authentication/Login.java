@@ -11,7 +11,7 @@ public class Login {
     private String status;
     private retrieveuser usersRetriever;
 
-    public String user_type;
+    public String userType;
     public Login(Connection connection) {
         usersRetriever = new retrieveuser(connection);
     }
@@ -31,7 +31,7 @@ public class Login {
             User tmpUser = allUsers.get(0);
             if (tmpUser.getPassword().equals(password)) {
                 setStatus("Valid username and password");
-                user_type = tmpUser.getUserType();
+                userType = tmpUser.getUserType();
                 UserSession.setCurrentUser(tmpUser);
                 UserSession.setSessionId(UserSessionManager.createSession(username));
                 return true;

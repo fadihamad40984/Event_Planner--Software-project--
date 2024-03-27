@@ -109,7 +109,7 @@ public class Main {
             consoleHandler.setLevel(Level.INFO);
             consoleHandler.setFormatter(new SimpleFormatter() {
                 @Override
-                public synchronized String format(java.util.logging.LogRecord logRecord) {
+                public synchronized String format(LogRecord logRecord) {
                     return logRecord.getMessage() + "\n";
                 }
             });
@@ -183,7 +183,7 @@ public class Main {
             userType = reader.readLine();
             logger.info("Choose Image : ");
             imagePath = chooseImagePath();
-            logger.info("\n"+imagePath);
+            logger.info(String.format("%n%s", imagePath));
 
 
 
@@ -247,26 +247,26 @@ public class Main {
             if(b)
             {
                 logger.info("Login Successfully\n");
-                if(Objects.equals(login.user_type, ADMIN))
+                if(Objects.equals(login.userType, ADMIN))
                 {
                     adminpage();
                     return;
 
                 }
-                else if(Objects.equals(login.user_type, "service provider"))
+                else if(Objects.equals(login.userType, "service provider"))
                 {
                     serviceproviderpage();
                     return;
 
                 }
-                else if(Objects.equals(login.user_type, "customer"))
+                else if(Objects.equals(login.userType, "customer"))
                 {
                     customerpage();
                     return;
 
                 }
 
-                else if(Objects.equals(login.user_type, "vendor"))
+                else if(Objects.equals(login.userType, "vendor"))
                 {
                     vendorpage();
                     return;
@@ -693,7 +693,7 @@ public class Main {
         int choice;
         int year;
         int month;
-        int day;
+        int day = 0;
         String date;
 
         String chosenTime;
@@ -754,44 +754,24 @@ public class Main {
 
 
                 while(true) {
-                    while (true) {
+                    boolean validDay = false;
+
+                    while (!validDay) {
                         logger.info("Enter Day You Want To Book The Event At: ");
                         day = scanner.nextInt();
+
                         if (day >= 1) {
-                            if (month == 2) {
-
-                                if (year % 4 == 0) {
-                                    if (day > 29) {
-                                        continue;
-                                    }
-
-                                    break;
-
-                                } else {
-                                    if (day > 28) {
-                                        continue;
-                                    }
-                                    break;
-
-                                }
-                            } else if (month % 2 == 0) {
-                                if (day > 30) {
-                                    continue;
-                                }
-                                break;
-                            } else if (month % 2 != 0) {
-                                if (day > 31) {
-                                    continue;
-                                }
-                                break;
+                            if ((month == 2 && ((year % 4 == 0 && day <= 29) || (day <= 28))) ||
+                                    ((month % 2 == 0 && day <= 30) || (month % 2 != 0 && day <= 31))) {
+                                validDay = true; // Day is valid, exit loop
                             } else {
-                                break;
+                                logger.info("Invalid day for the selected month, please enter again.");
                             }
-
-
+                        } else {
+                            logger.info("Day should be greater than or equal to 1.");
                         }
-
                     }
+
 
                     date = Generator.generateDateString(day, month, year);
 
@@ -844,7 +824,9 @@ public class Main {
 
 
                         times.add(starttime);
-                        logger.info("Time " + (++count) + ": " + starttime);
+                        logger.info(String.format("Time %d: %s", ++count, starttime));
+
+
                         f = true;
                         starttime = ((abs(Generator.getTimeDifference(starttime, TIME)) / 60) + Integer.parseInt(allEvent.get(choice - 1).getBookingTime())) + ":00";
 
@@ -931,41 +913,33 @@ public class Main {
 
                 }
 
+                boolean chooseAnotherVendor = true;
 
-
-                while(true) {
-
-
-                    boolean cont = false;
-
-
+                while (chooseAnotherVendor) {
                     logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
                             NUMBER, "Vendor_User_Name", DESCRIPTION, "Price/H", "Type", "Rating"));
 
                     List<String> printedVendors = new ArrayList<>();
                     List<Integer> printedPrice = new ArrayList<>();
 
-
                     int counterservice = 0;
                     for (VendorService vs : allVendorServices()) {
-                        cont = false;
+                        boolean skipVendor = false;
                         for (AVendorBooking vb : allNotAvailableVendors()) {
-                            if ((Objects.equals(vs.getVendorUserName(), vb.getVendor_user_name())) && (date.equals(vb.getBooking_date())) && (Objects.equals(chosenTime, vb.getStart_time()))) {
-
-                                cont = true;
+                            if ((Objects.equals(vs.getVendorUserName(), vb.getVendor_user_name())) &&
+                                    (date.equals(vb.getBooking_date())) &&
+                                    (Objects.equals(chosenTime, vb.getStart_time()))) {
+                                skipVendor = true;
                                 break;
-
                             }
                         }
 
-                        if(!cont) {
+                        if (!skipVendor) {
                             String description = vs.getServiceDescription().replace("\n", " ");
                             StringBuilder rate = new StringBuilder();
                             for (int i = 0; i < vs.getAverageRating(); i++) {
                                 rate.append("*");
                             }
-
-
 
                             if (Integer.parseInt(vs.getServicePrice()) <= balance) {
                                 printedVendors.add(vs.getVendorUserName());
@@ -973,59 +947,39 @@ public class Main {
                                 logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
                                         ++counterservice, vs.getVendorUserName(), description,
                                         vs.getServicePrice(), vs.getServiceType(), rate));
-                            } else
-                            {
+                            } else {
                                 counterservice++;
                             }
-
-
-
                         }
-
                     }
 
-                    if(printedVendors.isEmpty())
-                    {
+                    if (printedVendors.isEmpty()) {
                         logger.severe("No Vendor Matching With Remaining Balance");
                         break;
-
                     }
 
-                    boolean f = false;
+                    boolean validInput = false;
                     int chooseVendor;
-                    while (true) {
+                    while (!validInput) {
                         logger.info("Choose Vendor : ");
                         chooseVendor = scanner.nextInt();
                         if (chooseVendor > 0 && chooseVendor <= counterservice) {
-                            balance -= printedPrice.get(chooseVendor - 1) * Integer.parseInt(allEvent.get(choice-1).getBookingTime());
+                            balance -= printedPrice.get(chooseVendor - 1) * Integer.parseInt(allEvent.get(choice - 1).getBookingTime());
                             vendors.add(printedVendors.get(chooseVendor - 1));
                             logger.info("Do You Want Choose Another Vendor : \s" +
                                     YES +
                                     NO);
-                            int choise;
-                            choise = scanner.nextInt();
-                            if (choise == 1) {
-                                f=true;
-                                break;
-                            } else
-                                break;
-
+                            int choiceInput = scanner.nextInt();
+                            if (choiceInput == 1) {
+                                validInput = true; // Choose another vendor
+                            } else {
+                                chooseAnotherVendor = false; // Do not choose another vendor
+                                validInput = true;
+                            }
                         } else {
                             logger.severe(INVALID_INPUT);
-
                         }
                     }
-
-                    if(!f)
-                    {
-                        break;
-
-                    }
-
-
-
-
-
                 }
 
 
@@ -1046,7 +1000,7 @@ public class Main {
                 eventManipulation.bookEvent(accpetevent);
 
                 logger.severe(eventManipulation.getStatus());
-                logger.severe("Remaining Balance is : " + balance + "\n");
+                logger.severe(String.format("Remaining Balance is: %s%n", balance));
 
 
 
@@ -1149,178 +1103,159 @@ public class Main {
 
     private static void serviceproviderpage() throws IOException, SQLException {
         logger.info("***************************ServiceProvider Page***************************\n");
-        int ch;
-        boolean continueloopbig = true;
-        while(continueloopbig) {
-            logger.info("""
-                    1- Event Service Management
-                    2- Venue Management
-                    3- Check Requests
-                    4- Log out""");
-            ch = scanner.nextInt();
-            if (ch == 1) {
-                logger.info("***************************Event Service Management***************************\n");
 
-                boolean continueloop = true;
-                while (continueloop) {
-                    int che;
-                    logger.info("1- Add EventService\s" +
-                            "2- Edit EventService" +
-                            "3- Delete EventService");
-                    che = scanner.nextInt();
-                    if (che == 1) {
-                        addeventservice();
-                        return;
+        boolean continueLoop = true;
+        while (continueLoop) {
+            int choice = displayServiceProviderOptions();
 
-                    } else if (che == 2) {
-                        editeventservice();
-                        return;
-
-                    } else if (che == 3) {
-                        deleteeventservice();
-                        return;
-
-                    }
-
-                    else if(che==4)
-                    {
-                        menu();
-                        return;
-                    }
-                    else {
-                        logger.info(YOU_SHOULD_CHOOSE_NUMBER_ABOVE);
-                        logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
-                        String userInput = reader.readLine();
-                        continueloop = userInput.equals("yes");
-                    }
-
+            switch (choice) {
+                case 1 -> handleEventServiceManagement();
+                case 2 -> handleVenueManagement();
+                case 3 -> requestsPage();
+                case 4 -> {
+                    menu();
+                    return;
                 }
-
-
-            } else if (ch == 2) {
-                logger.info("***************************Venue Management***************************\n");
-
-                boolean continueloop = true;
-                while (continueloop) {
-                    int che;
-                    logger.info("1- Add Venue\n");
-                    che = scanner.nextInt();
-                    if (che == 1) {
-                        addvenu();
-                        return;
-
-                    } else {
-                        logger.info(YOU_SHOULD_CHOOSE_NUMBER_ABOVE);
-                        logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
-                        String userInput = reader.readLine();
-                        continueloop = userInput.equals("yes");
-                    }
-
-                }
-
+                default -> continueLoop = promptToContinue();
             }
-            else if(ch==3)
-            {
-                requestsPage();
-            }
-
-
-            else {
-                logger.info(YOU_SHOULD_CHOOSE_NUMBER_ABOVE);
-                logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
-                String userInput = reader.readLine();
-                continueloopbig = userInput.equals("yes");
-            }
-
         }
-
     }
 
+    private static int displayServiceProviderOptions()  {
+        logger.info("""
+            1- Event Service Management
+            2- Venue Management
+            3- Check Requests
+            4- Log out""");
+        return scanner.nextInt();
+    }
+
+    private static void handleEventServiceManagement() throws IOException, SQLException {
+        logger.info("***************************Event Service Management***************************\n");
+
+        boolean continueLoop = true;
+        while (continueLoop) {
+            int choice = displayEventServiceManagementOptions();
+
+            switch (choice) {
+                case 1 -> addeventservice();
+                case 2 -> editeventservice();
+                case 3 -> deleteeventservice();
+                case 4 -> {
+                    menu();
+                    return;
+                }
+                default -> {
+                    logger.info(YOU_SHOULD_CHOOSE_NUMBER_ABOVE);
+                    continueLoop = promptToContinue();
+                }
+            }
+        }
+    }
+
+    private static int displayEventServiceManagementOptions()  {
+        logger.info("1- Add EventService\s" +
+                "2- Edit EventService" +
+                "3- Delete EventService");
+        return scanner.nextInt();
+    }
+
+    private static void handleVenueManagement() throws IOException, SQLException {
+        logger.info("***************************Venue Management***************************\n");
+
+        boolean continueLoop = true;
+        while (continueLoop) {
+            logger.info("1- Add Venue\n");
+            int choice = scanner.nextInt();
+            if (choice == 1) {
+                addvenu();
+                return;
+            } else {
+                logger.info(YOU_SHOULD_CHOOSE_NUMBER_ABOVE);
+                continueLoop = promptToContinue();
+            }
+        }
+    }
+
+    private static boolean promptToContinue() throws IOException {
+        logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
+        String userInput = reader.readLine();
+        return userInput.equals("yes");
+    }
     private static void requestsPage() throws SQLException, IOException {
         logger.info("***************************Requests Page***************************\n");
-        List<Event> events;
-        List<String> status;
-        status = selectAllStatus();
-        events = selectAllRequests();
+
+        List<Event> events = selectAllRequests();
+        List<String> status = selectAllStatus();
+
         logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
                 NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE, STATUS));
 
+        displayEvents(events, status);
+
+        handleEventUpdates(events);
+
+        returnToMainPage();
+    }
+
+    private static void displayEvents(List<Event> events, List<String> status) {
         int counter = 0;
-        for(Event e : events)
-        {
+        for (Event e : events) {
             logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
                     ++counter, e.getDate(), e.getTime(),
-                    e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));
+                    e.getDescription(), e.getAttendeeCount(), e.getBalance(), status.get(counter - 1)));
         }
+    }
 
+    private static void handleEventUpdates(List<Event> events) {
+        boolean continueLoop = true;
 
-
-        while(true)
-        {
+        while (continueLoop) {
             logger.info("Enter Event Number You Want To Accept/Refuse it : ");
 
-            int ch1;
-            ch1=scanner.nextInt();
-            if(ch1>0 && ch1<=counter)
-            {
+            int eventNumber = scanner.nextInt();
+            if (eventNumber > 0 && eventNumber <= events.size()) {
                 logger.info("Status\s" +
                         "1- Accept" +
                         "2- Refuse");
-                int ch2;
-                ch2 = scanner.nextInt();
-                if (ch2==1)
-                {
-                    updateStatus("accept",events.get(ch1-1).getId());
-                    deleteEvent(events.get(ch1-1).getId());
-
+                int statusChoice = scanner.nextInt();
+                if (statusChoice == 1) {
+                    updateAndDeleteEvent("accept", events.get(eventNumber - 1).getId(), events);
+                } else if (statusChoice == 2) {
+                    updateStatus("refuse", events.get(eventNumber - 1).getId());
+                } else {
+                    continueLoop = false; // Terminate loop
                 }
-                else if(ch2==2)
-                {
-                    updateStatus("refuse",events.get(ch1-1).getId());
-
-                }
-
-                else{
-                    break;
-                }
-
-                break;
-            }
-
-            else{
-
+            } else {
                 logger.info(INVALID_INPUT);
-
             }
         }
+    }
 
+    private static void updateAndDeleteEvent(String status, int eventId, List<Event> events) {
+        updateStatus(status, eventId);
+        deleteEvent(eventId);
+        // Remove the event from the list to prevent further processing
+        events.removeIf(event -> event.getId() == eventId);
+    }
 
+    private static void returnToMainPage() throws SQLException, IOException {
         logger.info("Do You Want To Return To Main Page : \s" +
                 YES +
                 NO);
 
-        while (true)
-        {
-            int ch;
-            ch = scanner.nextInt();
-            if(ch==1)
-            {
+        while (true) {
+            int ch = scanner.nextInt();
+            if (ch == 1) {
                 serviceproviderpage();
                 return;
-            }
-            else if(ch==2)
-            {
+            } else if (ch == 2) {
                 exit(0);
-            }
-            else{
+            } else {
                 logger.info("Enter Valid Input\n");
             }
-
         }
-
-
     }
-
     private static List<Event> selectAllRequests() throws SQLException , NullPointerException {
         Statement stmt = null;
         List<Event> events = new ArrayList<>();
@@ -1467,7 +1402,7 @@ public class Main {
         place.setName(name);
         place.setCapacity(capacity);
         place.setAmenities(amenities);
-        eventManipulation.addvenue(place);
+        eventManipulation.addVenue(place);
         logger.info(eventManipulation.getStatus());
         serviceproviderpage();
 

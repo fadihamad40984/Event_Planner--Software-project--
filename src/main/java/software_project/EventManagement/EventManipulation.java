@@ -9,11 +9,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class EventManipulation {
+    public static final String VALID = "Valid";
     private String status;
     private final insertData insertES;
 
-    private editEvent editEvent;
-    private deleteEvent delete;
+    private final editEvent editEvent;
+    private final deleteEvent delete;
     public EventManipulation(Connection con){
         insertES = new insertData(con);
         delete = new deleteEvent(con);
@@ -31,7 +32,7 @@ public class EventManipulation {
     public void addEventService(EventService eventService) throws SQLException {
         String st = validation.eventServiceValidationTest(eventService);
         setStatus(st);
-        if(getStatus().equals("Valid")) {
+        if(getStatus().equals(VALID)) {
             insertES.insertEventService(eventService);
             insertES.insertEventService_Place(eventService);
             setStatus("Event added successfully");
@@ -39,17 +40,17 @@ public class EventManipulation {
     }
 
     public void deleteEventService(EventService es) {
-        boolean b = delete.delete_event(es);
+        delete.delete_event(es);
 
 
         setStatus(delete.getStatus());
 
     }
 
-    public void addvenue(Places place) throws SQLException {
+    public void addVenue(Places place) throws SQLException {
         String st = validation.venueServiceValidationTest(place);
         setStatus(st);
-        if(getStatus().equals("Valid")) {
+        if(getStatus().equals(VALID)) {
             insertES.insertVenue(place);
             setStatus("Venue added successfully");
         }
@@ -59,7 +60,7 @@ public class EventManipulation {
     public void bookEvent(Event e) throws SQLException {
         String st = validation.eventValidationTest(e);
         setStatus(st);
-        if(getStatus().equals("Valid")) {
+        if(getStatus().equals(VALID)) {
             insertES.insertEvent(e);
             insertES.insertNotAvailableVendor(e);
 
@@ -71,9 +72,9 @@ public class EventManipulation {
     public void editEventService(EventService eventService) {
 
 
-            editEvent.updateEventService(eventService);
+        editEvent.updateEventService(eventService);
 
-            setStatus("Event updated successfully");
+        setStatus("Event updated successfully");
 
 
     }
