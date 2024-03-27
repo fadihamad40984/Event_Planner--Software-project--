@@ -1,6 +1,7 @@
 package software_project;
 
 
+import org.jetbrains.annotations.NotNull;
 import software_project.DataBase.DB_Connection;
 import software_project.DataBase.retrieve.retrieve;
 import software_project.EventManagement.Event;
@@ -34,18 +35,33 @@ import java.util.logging.*;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.log;
-import static java.lang.String.format;
+import static java.lang.String.*;
 import static java.lang.System.exit;
 
 
 public class Main {
-private static final JFileChooser fileChooser = new JFileChooser();
+    private static final JFileChooser fileChooser = new JFileChooser();
 
     private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
    private static final Scanner scanner = new Scanner(System.in);
     private static final DB_Connection conn = new DB_Connection();
     private static final Logger logger = Logger.getLogger(Main.class.getName());
+    public static final String STATUS = "Status";
+    public static final String ADMIN = "admin";
+    public static final String DO_YOU_WANT_TO_CONTINUE_YES_NO = "Do you want to continue? (yes/no)";
+    public static final String NUMBER = "Number";
+    public static final String DESCRIPTION = "Description";
+    public static final String ATTENDEE_COUNT = "Attendee_Count";
+    public static final String EVENT_ID = "Event_id";
+    public static final String SELECT_FROM_EVENT_WHERE_EVENT_ID = "select * from \"Event\" where \"Event_id\" = ";
+    public static final String EVENT_SERVICE_ID = "EventService_id";
+    public static final String BALANCE = "Balance";
+    public static final String YES = "1- Yes\n";
+    public static final String NO = "2- No";
+    public static final String INVALID_INPUT = "Invalid Input\n";
+    public static final String EVENT_ID1 = "Event Id";
+
     static {
 
         System.setProperty("mail.debug", "false");
@@ -119,8 +135,13 @@ private static final JFileChooser fileChooser = new JFileChooser();
         else if(ch==2)
             signuppage();
         else
-            logger.severe("You should choose number above");
+            logger.severe(getYouShouldChooseNumberAbove());
 
+    }
+
+    @NotNull
+    private static String getYouShouldChooseNumberAbove() {
+        return "You should choose number above";
     }
 
     private static void signuppage() throws IOException, SQLException {
@@ -220,7 +241,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
             if(b)
             {
                 logger.info("Login Successfully\n");
-                if(Objects.equals(login.user_type, "admin"))
+                if(Objects.equals(login.user_type, ADMIN))
                 {
                     adminpage();
                     return;
@@ -250,7 +271,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
             else
             {
                 logger.severe(login.getStatus());
-                logger.info("Do you want to continue? (yes/no)");
+                logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
                 String userInput = reader.readLine();
                 continueLoop = userInput.equals("yes");
             }
@@ -275,7 +296,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 events = ShowUpcomingEventsForParticularVendor(UserSession.getCurrentUser().getUsername());
 
                 logger.info(format("%-15s%-15s%-15s%-30s%-15s%n",
-                        "Number", "Date", "Time", "Description", "Attendee_Count"));
+                        NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT));
 
                 int counter = 0;
                 for(Event e : events)
@@ -292,7 +313,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 menu();
             else
             {
-                logger.info("Do you want to continue? (yes/no)");
+                logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
                 String userInput = reader.readLine();
                 continueloop = userInput.equals("yes");
             }
@@ -311,23 +332,23 @@ private static final JFileChooser fileChooser = new JFileChooser();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
             {
-                EventsIDs.add(rs.getInt("Event_id"));
+                EventsIDs.add(rs.getInt(EVENT_ID));
             }
 
             for(int i=0 ; i < EventsIDs.size();i++)
             {
-                String query2 = "select * from \"Event\" where \"Event_id\" = "+EventsIDs.get(i)+";";
+                String query2 = SELECT_FROM_EVENT_WHERE_EVENT_ID +EventsIDs.get(i)+";";
                 ResultSet rs1 = stmt.executeQuery(query2);
                 while(rs1.next())
                 {
                     Event event = new Event(conn.getCon());
-                    event.setId(rs1.getInt("Event_id"));
+                    event.setId(rs1.getInt(EVENT_ID));
                     event.setDate(rs1.getString("Date"));
-                    event.setDescription(rs1.getString("Description"));
+                    event.setDescription(rs1.getString(DESCRIPTION));
                     event.setTime(rs1.getString("Time"));
-                    event.setAttendeeCount(rs1.getString("Attendee_Count"));
-                    event.setServiceId(rs1.getInt("EventService_id"));
-                    event.setBalance(rs1.getString("Balance"));
+                    event.setAttendeeCount(rs1.getString(ATTENDEE_COUNT));
+                    event.setServiceId(rs1.getInt(EVENT_SERVICE_ID));
+                    event.setBalance(rs1.getString(BALANCE));
                     event.setUsername(username);
                     events.add(event);
 
@@ -373,7 +394,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 menu();
             else
             {
-                logger.info("Do you want to continue? (yes/no)");
+                logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
                 String userInput = reader.readLine();
                 continueloop = userInput.equals("yes");
             }
@@ -386,13 +407,12 @@ private static final JFileChooser fileChooser = new JFileChooser();
     private static void ShowCalendarPage() throws SQLException, IOException {  logger.info("Choose The Event You Want To Cancel :");
         List<Event> events = new ArrayList<>();
         events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
-        logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
-                "Number", "Date", "Time", "Description", "Attendee_Count", "Balance"));
+        logger.info(getFormatted());
 
         int counter = 0;
         for(Event e : events)
         {
-            logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
+            logger.info(format(getString(),
                     ++counter, e.getDate(), e.getTime(),
                     e.getDescription(), e.getAttendeeCount(), e.getBalance()));
         }
@@ -410,26 +430,30 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
     }
 
+    @NotNull
+    private static String getString() {
+        return "%-15s%-15s%-15s%-30s%-15s%-15s%n";
+    }
+
     private static void CheckRequestPage() throws SQLException, IOException {
 
-        List<Event> events = new ArrayList<>();
-        List<String> status = new ArrayList<>();
+        List<Event> events;
+       
+        List<String> status;
+        
         status = SelectStatusOfParticularUserName(UserSession.getCurrentUser().getUsername());
         events = SelectAllRequestOfParticualrUserName(UserSession.getCurrentUser().getUsername());
-        logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
-                "Number", "Date", "Time", "Description", "Attendee_Count", "Balance" , "Status"));
+        logger.info(getFormat());
 
         int counter = 0;
         for(Event e : events)
         {
-            logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
-                    ++counter, e.getDate(), e.getTime(),
-                    e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));
+            logger.info(format(getFormat1(), ++counter, e.getDate(), e.getTime(), e.getDescription(), e.getAttendeeCount(), e.getBalance(), status.get(counter - 1)));
         }
 
         logger.info("Do You Want To Return To Main Page : \n" +
-                    "1- Yes\n" +
-                    "2- No");
+                YES +
+                NO);
 
         while (true)
         {
@@ -453,18 +477,21 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
     }
 
+    @NotNull
+    private static String getFormat1() {
+        return "%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n";
+    }
+
     private static void CancelEventPage() {
 
         logger.info("Choose The Event You Want To Cancel :");
-       List<Event> events = new ArrayList<>();
-        events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
-        logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
-                "Number", "Date", "Time", "Description", "Attendee_Count", "Balance"));
+        List<Event> events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
+        logger.info(getFormatted());
 
       int counter = 0;
         for(Event e : events)
         {
-              logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%n",
+              logger.info(format(getString(),
                 ++counter, e.getDate(), e.getTime(),
                 e.getDescription(), e.getAttendeeCount(), e.getBalance()));
         }
@@ -483,7 +510,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
             }
 
             else{
-                logger.severe("Invalid Input\n");
+                logger.severe(INVALID_INPUT);
                 logger.info("Enter Another Choice\n");
 
             }
@@ -494,6 +521,11 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
 
 
+    }
+
+    private static String getFormatted() {
+        return format(getString(),
+                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE);
     }
 
     private static void sendRequest(Event e) {
@@ -538,10 +570,11 @@ private static final JFileChooser fileChooser = new JFileChooser();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
             {
-                statuses.add(rs.getString("Status"));
+                statuses.add(rs.getString(STATUS));
             }
         }catch (Exception e){
 
+            logger.info(e.getMessage());
         }
 
         return statuses;
@@ -559,23 +592,23 @@ private static final JFileChooser fileChooser = new JFileChooser();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
             {
-                EventsIDs.add(rs.getInt("Event Id"));
+                EventsIDs.add(rs.getInt(EVENT_ID1));
             }
 
             for(int i=0 ; i < EventsIDs.size();i++)
             {
-                String query2 = "select * from \"Event\" where \"Event_id\" = "+EventsIDs.get(i)+";";
+                String query2 = SELECT_FROM_EVENT_WHERE_EVENT_ID+EventsIDs.get(i)+";";
                 ResultSet rs1 = stmt.executeQuery(query2);
                 while(rs1.next())
                 {
                     Event event = new Event(conn.getCon());
-                    event.setId(rs1.getInt("Event_id"));
+                    event.setId(rs1.getInt(EVENT_ID));
                     event.setDate(rs1.getString("Date"));
-                    event.setDescription(rs1.getString("Description"));
+                    event.setDescription(rs1.getString(DESCRIPTION));
                     event.setTime(rs1.getString("Time"));
-                    event.setAttendeeCount(rs1.getString("Attendee_Count"));
-                    event.setServiceId(rs1.getInt("EventService_id"));
-                    event.setBalance(rs1.getString("Balance"));
+                    event.setAttendeeCount(rs1.getString(ATTENDEE_COUNT));
+                    event.setServiceId(rs1.getInt(EVENT_SERVICE_ID));
+                    event.setBalance(rs1.getString(BALANCE));
                     event.setUsername(username);
                     events.add(event);
 
@@ -603,7 +636,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
             {
-               EventsIDs.add(rs.getInt("Event Id"));
+               EventsIDs.add(rs.getInt(EVENT_ID1));
             }
 
             for(int i=0 ; i < EventsIDs.size();i++)
@@ -645,18 +678,18 @@ private static final JFileChooser fileChooser = new JFileChooser();
         int month;
         int day;
         String date;
-        String time;
+
         String ChosenTime;
         String Description;
         int AttendeeCount;
-        String Username;
+
         List<String> GuestList = new ArrayList<>();
         List<String> images = new ArrayList<>();
         List<String> Vendors = new ArrayList<>();
 
         int Balance;
         int StoreBalance;
-        Event event = new Event(conn.getCon());
+
         List<String> Times = new ArrayList<>();
 
 
@@ -740,7 +773,6 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
 
                         } else if (day < 1) {
-                            continue;
                         }
 
                     }
@@ -805,8 +837,6 @@ private static final JFileChooser fileChooser = new JFileChooser();
                     if (!f) {
                         logger.severe("Chosen Day Is Full");
 
-                        continue;
-
                     }
 
                     else {
@@ -828,7 +858,6 @@ private static final JFileChooser fileChooser = new JFileChooser();
                     if(ChosenTime == null)
                     {
                         logger.severe("Wrong option\n");
-                        continue;
                     }
 
                     else
@@ -869,19 +898,17 @@ private static final JFileChooser fileChooser = new JFileChooser();
                     image = chooseImagePath();
                     images.add(image);
 
-                    logger.info("Do You Want Choose Another Image ?\n" +
-                            "1- Yes\n" +
+                    logger.info("Do You Want Choose Another Image ?\s" +
+                            "1- Yes" +
                             "2- No");
 
                     int ch;
                     ch = scanner.nextInt();
-                    if(ch==1)
+                    if(ch!=1)
                     {
-                        continue;
-                    }
-                    else {
                         break;
                     }
+
                 }
 
 
@@ -892,6 +919,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
                     boolean cont = false;
 
 
+
                     logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
                             "Number", "Vendor_User_Name", "Description", "Price/H", "Type", "Rating"));
 
@@ -900,9 +928,9 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
 
                     int counterservice = 0;
-                    for (VendorService vs : ALLVendorServices()) {
+                    for (VendorService vs : allVendorServices()) {
                         cont = false;
-                        for (AVendorBooking vb : ALLNotAvailableVendors()) {
+                        for (AVendorBooking vb : allNotAvailableVendors()) {
                             if ((Objects.equals(vs.getVendorUserName(), vb.getVendor_user_name())) && (date.equals(vb.getBooking_date())) && (Objects.equals(ChosenTime, vb.getStart_time()))) {
 
                                 cont = true;
@@ -910,9 +938,9 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
                             }
                         }
-                        if (cont)
-                            continue;
-                        else {
+                        if (!cont) {
+
+
                             String description = vs.getServiceDescription().replace("\n", " ");
                             StringBuilder rate = new StringBuilder();
                             for (int i = 0; i < vs.getAverageRating(); i++) {
@@ -953,8 +981,8 @@ private static final JFileChooser fileChooser = new JFileChooser();
                         if (chooseVendor > 0 && chooseVendor <= counterservice) {
                             Balance -= printedPrice.get(chooseVendor - 1) * Integer.parseInt(AllEvent.get(choice-1).getBookingTime());
                             Vendors.add(printedVendors.get(chooseVendor - 1));
-                            logger.info("Do You Want Choose Another Vendor : \n" +
-                                    "1- Yes\n" +
+                            logger.info("Do You Want Choose Another Vendor : \s" +
+                                    "1- Yes" +
                                     "2- No");
                             int choise;
                             choise = scanner.nextInt();
@@ -966,18 +994,16 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
                         } else {
                             logger.severe("Invalid Input\n");
-                            continue;
                         }
                     }
 
-                    if(f)
+                    if(!f)
                     {
-
-                        continue;
+                        break;
                     }
 
-                    else
-                        break;
+
+
 
 
                 }
@@ -989,10 +1015,10 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 accpetevent.setDate(date);
                 accpetevent.setDescription(Description);
                 accpetevent.setTime(ChosenTime);
-                accpetevent.setAttendeeCount(String.valueOf(AttendeeCount));
+                accpetevent.setAttendeeCount(valueOf(AttendeeCount));
                 accpetevent.setServiceTitle(AllEvent.get(choice-1).getTitle());
                 accpetevent.setServiceId(AllEvent.get(choice-1).getId());
-                accpetevent.setBalance(String.valueOf(StoreBalance));
+                accpetevent.setBalance(valueOf(StoreBalance));
                 accpetevent.setGuestList(GuestList);
                 accpetevent.setImages(images);
                 accpetevent.setVendors(Vendors);
@@ -1021,7 +1047,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
     }
 
 
-    private static List<AVendorBooking> ALLNotAvailableVendors()
+    private static List<AVendorBooking> allNotAvailableVendors()
     {
         DB_Connection conn = new DB_Connection(5432,"Event_Planner","postgres","admin");
 
@@ -1059,7 +1085,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
 
 
-    private static List<VendorService> ALLVendorServices()
+    private static List<VendorService> allVendorServices()
     {
         DB_Connection conn = new DB_Connection(5432,"Event_Planner","postgres","admin");
 
@@ -1112,8 +1138,8 @@ private static final JFileChooser fileChooser = new JFileChooser();
                 boolean continueloop = true;
                 while (continueloop) {
                     int che;
-                    logger.info("1- Add EventService\n" +
-                            "2- Edit EventService\n" +
+                    logger.info("1- Add EventService\s" +
+                            "2- Edit EventService" +
                             "3- Delete EventService");
                     che = scanner.nextInt();
                     if (che == 1) {
@@ -1136,7 +1162,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
                         return;
                     }
                     else {
-                        logger.info("You should choose number above");
+                        logger.info(getYouShouldChooseNumberAbove());
                         logger.info("Do you want to continue? (yes/no)");
                         String userInput = reader.readLine();
                         continueloop = userInput.equals("yes");
@@ -1158,7 +1184,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
                         return;
 
                     } else {
-                        logger.info("You should choose number above");
+                        logger.info(getYouShouldChooseNumberAbove());
                         logger.info("Do you want to continue? (yes/no)");
                         String userInput = reader.readLine();
                         continueloop = userInput.equals("yes");
@@ -1169,12 +1195,12 @@ private static final JFileChooser fileChooser = new JFileChooser();
             }
             else if(ch==3)
             {
-                RequestsPage();
+                requestsPage();
             }
 
 
             else {
-                logger.info("You should choose number above");
+                logger.info(getYouShouldChooseNumberAbove());
                 logger.info("Do you want to continue? (yes/no)");
                 String userInput = reader.readLine();
                 continueloopbig = userInput.equals("yes");
@@ -1184,67 +1210,56 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
     }
 
-    private static void RequestsPage() throws SQLException, IOException {
+    private static void requestsPage() throws SQLException, IOException {
         logger.info("***************************Requests Page***************************\n");
-        List<Event> events = new ArrayList<>();
-        List<String> status = new ArrayList<>();
-        status = SelectAllStatus();
-        events = SelectAllRequests();
-        logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
-                "Number", "Date", "Time", "Description", "Attendee_Count", "Balance" , "Status"));
+        List<Event> events;
+        List<String> status;
+        status = selectAllStatus();
+        events = selectAllRequests();
+        logger.info(getFormat());
 
         int counter = 0;
         for(Event e : events)
         {
-            logger.info(format("%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n",
+            logger.info(format(getFormat1(),
                     ++counter, e.getDate(), e.getTime(),
                     e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));
         }
 
 
-
-        while(true)
-        {
+        do {
             logger.info("Enter Event Number You Want To Accept/Refuse it : ");
 
             int ch1;
-            ch1=scanner.nextInt();
-            if(ch1>0 && ch1<=counter)
-            {
-                logger.info("Status\n" +
-                            "1- Accept\n" +
-                            "2- Refuse");
+            ch1 = scanner.nextInt();
+            if (ch1 > 0 && ch1 <= counter) {
+                logger.info("Status\s" +
+                        "1- Accept" +
+                        "2- Refuse");
                 int ch2;
                 ch2 = scanner.nextInt();
-                if (ch2==1)
-                {
-                    updateStatus("accept",events.get(ch1-1).getId());
-                    delete_event(events.get(ch1-1).getId());
+                if (ch2 == 1) {
+                    updateStatus("accept", events.get(ch1 - 1).getId());
+                    deleteEvent(events.get(ch1 - 1).getId());
 
-                }
-                else if(ch2==2)
-                {
-                    updateStatus("refuse",events.get(ch1-1).getId());
+                } else if (ch2 == 2) {
+                    updateStatus("refuse", events.get(ch1 - 1).getId());
 
-                }
-
-                else{
+                } else {
                     break;
                 }
 
                 break;
-            }
-
-            else{
+            } else {
 
                 logger.info("Invalid Input\n");
 
             }
-        }
+        } while (true);
 
 
-        logger.info("Do You Want To Return To Main Page : \n" +
-                    "1- Yes\n" +
+        logger.info("Do You Want To Return To Main Page : \s" +
+                    "1- Yes" +
                     "2- No");
 
         while (true)
@@ -1254,7 +1269,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
             if(ch==1)
             {
                 serviceproviderpage();
-                return;
+                break;
             }
             else if(ch==2)
             {
@@ -1269,7 +1284,12 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
     }
 
-    private static List<Event> SelectAllRequests() {
+    private static String getFormat() {
+        return format(getFormat1(),
+                "Number", "Date", "Time", "Description", "Attendee_Count", "Balance", STATUS);
+    }
+
+    private static List<Event> selectAllRequests() {
         Statement stmt = null;
         List<Event> events = new ArrayList<>();
         List<String> users = new ArrayList<>();
@@ -1315,7 +1335,7 @@ private static final JFileChooser fileChooser = new JFileChooser();
 
     }
 
-    private static List<String> SelectAllStatus() {
+    private static List<String> selectAllStatus() {
         Statement stmt = null;
         List<String> statuses = new ArrayList<>();
 
@@ -1325,17 +1345,18 @@ private static final JFileChooser fileChooser = new JFileChooser();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
             {
-                statuses.add(rs.getString("Status"));
+                statuses.add(rs.getString(STATUS));
             }
         }catch (Exception e){
 
+            logger.info(e.getMessage());
         }
 
         return statuses;
     }
 
 
-    public static boolean delete_event(int id) {
+    public static boolean deleteEvent(int id) {
 
         try {
             conn.getCon().setAutoCommit(false);
