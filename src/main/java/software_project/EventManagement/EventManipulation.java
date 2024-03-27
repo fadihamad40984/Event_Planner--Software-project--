@@ -3,16 +3,14 @@ package software_project.EventManagement;
 import software_project.DataBase.delete.deleteEvent;
 import software_project.DataBase.insert.insertData;
 import software_project.DataBase.update.editEvent;
-import software_project.UserManagement.User;
 import software_project.helper.validation;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 public class EventManipulation {
     private String status;
-    private insertData insertES;
+    private final insertData insertES;
 
     private editEvent editEvent;
     private deleteEvent delete;

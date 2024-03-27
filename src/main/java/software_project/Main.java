@@ -1,7 +1,6 @@
 package software_project;
 
 
-import org.jetbrains.annotations.NotNull;
 import software_project.DataBase.DB_Connection;
 import software_project.DataBase.retrieve.retrieve;
 import software_project.EventManagement.Event;
@@ -34,8 +33,7 @@ import java.util.Scanner;
 import java.util.logging.*;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.log;
-import static java.lang.String.*;
+import static java.lang.String.format;
 import static java.lang.System.exit;
 
 
@@ -44,23 +42,36 @@ public class Main {
 
     private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-   private static final Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
     private static final DB_Connection conn = new DB_Connection();
     private static final Logger logger = Logger.getLogger(Main.class.getName());
-    public static final String STATUS = "Status";
+    public static final String YOU_SHOULD_CHOOSE_NUMBER_ABOVE = "You should choose number above";
+    public static final String YES = "1- Yes";
     public static final String ADMIN = "admin";
     public static final String DO_YOU_WANT_TO_CONTINUE_YES_NO = "Do you want to continue? (yes/no)";
     public static final String NUMBER = "Number";
     public static final String DESCRIPTION = "Description";
+    public static final String DETAILS = "Details";
     public static final String ATTENDEE_COUNT = "Attendee_Count";
     public static final String EVENT_ID = "Event_id";
     public static final String SELECT_FROM_EVENT_WHERE_EVENT_ID = "select * from \"Event\" where \"Event_id\" = ";
     public static final String EVENT_SERVICE_ID = "EventService_id";
     public static final String BALANCE = "Balance";
-    public static final String YES = "1- Yes\n";
+    public static final String S_15_S_15_S_30_S_15_S_15_S_N = "%-15s%-15s%-15s%-30s%-15s%-15s%n";
+    public static final String S_15_S_15_S_30_S_15_S_15_S_15_S_N = "%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n";
+    public static final String STATUS = "Status";
     public static final String NO = "2- No";
     public static final String INVALID_INPUT = "Invalid Input\n";
     public static final String EVENT_ID1 = "Event Id";
+    public static final String S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N = "%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n";
+    public static final String TITLE = "Title";
+    public static final String EVENT_CATEGORY = "EventCategory";
+    public static final String PRICE = "Price";
+    public static final String PLACE = "Place";
+    public static final String START_TIME = "StartTime";
+    public static final String END_TIME = "EndTime";
+    public static final String BOOKING_TIME = "BookingTime";
+    public static final String TIME = "00:00";
 
     static {
 
@@ -79,7 +90,7 @@ public class Main {
     private static final Register register = new Register(conn.getCon());
     private static final EventManipulation eventManipulation = new EventManipulation(conn.getCon());
 
-     private static final retrieve retrieve = new retrieve(conn.getCon());
+    private static final retrieve retrieve = new retrieve(conn.getCon());
     public static void main(String[] args) {
 
 
@@ -112,9 +123,10 @@ public class Main {
         try {
             menu();
 
-        }catch (Exception ignored)
+        }catch (Exception ii)
         {
 
+            logger.info(ii.getMessage());
         }
     }
 
@@ -133,34 +145,28 @@ public class Main {
         if (ch==1)
             signinpage();
         else if(ch==2)
-            signuppage();
+            signUpPage();
         else
-            logger.severe(getYouShouldChooseNumberAbove());
+            logger.severe(YOU_SHOULD_CHOOSE_NUMBER_ABOVE);
 
     }
 
-    @NotNull
-    private static String getYouShouldChooseNumberAbove() {
-        return "You should choose number above";
-    }
-
-    private static void signuppage() throws IOException, SQLException {
+    private static void signUpPage() throws IOException, SQLException {
         logger.info("***************************Register Page***************************\n");
 
-        boolean continueLoop = true;
         User user;
 
         String username;
-         String firstName;
-         String lastName;
-         String phoneNumber;
-         String password;
-         String email;
-         String imagePath;
-         String userType;
-         int code;
+        String firstName;
+        String lastName;
+        String phoneNumber;
+        String password;
+        String email;
+        String imagePath;
+        String userType;
+        int code;
 
-        while (continueLoop) {
+        while (true) {
             logger.info("Enter UserName : ");
             username = reader.readLine();
             logger.info("Enter FirstName : ");
@@ -248,17 +254,17 @@ public class Main {
 
                 }
                 else if(Objects.equals(login.user_type, "service provider"))
-            {
-                serviceproviderpage();
-                return;
+                {
+                    serviceproviderpage();
+                    return;
 
-            }
+                }
                 else if(Objects.equals(login.user_type, "customer"))
-            {
-                customerpage();
-                return;
+                {
+                    customerpage();
+                    return;
 
-            }
+                }
 
                 else if(Objects.equals(login.user_type, "vendor"))
                 {
@@ -282,7 +288,7 @@ public class Main {
 
     private static void vendorpage() throws IOException, SQLException {
         logger.info("***************************Vendor Page***************************\n");
-        List<Event> events = new ArrayList<>();
+        List<Event> events;
 
         int choise;
         boolean continueloop = true;
@@ -293,7 +299,7 @@ public class Main {
             choise = scanner.nextInt();
             if(choise==1)
             {
-                events = ShowUpcomingEventsForParticularVendor(UserSession.getCurrentUser().getUsername());
+                events = showUpcomingEventsForParticularVendor(UserSession.getCurrentUser().getUsername());
 
                 logger.info(format("%-15s%-15s%-15s%-30s%-15s%n",
                         NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT));
@@ -320,11 +326,11 @@ public class Main {
         }
     }
 
-    private static List<Event> ShowUpcomingEventsForParticularVendor(String username) {
+    private static List<Event> showUpcomingEventsForParticularVendor(String username) throws SQLException , NullPointerException {
 
         Statement stmt = null;
         List<Event> events = new ArrayList<>();
-        List<Integer> EventsIDs = new ArrayList<>();
+        List<Integer> eventsIDs = new ArrayList<>();
 
         try {
             stmt = conn.getCon().createStatement();
@@ -332,12 +338,12 @@ public class Main {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
             {
-                EventsIDs.add(rs.getInt(EVENT_ID));
+                eventsIDs.add(rs.getInt(EVENT_ID));
             }
 
-            for(int i=0 ; i < EventsIDs.size();i++)
+            for(int i=0 ; i < eventsIDs.size();i++)
             {
-                String query2 = SELECT_FROM_EVENT_WHERE_EVENT_ID +EventsIDs.get(i)+";";
+                String query2 = SELECT_FROM_EVENT_WHERE_EVENT_ID +eventsIDs.get(i)+";";
                 ResultSet rs1 = stmt.executeQuery(query2);
                 while(rs1.next())
                 {
@@ -357,8 +363,14 @@ public class Main {
 
             }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e ) {
+            throw new SQLException(e);
+        }
+
+        finally {
+            if (stmt != null) {
+                stmt.close();
+            }
         }
 
         return events;
@@ -383,13 +395,13 @@ public class Main {
                     5- Log out""");
             choise = scanner.nextInt();
             if(choise==1)
-                BookEventPage();
+                bookEventPage();
             else if(choise==2)
-                CancelEventPage();
+                cancelEventPage();
             else if(choise==3)
-                CheckRequestPage();
+                checkRequestPage();
             else if(choise==4)
-                ShowCalendarPage();
+                showCalendarPage();
             else if(choise==5)
                 menu();
             else
@@ -404,20 +416,21 @@ public class Main {
 
     }
 
-    private static void ShowCalendarPage() throws SQLException, IOException {  logger.info("Choose The Event You Want To Cancel :");
-        List<Event> events = new ArrayList<>();
-        events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
-        logger.info(getFormatted());
+    private static void showCalendarPage() throws SQLException, IOException {  logger.info("Choose The Event You Want To Cancel :");
+        List<Event> events;
+        events = selectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
+        logger.info(format(S_15_S_15_S_30_S_15_S_15_S_N,
+                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE));
 
         int counter = 0;
         for(Event e : events)
         {
-            logger.info(format(getString(),
+            logger.info(format(S_15_S_15_S_30_S_15_S_15_S_N,
                     ++counter, e.getDate(), e.getTime(),
                     e.getDescription(), e.getAttendeeCount(), e.getBalance()));
         }
 
-       logger.info("Return To Main Page Enter \"ok\" ");
+        logger.info("Return To Main Page Enter \"ok\" ");
         String ch;
         ch= reader.readLine();
         if(Objects.equals(ch, "ok") || "OK".equals(ch))
@@ -430,28 +443,24 @@ public class Main {
 
     }
 
-    @NotNull
-    private static String getString() {
-        return "%-15s%-15s%-15s%-30s%-15s%-15s%n";
-    }
-
-    private static void CheckRequestPage() throws SQLException, IOException {
+    private static void checkRequestPage() throws SQLException, IOException {
 
         List<Event> events;
-       
         List<String> status;
-        
-        status = SelectStatusOfParticularUserName(UserSession.getCurrentUser().getUsername());
-        events = SelectAllRequestOfParticualrUserName(UserSession.getCurrentUser().getUsername());
-        logger.info(getFormat());
+        status = selectStatusOfParticularUserName(UserSession.getCurrentUser().getUsername());
+        events = selectAllRequestOfParticualrUserName(UserSession.getCurrentUser().getUsername());
+        logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
+                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE, STATUS));
 
         int counter = 0;
         for(Event e : events)
         {
-            logger.info(format(getFormat1(), ++counter, e.getDate(), e.getTime(), e.getDescription(), e.getAttendeeCount(), e.getBalance(), status.get(counter - 1)));
+            logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
+                    ++counter, e.getDate(), e.getTime(),
+                    e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));
         }
 
-        logger.info("Do You Want To Return To Main Page : \n" +
+        logger.info("Do You Want To Return To Main Page : \s" +
                 YES +
                 NO);
 
@@ -477,23 +486,21 @@ public class Main {
 
     }
 
-    @NotNull
-    private static String getFormat1() {
-        return "%-15s%-15s%-15s%-30s%-15s%-15s%-15s%n";
-    }
-
-    private static void CancelEventPage() {
+    private static void cancelEventPage() throws SQLException {
 
         logger.info("Choose The Event You Want To Cancel :");
-        List<Event> events = SelectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
-        logger.info(getFormatted());
+        List<Event> events;
+        events = selectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
 
-      int counter = 0;
+        logger.info(format(S_15_S_15_S_30_S_15_S_15_S_N,
+                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE));
+
+        int counter = 0;
         for(Event e : events)
         {
-              logger.info(format(getString(),
-                ++counter, e.getDate(), e.getTime(),
-                e.getDescription(), e.getAttendeeCount(), e.getBalance()));
+            logger.info(format(S_15_S_15_S_30_S_15_S_15_S_N,
+                    ++counter, e.getDate(), e.getTime(),
+                    e.getDescription(), e.getAttendeeCount(), e.getBalance()));
         }
 
         int choise;
@@ -523,12 +530,8 @@ public class Main {
 
     }
 
-    private static String getFormatted() {
-        return format(getString(),
-                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE);
-    }
-
     private static void sendRequest(Event e) {
+
 
         try {
             conn.getCon().setAutoCommit(false);
@@ -536,12 +539,12 @@ public class Main {
             String query5 = "insert into \"Requests\"(\"UserName\",\"Event Id\" , \"Status\") values (?,?,?);";
 
 
-
-            PreparedStatement preparedStmt5 = conn.getCon().prepareStatement(query5);
-            preparedStmt5.setString(1,e.getUsername());
-            preparedStmt5.setInt(2,e.getId());
-            preparedStmt5.setString(3,"pending");
-            preparedStmt5.execute();
+            try (PreparedStatement preparedStmt5 = conn.getCon().prepareStatement(query5)) {
+                preparedStmt5.setString(1, e.getUsername());
+                preparedStmt5.setInt(2, e.getId());
+                preparedStmt5.setString(3, "pending");
+                preparedStmt5.execute();
+            }
             conn.getCon().commit();
             conn.getCon().setAutoCommit(false);
 
@@ -550,8 +553,10 @@ public class Main {
 
             conn.getCon().commit();
         } catch (Exception exception) {
+            logger.info(exception.getMessage());
 
         }
+
 
 
 
@@ -559,32 +564,9 @@ public class Main {
     }
 
 
-    public static List<String> SelectStatusOfParticularUserName(String Username)
-    {
+    public static List<String> selectStatusOfParticularUserName(String username) throws SQLException {
         Statement stmt = null;
         List<String> statuses = new ArrayList<>();
-
-        try {
-            stmt = conn.getCon().createStatement();
-            String query = "SELECT * FROM \"Requests\" where \"UserName\" = \'"+Username+ "\';";
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next())
-            {
-                statuses.add(rs.getString(STATUS));
-            }
-        }catch (Exception e){
-
-            logger.info(e.getMessage());
-        }
-
-        return statuses;
-
-    }
-
-    private static List<Event> SelectAllRequestOfParticualrUserName(String username) {
-        Statement stmt = null;
-        List<Event> events = new ArrayList<>();
-        List<Integer> EventsIDs = new ArrayList<>();
 
         try {
             stmt = conn.getCon().createStatement();
@@ -592,12 +574,38 @@ public class Main {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
             {
-                EventsIDs.add(rs.getInt(EVENT_ID1));
+                statuses.add(rs.getString(STATUS));
+            }
+        }catch (Exception e){
+            logger.info(e.getMessage());
+
+        }finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+
+        return statuses;
+
+    }
+
+    private static List<Event> selectAllRequestOfParticualrUserName(String username) throws SQLException {
+        Statement stmt = null;
+        List<Event> events = new ArrayList<>();
+        List<Integer> eventsIDs = new ArrayList<>();
+
+        try {
+            stmt = conn.getCon().createStatement();
+            String query = "SELECT * FROM \"Requests\" where \"UserName\" = \'"+username+ "\';";
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+               eventsIDs.add(rs.getInt(EVENT_ID1));
             }
 
-            for(int i=0 ; i < EventsIDs.size();i++)
+            for(int i=0 ; i < eventsIDs.size();i++)
             {
-                String query2 = SELECT_FROM_EVENT_WHERE_EVENT_ID+EventsIDs.get(i)+";";
+                String query2 = SELECT_FROM_EVENT_WHERE_EVENT_ID +eventsIDs.get(i)+";";
                 ResultSet rs1 = stmt.executeQuery(query2);
                 while(rs1.next())
                 {
@@ -618,17 +626,22 @@ public class Main {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new SQLException(e);
+        }
+        finally {
+            if (stmt != null) {
+                stmt.close();
+            }
         }
 
         return events;
 
     }
 
-    private static List<Event> SelectAllEventOfParticualrUserName(String username) {
+    private static List<Event> selectAllEventOfParticualrUserName(String username) throws SQLException {
         Statement stmt = null;
         List<Event> events = new ArrayList<>();
-        List<Integer> EventsIDs = new ArrayList<>();
+        List<Integer> eventsIDs = new ArrayList<>();
 
         try {
             stmt = conn.getCon().createStatement();
@@ -636,23 +649,23 @@ public class Main {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
             {
-               EventsIDs.add(rs.getInt(EVENT_ID1));
+                eventsIDs.add(rs.getInt(EVENT_ID1));
             }
 
-            for(int i=0 ; i < EventsIDs.size();i++)
+            for(int i=0 ; i < eventsIDs.size();i++)
             {
-                String query2 = "select * from \"Event\" where \"Event_id\" = "+EventsIDs.get(i)+";";
+                String query2 = SELECT_FROM_EVENT_WHERE_EVENT_ID +eventsIDs.get(i)+";";
                 ResultSet rs1 = stmt.executeQuery(query2);
                 while(rs1.next())
                 {
                     Event event = new Event(conn.getCon());
-                    event.setId(rs1.getInt("Event_id"));
+                    event.setId(rs1.getInt(EVENT_ID));
                     event.setDate(rs1.getString("Date"));
-                    event.setDescription(rs1.getString("Description"));
+                    event.setDescription(rs1.getString(DESCRIPTION));
                     event.setTime(rs1.getString("Time"));
-                    event.setAttendeeCount(rs1.getString("Attendee_Count"));
-                    event.setServiceId(rs1.getInt("EventService_id"));
-                    event.setBalance(rs1.getString("Balance"));
+                    event.setAttendeeCount(rs1.getString(ATTENDEE_COUNT));
+                    event.setServiceId(rs1.getInt(EVENT_SERVICE_ID));
+                    event.setBalance(rs1.getString(BALANCE));
                     event.setUsername(username);
                     events.add(event);
 
@@ -661,16 +674,20 @@ public class Main {
 
             }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new SQLException(e);
+        }finally {
+            if (stmt != null) {
+                stmt.close();
+            }
         }
 
         return events;
 
     }
 
-    private static void BookEventPage() throws SQLException, IOException {
-        List<EventService> AllEvent = retrieve.retrieveAllEventServices();
+    private static void bookEventPage() throws SQLException, IOException {
+        List<EventService> allEvent = retrieve.retrieveAllEventServices();
 
         int counter = 0;
         int choice;
@@ -679,32 +696,32 @@ public class Main {
         int day;
         String date;
 
-        String ChosenTime;
-        String Description;
-        int AttendeeCount;
+        String chosenTime;
+        String descr;
+        int attendeeCount;
 
-        List<String> GuestList = new ArrayList<>();
+        List<String> guestList = new ArrayList<>();
         List<String> images = new ArrayList<>();
-        List<String> Vendors = new ArrayList<>();
+        List<String> vendors = new ArrayList<>();
 
-        int Balance;
-        int StoreBalance;
+        int balance;
+        int storeBalance;
 
-        List<String> Times = new ArrayList<>();
+        List<String> times = new ArrayList<>();
 
 
         logger.info("Enter The Balance : ");
-        Balance = scanner.nextInt();
-        StoreBalance = Balance;
+        balance = scanner.nextInt();
+        storeBalance = balance;
 
 
-        logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
-                "Number", "Title", "Details", "EventCategory", "Price", "Place", "StartTime", "EndTime", "BookingTime"));
-        for (EventService eventService : AllEvent) {
-            if (Integer.parseInt(eventService.getPrice()) <= Balance) {
+        logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
+                NUMBER, TITLE, DETAILS, EVENT_CATEGORY, PRICE, PLACE, START_TIME, END_TIME, BOOKING_TIME));
+        for (EventService eventService : allEvent) {
+            if (Integer.parseInt(eventService.getPrice()) <= balance) {
 
 
-                logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
+                logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
                         ++counter, eventService.getTitle(), eventService.getDetails(),
                         eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
                         eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
@@ -733,7 +750,7 @@ public class Main {
 
 
 
-                Generator.printCalendar(year,month,retrieve.CheckDays(year,month,AllEvent.get(choice-1)));
+                Generator.printCalendar(year,month,retrieve.CheckDays(year,month,allEvent.get(choice-1)));
 
 
                 while(true) {
@@ -772,22 +789,21 @@ public class Main {
                             }
 
 
-                        } else if (day < 1) {
                         }
 
                     }
 
                     date = Generator.generateDateString(day, month, year);
 
-                    List<Event> events = retrieve.selectEventOfParticularDateAndServiceId(date, AllEvent.get(choice - 1).getId());
+                    List<Event> events = retrieve.selectEventOfParticularDateAndServiceId(date, allEvent.get(choice - 1).getId());
 
                     if (events.isEmpty()) {
                         logger.info("There Is No Events. You Can Request To Book An Event In This Day!");
                     } else {
                         logger.info(format("%-15s%-15s%-15s%n",
-                                "StartTime", "EndTime", "Description"));
+                                START_TIME, END_TIME, DESCRIPTION));
                         for (Event e : events) {
-                            int c = (abs(Generator.getTimeDifference(e.getTime(), "00:00")) / 60) + Integer.parseInt(AllEvent.get(choice - 1).getBookingTime());
+                            int c = (abs(Generator.getTimeDifference(e.getTime(), TIME)) / 60) + Integer.parseInt(allEvent.get(choice - 1).getBookingTime());
                             logger.info(format("%-15s%-15s%-15s%n",
 
                                     e.getTime(), c + ":00", e.getDescription()));
@@ -796,24 +812,24 @@ public class Main {
 
 
 
-                    int TimeDiff = abs(Generator.getTimeDifference(AllEvent.get(choice - 1).getStartTime(), AllEvent.get(choice - 1).getEndTime()));
-                    int BookingTime = Integer.parseInt(AllEvent.get(choice - 1).getBookingTime()) * 60;
-                    int NumberOfEvents = TimeDiff / BookingTime;
+                    int timeDiff = abs(Generator.getTimeDifference(allEvent.get(choice - 1).getStartTime(), allEvent.get(choice - 1).getEndTime()));
+                    int bookingTime = Integer.parseInt(allEvent.get(choice - 1).getBookingTime()) * 60;
+                    int numberOfEvents = timeDiff / bookingTime;
 
                     int count = 0;
 
                     boolean flag = false;
                     boolean f = false;
-                    String starttime = AllEvent.get(choice - 1).getStartTime();
-                    List<Event> ALLEven = retrieve.selectEventOfParticularDateAndServiceId(date,AllEvent.get(choice - 1).getId());
+                    String starttime = allEvent.get(choice - 1).getStartTime();
+                    List<Event> aLLEven = retrieve.selectEventOfParticularDateAndServiceId(date,allEvent.get(choice - 1).getId());
 
 
 
 
-                    for (int i = 0; i < NumberOfEvents; i++) {
-                        for (Event event2 : ALLEven) {
+                    for (int i = 0; i < numberOfEvents; i++) {
+                        for (Event event2 : aLLEven) {
                             if (Objects.equals(starttime, event2.getTime())) {
-                                starttime = ((abs(Generator.getTimeDifference(event2.getTime(), "00:00")) / 60) + Integer.parseInt(AllEvent.get(choice - 1).getBookingTime())) + ":00";
+                                starttime = ((abs(Generator.getTimeDifference(event2.getTime(), TIME)) / 60) + Integer.parseInt(allEvent.get(choice - 1).getBookingTime())) + ":00";
                                 flag = true;
                                 break;
 
@@ -827,15 +843,17 @@ public class Main {
 
 
 
-                        Times.add(starttime);
+                        times.add(starttime);
                         logger.info("Time " + (++count) + ": " + starttime);
                         f = true;
-                        starttime = ((abs(Generator.getTimeDifference(starttime, "00:00")) / 60) + Integer.parseInt(AllEvent.get(choice - 1).getBookingTime())) + ":00";
+                        starttime = ((abs(Generator.getTimeDifference(starttime, TIME)) / 60) + Integer.parseInt(allEvent.get(choice - 1).getBookingTime())) + ":00";
 
                     }
 
                     if (!f) {
                         logger.severe("Chosen Day Is Full");
+
+
 
                     }
 
@@ -854,39 +872,41 @@ public class Main {
                     int choseTime;
 
                     choseTime = scanner.nextInt();
-                     ChosenTime = Times.get(choseTime-1);
-                    if(ChosenTime == null)
+                    chosenTime = times.get(choseTime-1);
+                    if(chosenTime == null)
                     {
                         logger.severe("Wrong option\n");
+
                     }
 
                     else
                         break;
                 }
 
-                Balance-=Integer.parseInt(AllEvent.get(choice - 1).getPrice());
+                balance-=Integer.parseInt(allEvent.get(choice - 1).getPrice());
 
                 logger.info("Enter Description : ");
 
-                Description = reader.readLine();
+                descr = reader.readLine();
 
                 logger.info("Enter AttendeeCount : ");
 
-                AttendeeCount = scanner.nextInt();
+                attendeeCount = scanner.nextInt();
 
                 logger.info("Enter Guests Names : ");
 
+                int k=0;
                 String guest;
-                for(int i = 0 ; i < AttendeeCount ; i++)
+                for( k = 0 ; k < attendeeCount ; k++)
                 {
                     guest = reader.readLine();
                     if(guest == null)
                     {
                         logger.severe("You Should Enter A name\n");
-                        i--;
+                        k--;
                         continue;
                     }
-                    GuestList.add(guest);
+                    guestList.add(guest);
 
                 }
 
@@ -899,8 +919,8 @@ public class Main {
                     images.add(image);
 
                     logger.info("Do You Want Choose Another Image ?\s" +
-                            "1- Yes" +
-                            "2- No");
+                            YES +
+                            NO);
 
                     int ch;
                     ch = scanner.nextInt();
@@ -919,9 +939,8 @@ public class Main {
                     boolean cont = false;
 
 
-
                     logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
-                            "Number", "Vendor_User_Name", "Description", "Price/H", "Type", "Rating"));
+                            NUMBER, "Vendor_User_Name", DESCRIPTION, "Price/H", "Type", "Rating"));
 
                     List<String> printedVendors = new ArrayList<>();
                     List<Integer> printedPrice = new ArrayList<>();
@@ -931,16 +950,15 @@ public class Main {
                     for (VendorService vs : allVendorServices()) {
                         cont = false;
                         for (AVendorBooking vb : allNotAvailableVendors()) {
-                            if ((Objects.equals(vs.getVendorUserName(), vb.getVendor_user_name())) && (date.equals(vb.getBooking_date())) && (Objects.equals(ChosenTime, vb.getStart_time()))) {
+                            if ((Objects.equals(vs.getVendorUserName(), vb.getVendor_user_name())) && (date.equals(vb.getBooking_date())) && (Objects.equals(chosenTime, vb.getStart_time()))) {
 
                                 cont = true;
                                 break;
 
                             }
                         }
-                        if (!cont) {
 
-
+                        if(!cont) {
                             String description = vs.getServiceDescription().replace("\n", " ");
                             StringBuilder rate = new StringBuilder();
                             for (int i = 0; i < vs.getAverageRating(); i++) {
@@ -949,7 +967,7 @@ public class Main {
 
 
 
-                            if (Integer.parseInt(vs.getServicePrice()) <= Balance) {
+                            if (Integer.parseInt(vs.getServicePrice()) <= balance) {
                                 printedVendors.add(vs.getVendorUserName());
                                 printedPrice.add(Integer.parseInt(vs.getServicePrice()));
                                 logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
@@ -979,11 +997,11 @@ public class Main {
                         logger.info("Choose Vendor : ");
                         chooseVendor = scanner.nextInt();
                         if (chooseVendor > 0 && chooseVendor <= counterservice) {
-                            Balance -= printedPrice.get(chooseVendor - 1) * Integer.parseInt(AllEvent.get(choice-1).getBookingTime());
-                            Vendors.add(printedVendors.get(chooseVendor - 1));
+                            balance -= printedPrice.get(chooseVendor - 1) * Integer.parseInt(allEvent.get(choice-1).getBookingTime());
+                            vendors.add(printedVendors.get(chooseVendor - 1));
                             logger.info("Do You Want Choose Another Vendor : \s" +
-                                    "1- Yes" +
-                                    "2- No");
+                                    YES +
+                                    NO);
                             int choise;
                             choise = scanner.nextInt();
                             if (choise == 1) {
@@ -993,13 +1011,15 @@ public class Main {
                                 break;
 
                         } else {
-                            logger.severe("Invalid Input\n");
+                            logger.severe(INVALID_INPUT);
+
                         }
                     }
 
                     if(!f)
                     {
                         break;
+
                     }
 
 
@@ -1013,20 +1033,20 @@ public class Main {
 
                 Event accpetevent = new Event(conn.getCon());
                 accpetevent.setDate(date);
-                accpetevent.setDescription(Description);
-                accpetevent.setTime(ChosenTime);
-                accpetevent.setAttendeeCount(valueOf(AttendeeCount));
-                accpetevent.setServiceTitle(AllEvent.get(choice-1).getTitle());
-                accpetevent.setServiceId(AllEvent.get(choice-1).getId());
-                accpetevent.setBalance(valueOf(StoreBalance));
-                accpetevent.setGuestList(GuestList);
+                accpetevent.setDescription(descr);
+                accpetevent.setTime(chosenTime);
+                accpetevent.setAttendeeCount(String.valueOf(attendeeCount));
+                accpetevent.setServiceTitle(allEvent.get(choice-1).getTitle());
+                accpetevent.setServiceId(allEvent.get(choice-1).getId());
+                accpetevent.setBalance(String.valueOf(storeBalance));
+                accpetevent.setGuestList(guestList);
                 accpetevent.setImages(images);
-                accpetevent.setVendors(Vendors);
+                accpetevent.setVendors(vendors);
                 accpetevent.setUsername(UserSession.getCurrentUser().getUsername());
                 eventManipulation.bookEvent(accpetevent);
 
                 logger.severe(eventManipulation.getStatus());
-                logger.severe("Remaining Balance is : " + Balance + "\n");
+                logger.severe("Remaining Balance is : " + balance + "\n");
 
 
 
@@ -1047,9 +1067,8 @@ public class Main {
     }
 
 
-    private static List<AVendorBooking> allNotAvailableVendors()
-    {
-        DB_Connection conn = new DB_Connection(5432,"Event_Planner","postgres","admin");
+    private static List<AVendorBooking> allNotAvailableVendors() throws SQLException {
+        DB_Connection conn = new DB_Connection(5432,"Event_Planner","postgres", ADMIN);
 
         Statement stmt = null;
 
@@ -1063,10 +1082,10 @@ public class Main {
             while (rs.next())
             {
                 AVendorBooking vb = new AVendorBooking();
-               vb.setVendor_user_name(rs.getString("Vendor_UN"));
-               vb.setBooking_date(rs.getString("Date"));
-               vb.setStart_time(rs.getString("Time"));
-               vbs.add(vb);
+                vb.setVendor_user_name(rs.getString("Vendor_UN"));
+                vb.setBooking_date(rs.getString("Date"));
+                vb.setStart_time(rs.getString("Time"));
+                vbs.add(vb);
 
 
             }
@@ -1074,6 +1093,10 @@ public class Main {
         } catch (SQLException e) {
             logger.severe("Error DataBase");
 
+        }finally {
+            if (stmt != null) {
+                stmt.close();
+            }
         }
 
         return vbs;
@@ -1085,9 +1108,8 @@ public class Main {
 
 
 
-    private static List<VendorService> allVendorServices()
-    {
-        DB_Connection conn = new DB_Connection(5432,"Event_Planner","postgres","admin");
+    private static List<VendorService> allVendorServices() throws SQLException {
+        DB_Connection conn = new DB_Connection(5432,"Event_Planner","postgres", ADMIN);
 
         Statement stmt = null;
 
@@ -1102,8 +1124,8 @@ public class Main {
                 VendorService vs = new VendorService();
 
                 vs.setVendorUserName(rs.getString("Vendor_User_Name"));
-                vs.setServiceDescription(rs.getString("Description"));
-                vs.setServicePrice(rs.getString("Price"));
+                vs.setServiceDescription(rs.getString(DESCRIPTION));
+                vs.setServicePrice(rs.getString(PRICE));
                 vs.setServiceType(rs.getString("Type"));
                 vs.setAverageRating(Integer.parseInt(rs.getString("Average_Rating")));
 
@@ -1114,6 +1136,10 @@ public class Main {
         } catch (SQLException e) {
             logger.severe("Error DataBase");
 
+        }finally {
+            if (stmt != null) {
+                stmt.close();
+            }
         }
 
         return vss;
@@ -1162,8 +1188,8 @@ public class Main {
                         return;
                     }
                     else {
-                        logger.info(getYouShouldChooseNumberAbove());
-                        logger.info("Do you want to continue? (yes/no)");
+                        logger.info(YOU_SHOULD_CHOOSE_NUMBER_ABOVE);
+                        logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
                         String userInput = reader.readLine();
                         continueloop = userInput.equals("yes");
                     }
@@ -1184,8 +1210,8 @@ public class Main {
                         return;
 
                     } else {
-                        logger.info(getYouShouldChooseNumberAbove());
-                        logger.info("Do you want to continue? (yes/no)");
+                        logger.info(YOU_SHOULD_CHOOSE_NUMBER_ABOVE);
+                        logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
                         String userInput = reader.readLine();
                         continueloop = userInput.equals("yes");
                     }
@@ -1200,8 +1226,8 @@ public class Main {
 
 
             else {
-                logger.info(getYouShouldChooseNumberAbove());
-                logger.info("Do you want to continue? (yes/no)");
+                logger.info(YOU_SHOULD_CHOOSE_NUMBER_ABOVE);
+                logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
                 String userInput = reader.readLine();
                 continueloopbig = userInput.equals("yes");
             }
@@ -1216,51 +1242,62 @@ public class Main {
         List<String> status;
         status = selectAllStatus();
         events = selectAllRequests();
-        logger.info(getFormat());
+        logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
+                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE, STATUS));
 
         int counter = 0;
         for(Event e : events)
         {
-            logger.info(format(getFormat1(),
+            logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
                     ++counter, e.getDate(), e.getTime(),
                     e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));
         }
 
 
-        do {
+
+        while(true)
+        {
             logger.info("Enter Event Number You Want To Accept/Refuse it : ");
 
             int ch1;
-            ch1 = scanner.nextInt();
-            if (ch1 > 0 && ch1 <= counter) {
+            ch1=scanner.nextInt();
+            if(ch1>0 && ch1<=counter)
+            {
                 logger.info("Status\s" +
                         "1- Accept" +
                         "2- Refuse");
                 int ch2;
                 ch2 = scanner.nextInt();
-                if (ch2 == 1) {
-                    updateStatus("accept", events.get(ch1 - 1).getId());
-                    deleteEvent(events.get(ch1 - 1).getId());
+                if (ch2==1)
+                {
+                    updateStatus("accept",events.get(ch1-1).getId());
+                    deleteEvent(events.get(ch1-1).getId());
 
-                } else if (ch2 == 2) {
-                    updateStatus("refuse", events.get(ch1 - 1).getId());
+                }
+                else if(ch2==2)
+                {
+                    updateStatus("refuse",events.get(ch1-1).getId());
 
-                } else {
+                }
+
+                else{
                     break;
                 }
 
                 break;
-            } else {
+            }
 
-                logger.info("Invalid Input\n");
+            else{
+
+                logger.info(INVALID_INPUT);
 
             }
-        } while (true);
+        }
 
 
         logger.info("Do You Want To Return To Main Page : \s" +
-                    "1- Yes" +
-                    "2- No");
+                YES +
+                NO);
 
         while (true)
         {
@@ -1269,7 +1306,7 @@ public class Main {
             if(ch==1)
             {
                 serviceproviderpage();
-                break;
+                return;
             }
             else if(ch==2)
             {
@@ -1284,16 +1321,11 @@ public class Main {
 
     }
 
-    private static String getFormat() {
-        return format(getFormat1(),
-                "Number", "Date", "Time", "Description", "Attendee_Count", "Balance", STATUS);
-    }
-
-    private static List<Event> selectAllRequests() {
+    private static List<Event> selectAllRequests() throws SQLException , NullPointerException {
         Statement stmt = null;
         List<Event> events = new ArrayList<>();
         List<String> users = new ArrayList<>();
-        List<Integer> EventsIDs = new ArrayList<>();
+        List<Integer> eventsIDs = new ArrayList<>();
 
         try {
             stmt = conn.getCon().createStatement();
@@ -1301,24 +1333,24 @@ public class Main {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
             {
-                EventsIDs.add(rs.getInt("Event Id"));
+                eventsIDs.add(rs.getInt(EVENT_ID1));
                 users.add(rs.getString("UserName"));
             }
 
-            for(int i=0 ; i < EventsIDs.size();i++)
+            for(int i=0 ; i < eventsIDs.size();i++)
             {
-                String query2 = "select * from \"Event\" where \"Event_id\" = "+EventsIDs.get(i)+";";
+                String query2 = SELECT_FROM_EVENT_WHERE_EVENT_ID +eventsIDs.get(i)+";";
                 ResultSet rs1 = stmt.executeQuery(query2);
                 while(rs1.next())
                 {
                     Event event = new Event(conn.getCon());
-                    event.setId(rs1.getInt("Event_id"));
+                    event.setId(rs1.getInt(EVENT_ID));
                     event.setDate(rs1.getString("Date"));
-                    event.setDescription(rs1.getString("Description"));
+                    event.setDescription(rs1.getString(DESCRIPTION));
                     event.setTime(rs1.getString("Time"));
-                    event.setAttendeeCount(rs1.getString("Attendee_Count"));
-                    event.setServiceId(rs1.getInt("EventService_id"));
-                    event.setBalance(rs1.getString("Balance"));
+                    event.setAttendeeCount(rs1.getString(ATTENDEE_COUNT));
+                    event.setServiceId(rs1.getInt(EVENT_SERVICE_ID));
+                    event.setBalance(rs1.getString(BALANCE));
                     event.setUsername(users.get(i));
                     events.add(event);
 
@@ -1327,15 +1359,20 @@ public class Main {
 
             }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new SQLException(e);
+        }finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+
         }
 
         return events;
 
     }
 
-    private static List<String> selectAllStatus() {
+    private static List<String> selectAllStatus() throws SQLException {
         Statement stmt = null;
         List<String> statuses = new ArrayList<>();
 
@@ -1348,8 +1385,12 @@ public class Main {
                 statuses.add(rs.getString(STATUS));
             }
         }catch (Exception e){
-
             logger.info(e.getMessage());
+
+        }finally {
+            if (stmt != null) {
+                stmt.close();
+            }
         }
 
         return statuses;
@@ -1361,9 +1402,10 @@ public class Main {
         try {
             conn.getCon().setAutoCommit(false);
             String query = "delete from \"Event\" where \"Event_id\" = ?;";
-            PreparedStatement preparedStmt = conn.getCon().prepareStatement(query);
-            preparedStmt.setInt(1,id);
-            preparedStmt.execute();
+            try (PreparedStatement preparedStmt = conn.getCon().prepareStatement(query)) {
+                preparedStmt.setInt(1, id);
+                preparedStmt.execute();
+            }
             conn.getCon().commit();
             return true;
         } catch (Exception e) {
@@ -1373,15 +1415,17 @@ public class Main {
 
     }
 
-    public static boolean updateStatus(String Status , int id) {
+    public static boolean updateStatus(String status , int id) {
         try {
             conn.getCon().setAutoCommit(false);
             String query = "update \"Requests\" set \"Status\"= ? where \"Event Id\"=?";
-            PreparedStatement preparedStmt = conn.getCon().prepareStatement(query);
-            preparedStmt.setString(1,Status);
-            preparedStmt.setInt(2,id);
+            int rowsUpdated;
+            try (PreparedStatement preparedStmt = conn.getCon().prepareStatement(query)) {
+                preparedStmt.setString(1, status);
+                preparedStmt.setInt(2, id);
 
-            int rowsUpdated = preparedStmt.executeUpdate();
+                rowsUpdated = preparedStmt.executeUpdate();
+            }
             if (rowsUpdated > 0) {
                 conn.getCon().commit();
                 return true;
@@ -1408,21 +1452,21 @@ public class Main {
     private static void addvenu() throws IOException, SQLException {
 
 
-        String Name;
-        String Capacity;
-        String Amenities;
+        String name;
+        String capacity;
+        String amenities;
         Places place = new Places();
 
         logger.info("Enter Venue Name  : ");
-       Name = reader.readLine();
+        name = reader.readLine();
         logger.info("Enter Capacity  : ");
-        Capacity = reader.readLine();
+        capacity = reader.readLine();
         logger.info("Enter Amenities  : ");
-        Amenities = reader.readLine();
+        amenities = reader.readLine();
 
-        place.setName(Name);
-        place.setCapacity(Capacity);
-        place.setAmenities(Amenities);
+        place.setName(name);
+        place.setCapacity(capacity);
+        place.setAmenities(amenities);
         eventManipulation.addvenue(place);
         logger.info(eventManipulation.getStatus());
         serviceproviderpage();
@@ -1430,22 +1474,22 @@ public class Main {
     }
 
     private static void deleteeventservice() throws SQLException, IOException {
-        List<EventService> AllEvent = retrieve.retrieveAllEventServices();
+        List<EventService> allEvent = retrieve.retrieveAllEventServices();
 
-        logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
-                "Id", "Title", "Details", "EventCategory", "Price", "Place", "StartTime", "EndTime", "BookingTime"));
-        for (EventService eventService : AllEvent) {
-            logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
+        logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
+                "Id", TITLE, DETAILS, EVENT_CATEGORY, PRICE, PLACE, START_TIME, END_TIME, BOOKING_TIME));
+        for (EventService eventService : allEvent) {
+            logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
                     eventService.getId(), eventService.getTitle(), eventService.getDetails(),
                     eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
                     eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
         }
 
-        int event_id;
+        int eventId;
         logger.info("Enter The Event_Id you want To Delete : ");
-        event_id = scanner.nextInt();
+        eventId = scanner.nextInt();
         EventService es = new EventService();
-        es.setId(event_id);
+        es.setId(eventId);
         eventManipulation.deleteEventService(es);
         if(Objects.equals(eventManipulation.getStatus(), "Event service deleted successfully"))
         {
@@ -1470,12 +1514,12 @@ public class Main {
 
 
 
-        List<EventService> AllEvent = retrieve.retrieveAllEventServices();
+        List<EventService> allEvent = retrieve.retrieveAllEventServices();
 
-        logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
-                "Id", "Title", "Details", "EventCategory", "Price", "Place", "StartTime", "EndTime", "BookingTime"));
-        for (EventService eventService : AllEvent) {
-            logger.info(format("%-15s%-20s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%n",
+        logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
+                "Id", TITLE, DETAILS, EVENT_CATEGORY, PRICE, PLACE, START_TIME, END_TIME, BOOKING_TIME));
+        for (EventService eventService : allEvent) {
+            logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
                     eventService.getId(), eventService.getTitle(), eventService.getDetails(),
                     eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
                     eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
@@ -1511,21 +1555,21 @@ public class Main {
         serviceproviderpage();
 
 
-        
+
     }
 
     private static void addeventservice() throws IOException, SQLException {
         boolean continueLoop = true;
         EventService eventService;
 
-         String title;
-         String details;
-         String eventCategory;
-         String price;
-         String place;
-         String startTime;
-         String endTime;
-         String bookingTime;
+        String title;
+        String details;
+        String eventCategory;
+        String price;
+        String place;
+        String startTime;
+        String endTime;
+        String bookingTime;
 
         while (continueLoop) {
             logger.info("Enter Title : ");
@@ -1557,7 +1601,7 @@ public class Main {
             }
             else {
                 logger.info(eventManipulation.getStatus());
-                logger.info("Do you want to continue? (yes/no)");
+                logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
                 String userInput = reader.readLine();
                 continueLoop = userInput.equals("yes");
 
