@@ -1,7 +1,5 @@
 package software_project.EventManagement;
 
-import software_project.UserManagement.User;
-
 public class EventService {
     private int id;
     private String title;

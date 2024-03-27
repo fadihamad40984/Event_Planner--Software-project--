@@ -117,7 +117,7 @@ public class Event {
                 this.serviceId = rs.getInt("Id");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new SQLException(e);
         }
     }
 

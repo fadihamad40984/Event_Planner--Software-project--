@@ -1,6 +1,5 @@
 package software_project.EventManagement;
 
-import java.util.List;
 
 public class Places {
     private int id;

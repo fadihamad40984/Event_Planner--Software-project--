@@ -49,7 +49,7 @@ public class venueTCs {
 
     @Then("i click add")
     public void i_click_add() throws SQLException {
-        em.addvenue(p);
+        em.addVenue(p);
         status = em.getStatus();
     }
 

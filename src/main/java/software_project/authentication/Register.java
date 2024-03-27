@@ -1,6 +1,6 @@
 package software_project.authentication;
 
-import software_project.DataBase.DB_Connection;
+
 import software_project.DataBase.insert.insertData;
 import software_project.DataBase.retrieve.retrieveuser;
 import software_project.UserManagement.User;
@@ -11,13 +11,14 @@ import java.util.List;
 
 public class Register {
     private String status;
-    private insertData usersInserter;
-    private retrieveuser usersRetriever;
+    private final insertData usersInserter;
+    private final retrieveuser usersRetriever;
 
-    public Register(Connection connection){
+    public Register(Connection connection) {
         usersInserter = new insertData(connection);
         usersRetriever = new retrieveuser(connection);
     }
+
     public String getStatus() {
         return status;
     }
@@ -26,30 +27,17 @@ public class Register {
         this.status = status;
     }
 
-    public void registerUser(User user) throws SQLException {
+    public void registerUser(User user) {
         String st = validation.rollValidationTest(user);
         setStatus(st);
-        if(getStatus().equals("Valid")){
+        if (getStatus().equals("Valid")) {
 
-            List <User> alluser = usersRetriever.findUserByUsername(user.getUsername());
+            List<User> alluser = usersRetriever.findUserByUsername(user.getUsername());
 
-                if(alluser == null || alluser.isEmpty()){
-                    usersInserter.insertUser(user);
-                    setStatus("User was registered successfully");
-                }
-
-
-            else setStatus("Username is already taken");
-
-
-
+            if (alluser == null || alluser.isEmpty()) {
+                usersInserter.insertUser(user);
+                setStatus("User was registered successfully");
+            }
         }
-
-
-
     }
-
-
-
-
 }
