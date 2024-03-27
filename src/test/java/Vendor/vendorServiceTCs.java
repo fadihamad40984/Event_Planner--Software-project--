@@ -2,7 +2,7 @@ package Vendor;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.DataBase.DB_Connection;
+import software_project.DataBase.DBConnection;
 import software_project.Vendor.VendorManipulation;
 import software_project.Vendor.VendorService;
 
@@ -16,7 +16,7 @@ public class vendorServiceTCs {
 
     @When("the registering user is vendor")
     public void the_registering_user_is_vendor() {
-        DB_Connection conn = new DB_Connection(5432, "Event_Planner", "postgres", "admin");
+        DBConnection conn = new DBConnection(5432, "Event_Planner", "postgres", "admin");
         vs = new VendorService();
         vm = new VendorManipulation(conn.getCon());
     }

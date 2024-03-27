@@ -1,29 +1,24 @@
 package software_project.helper;
-
-
-
-
-import software_project.DataBase.DB_Connection;
-import software_project.DataBase.retrieve.retrieve;
+import software_project.DataBase.DBConnection;
 import software_project.EventManagement.Event;
 import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
 import software_project.UserManagement.User;
-
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static java.lang.Math.abs;
 
 public class Generator {
 
-    public static DB_Connection conn = new DB_Connection();
+    public static final DBConnection conn = new DBConnection();
+    private static final Logger logger = Logger.getLogger(Generator.class.getName());
 
 
     private Generator() {
@@ -133,9 +128,10 @@ public class Generator {
 
 
     public static boolean isTimeInsideInterval(String timeStr, String startStr, String endStr) {
-        LocalTime time = LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm"));
-        LocalTime start = LocalTime.parse(startStr, DateTimeFormatter.ofPattern("HH:mm"));
-        LocalTime end = LocalTime.parse(endStr, DateTimeFormatter.ofPattern("HH:mm"));
+        final String HourMiunt="HH:mm";
+        LocalTime time = LocalTime.parse(timeStr, DateTimeFormatter.ofPattern(HourMiunt));
+        LocalTime start = LocalTime.parse(startStr, DateTimeFormatter.ofPattern(HourMiunt));
+        LocalTime end = LocalTime.parse(endStr, DateTimeFormatter.ofPattern(HourMiunt));
 
         return !time.isBefore(start) && !time.isAfter(end);
     }
@@ -155,29 +151,30 @@ public class Generator {
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.MONTH, month - 1); // Adjust month as Calendar months are zero-based
         cal.set(Calendar.DAY_OF_MONTH, 1);
 
         int startDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
         int numDaysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        System.out.println(" " + getMonthName(month) + " " + year);
-        System.out.println(" Su Mo Tu We Th Fr Sa");
+        for (String s : Arrays.asList(" " + getMonthName(month) + " " + year, " Su Mo Tu We Th Fr Sa")) {
+            logger.info(s);
+        }
 
         for (int i = 1; i < startDayOfWeek; i++) {
-            System.out.print("   ");
+            logger.info("   ");
         }
 
         for (int i = 1; i <= numDaysInMonth; i++) {
-            String colorCode = colorMap.containsKey(i) && !colorMap.get(i) ? "\u001B[31m" : "\u001B[34m"; // Red for false, Blue for true
-            System.out.printf("%s%3d", colorCode, i);
+            String colorCode = (colorMap.containsKey(i) && !colorMap.get(i)) ? "\u001B[31m" : "\u001B[34m";
+            logger.info(String.format("%s%3d", colorCode, i));
             if ((startDayOfWeek + i - 1) % 7 == 0) {
-                System.out.println();
+                logger.info("");
             }
-            System.out.print("\u001B[0m"); // Reset color
+            logger.info("\u001B[0m"); // Reset color
         }
-        System.out.println("\n");
+        logger.info("\n");
     }
 
     public static String generateDateString(int day, int month, int year) {
@@ -186,7 +183,7 @@ public class Generator {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         return date.format(formatter);
-}
+    }
 
     public static String getMonthName(int month) {
         String[] monthNames = {"January", "February", "March", "April", "May", "June",
@@ -195,10 +192,11 @@ public class Generator {
     }
 
 
-    public static void main(String args[])
+    public static void main(String[] args)
     {
-       int c = (abs(getTimeDifference("14:00","00:00"))/60);
-       System.out.println(c);
+        int c = (abs(getTimeDifference("14:00","00:00"))/60);
+        logger.info(String.valueOf(c));
+
     }
 
 

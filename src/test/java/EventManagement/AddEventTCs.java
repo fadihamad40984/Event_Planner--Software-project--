@@ -3,7 +3,8 @@ package EventManagement;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.DataBase.DB_Connection;
+import software_project.DataBase.DBConnection;
+import software_project.DataBase.DBConnection;
 import software_project.EventManagement.EventManipulation;
 import software_project.EventManagement.EventService;
 
@@ -18,7 +19,7 @@ public class AddEventTCs {
 
     @When("I am in addition page")
     public void i_am_in_addition_page() {
-        DB_Connection conn = new DB_Connection(5432, "Event_Planner", "postgres", "admin");
+        DBConnection conn = new DBConnection(5432, "Event_Planner", "postgres", "admin");
         em = new EventManipulation(conn.getCon());
        es = new EventService();
     }

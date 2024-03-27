@@ -7,11 +7,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class editEvent {
+public class EditEvent {
     private String status;
-    private Connection conn;
+    private final Connection conn;
 
-    public editEvent(Connection conn) {
+    public EditEvent(Connection conn) {
         this.conn = conn;
     }
 

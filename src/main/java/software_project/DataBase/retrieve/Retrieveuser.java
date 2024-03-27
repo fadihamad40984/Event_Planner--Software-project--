@@ -1,21 +1,19 @@
 package software_project.DataBase.retrieve;
 
 import software_project.UserManagement.User;
-import software_project.Vendor.AVendorBooking;
 import software_project.helper.Generator;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class retrieveuser {
+public class Retrieveuser {
     private Connection con;
     private String status;
 
-    public retrieveuser(Connection con) {
+    public Retrieveuser(Connection con) {
         this.con = con;
     }
 
@@ -46,6 +44,7 @@ public class retrieveuser {
             try {
                 if (st != null) st.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

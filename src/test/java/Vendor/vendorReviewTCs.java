@@ -2,10 +2,12 @@ package Vendor;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.DataBase.DB_Connection;
+import software_project.DataBase.DBConnection;
 import software_project.Vendor.VendorManipulation;
 import software_project.Vendor.VendorReview;
 import software_project.Vendor.VendorService;
+
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,7 +18,7 @@ public class vendorReviewTCs {
 
     @When("customer is in reviewing page")
     public void customer_is_in_reviewing_page() {
-        DB_Connection conn = new DB_Connection(5432, "Event_Planner", "postgres", "admin");
+        DBConnection conn = new DBConnection(5432, "Event_Planner", "postgres", "admin");
         vr = new VendorReview();
         vm = new VendorManipulation(conn.getCon());
     }
@@ -34,7 +36,7 @@ public class vendorReviewTCs {
         assert(true);
     }
     @When("customer click confirm review")
-    public void customer_click_confirm_review() {
+    public void customer_click_confirm_review() throws SQLException {
         vm.addVendorReview(vr);
         status = vm.getStatus();
     }

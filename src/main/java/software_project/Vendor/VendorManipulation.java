@@ -1,23 +1,23 @@
 package software_project.Vendor;
 
-import software_project.DataBase.delete.deleteEvent;
-import software_project.DataBase.insert.insertData;
-import software_project.helper.validation;
+import software_project.DataBase.insert.InsertData;
+import software_project.helper.Validation;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class VendorManipulation {
 
     private String status;
-    private insertData insertVS;
+    private final InsertData insertVS;
 
 
     public VendorManipulation(Connection con){
-        insertVS = new insertData(con);
+        insertVS = new InsertData(con);
 
     }
     public void addVendorService(VendorService vs) {
-        String st = validation.vendorServiceValidationTest(vs);
+        String st = Validation.vendorServiceValidationTest(vs);
         setStatus(st);
         if(getStatus().equals("Valid")) {
             insertVS.insertVendorService(vs);
@@ -33,7 +33,7 @@ public class VendorManipulation {
         this.status = status;
     }
 
-    public void addVendorReview(VendorReview vr) {
+    public void addVendorReview(VendorReview vr) throws SQLException {
             insertVS.insertVendorReview(vr);
             setStatus("vendor review confirmed successfully");
     }

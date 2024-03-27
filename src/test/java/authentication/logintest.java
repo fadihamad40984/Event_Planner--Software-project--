@@ -3,7 +3,7 @@ package authentication;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.DataBase.DB_Connection;
+import software_project.DataBase.DBConnection;
 import software_project.authentication.Login;
 
 import java.sql.SQLException;
@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class logintest {
 
     private String status, username, password;
-    private DB_Connection conn;
+    private DBConnection conn;
     private Login login;
     @Given("user is connected to the database")
     public void user_is_connected_to_the_database() {
-        conn = new DB_Connection(5432,"Event_Planner","postgres","admin");
+        conn = new DBConnection(5432,"Event_Planner","postgres","admin");
         login = new Login(conn.getCon());
     }
 

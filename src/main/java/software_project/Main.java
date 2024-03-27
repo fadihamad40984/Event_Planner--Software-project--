@@ -1,8 +1,8 @@
 package software_project;
 
 
-import software_project.DataBase.DB_Connection;
-import software_project.DataBase.retrieve.retrieve;
+import software_project.DataBase.DBConnection;
+import software_project.DataBase.retrieve.Retrieve;
 import software_project.EventManagement.Event;
 import software_project.EventManagement.EventManipulation;
 import software_project.EventManagement.EventService;
@@ -26,6 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +44,7 @@ public class Main {
     private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     private static final Scanner scanner = new Scanner(System.in);
-    private static final DB_Connection conn = new DB_Connection();
+    private static final DBConnection conn = new DBConnection();
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     public static final String YOU_SHOULD_CHOOSE_NUMBER_ABOVE = "You should choose number above";
     public static final String YES = "1- Yes";
@@ -73,6 +74,9 @@ public class Main {
     public static final String BOOKING_TIME = "BookingTime";
     public static final String TIME = "00:00";
 
+
+
+
     static {
 
         System.setProperty("mail.debug", "false");
@@ -90,7 +94,7 @@ public class Main {
     private static final Register register = new Register(conn.getCon());
     private static final EventManipulation eventManipulation = new EventManipulation(conn.getCon());
 
-    private static final retrieve retrieve = new retrieve(conn.getCon());
+    private static final Retrieve retrieve = new Retrieve(conn.getCon());
     public static void main(String[] args) {
 
 
@@ -750,7 +754,7 @@ public class Main {
 
 
 
-                Generator.printCalendar(year,month,retrieve.CheckDays(year,month,allEvent.get(choice-1)));
+                Generator.printCalendar(year,month,retrieve.checkDays(year,month,allEvent.get(choice-1)));
 
 
                 while(true) {
@@ -926,9 +930,9 @@ public class Main {
                     for (VendorService vs : allVendorServices()) {
                         boolean skipVendor = false;
                         for (AVendorBooking vb : allNotAvailableVendors()) {
-                            if ((Objects.equals(vs.getVendorUserName(), vb.getVendor_user_name())) &&
-                                    (date.equals(vb.getBooking_date())) &&
-                                    (Objects.equals(chosenTime, vb.getStart_time()))) {
+                            if ((Objects.equals(vs.getVendorUserName(), vb.getVendorusername())) &&
+                                    (date.equals(vb.getBookingdate())) &&
+                                    (Objects.equals(chosenTime, vb.getStarttime()))) {
                                 skipVendor = true;
                                 break;
                             }
@@ -971,9 +975,9 @@ public class Main {
                                     NO);
                             int choiceInput = scanner.nextInt();
                             if (choiceInput == 1) {
-                                validInput = true; // Choose another vendor
+                                validInput = true;
                             } else {
-                                chooseAnotherVendor = false; // Do not choose another vendor
+                                chooseAnotherVendor = false;
                                 validInput = true;
                             }
                         } else {
@@ -1021,8 +1025,9 @@ public class Main {
     }
 
 
+
     private static List<AVendorBooking> allNotAvailableVendors() throws SQLException {
-        DB_Connection conn = new DB_Connection(5432,"Event_Planner","postgres", ADMIN);
+        DBConnection conn = new DBConnection(5432,"Event_Planner","postgres", ADMIN);
 
         Statement stmt = null;
 
@@ -1036,9 +1041,9 @@ public class Main {
             while (rs.next())
             {
                 AVendorBooking vb = new AVendorBooking();
-                vb.setVendor_user_name(rs.getString("Vendor_UN"));
-                vb.setBooking_date(rs.getString("Date"));
-                vb.setStart_time(rs.getString("Time"));
+                vb.setVendorusername(rs.getString("Vendor_UN"));
+                vb.setBookingdate(rs.getString("Date"));
+                vb.setStarttime(rs.getString("Time"));
                 vbs.add(vb);
 
 
@@ -1060,10 +1065,8 @@ public class Main {
 
 
 
-
-
     private static List<VendorService> allVendorServices() throws SQLException {
-        DB_Connection conn = new DB_Connection(5432,"Event_Planner","postgres", ADMIN);
+        DBConnection conn = new DBConnection(5432,"Event_Planner","postgres", ADMIN);
 
         Statement stmt = null;
 

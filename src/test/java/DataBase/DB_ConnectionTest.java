@@ -2,14 +2,14 @@ package DataBase;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.DataBase.DB_Connection;
+import software_project.DataBase.DBConnection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DB_ConnectionTest {
     private String databaseName, username, password;
     private int port;
-    private DB_Connection conn;
+    private DBConnection conn;
     @When("I want to connect to database")
     public void i_want_to_connect_to_database() {
         assert(true);
@@ -32,7 +32,7 @@ public class DB_ConnectionTest {
 
     @Then("I should see {string} for connection")
     public void i_should_see_for_connection(String msg) {
-        conn = new DB_Connection(port, databaseName, username, password);
+        conn = new DBConnection(port, databaseName, username, password);
         String status = conn.getStatus();
         assertEquals(status, msg);
     }

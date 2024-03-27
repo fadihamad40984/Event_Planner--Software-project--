@@ -3,7 +3,6 @@ package software_project.DataBase.retrieve;
 import software_project.EventManagement.Event;
 import software_project.EventManagement.EventService;
 import software_project.EventManagement.Places;
-import software_project.UserManagement.User;
 import software_project.Vendor.AVendorBooking;
 import software_project.Vendor.VendorService;
 import software_project.helper.Generator;
@@ -18,12 +17,17 @@ import java.util.Map;
 
 import static java.lang.Math.abs;
 
-public class retrieve {
+public class Retrieve {
 
-    private Connection con;
+    public static final String PRICE = "Price";
+    public static final String TITLE = "Title";
+    public static final String EVENT_ID = "Event_id";
+    public static final String EVENT_SERVICE_ID = "EventService_id";
+    public static final String DESCRIPTION = "Description";
+    private final Connection con;
     private String status;
 
-    public retrieve(Connection con) {
+    public Retrieve(Connection con) {
         this.con = con;
     }
 
@@ -35,20 +39,20 @@ public class retrieve {
         this.status = status;
     }
 
-    public List<EventService> selectEventServicesOfParticularPlace(String place_name) {
-        List<EventService> EventServices = new ArrayList<>();
+    public List<EventService> selectEventServicesOfParticularPlace(String placename) {
+        List<EventService> eventServices = new ArrayList<>();
         Statement stmt = null;
         try {
             stmt = con.createStatement();
-            String query = "SELECT \"iD\" FROM \"Places\" where \"Name\" = \'" + place_name + "\';";
+            String query = "SELECT \"iD\" FROM \"Places\" where \"Name\" = \'" + placename + "\';";
 
             ResultSet rs = stmt.executeQuery(query);
-            int place_id = 0;
+            int placeid = 0;
             while (rs.next())
-                place_id = rs.getInt("iD");
+                placeid = rs.getInt("iD");
 
 
-            String query2 = "SELECT \"ID_EventService\" FROM \"Place_EventServices\" where \"ID_Place\" = " + place_id + ";";
+            String query2 = "SELECT \"ID_EventService\" FROM \"Place_EventServices\" where \"ID_Place\" = " + placeid + ";";
 
             ResultSet rs2 = stmt.executeQuery(query2);
 
@@ -62,19 +66,19 @@ public class retrieve {
                 while (rs3 != null && rs3.next()) {
                     EventService es = new EventService();
                     es.setId(rs3.getInt("Id"));
-                    es.setTitle(rs3.getString("Title"));
+                    es.setTitle(rs3.getString(TITLE));
                     es.setDetails(rs3.getString("Details"));
                     es.setEventCategory(rs3.getString("Event_Category"));
-                    es.setPrice(rs3.getString("Price"));
+                    es.setPrice(rs3.getString(PRICE));
                     es.setPlace(rs3.getString("Place"));
                     es.setStartTime(rs3.getString("Start_Time"));
                     es.setEndTime(rs3.getString("End_Time"));
                     es.setBookingTime(rs3.getString("Booking_Time"));
-                    EventServices.add(es);
+                    eventServices.add(es);
                 }
             }
             setStatus("Retrieving event services for the place successfully");
-            return EventServices;
+            return eventServices;
         } catch (Exception e) {
             setStatus("Error while retrieving event services for the place from database");
             return new ArrayList<>();
@@ -82,12 +86,13 @@ public class retrieve {
             try {
                 if (stmt != null) stmt.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
 
 
-    public Places retriveplace(String place_name) throws SQLException {
+    public Places retriveplace(String placename) throws SQLException {
         Statement stmt = null;
 
 
@@ -95,7 +100,7 @@ public class retrieve {
 
         try {
             stmt = con.createStatement();
-            String query = "SELECT * FROM \"Places\" where \"Name\" = \'" + place_name + "\';";
+            String query = "SELECT * FROM \"Places\" where \"Name\" = \'" + placename + "\';";
 
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
@@ -115,13 +120,19 @@ public class retrieve {
             setStatus("Error while retrieving placeID for the place from database");
 
         }
+        finally {
+            if(stmt!=null)
+            {
+                stmt.close();
+            }
+        }
         return place;
     }
 
 
     public static int retriveeventIID(Connection con2) throws SQLException {
         Statement stmt = null;
-        int event_id = 0;
+        int eventid = 0;
 
 
         try {
@@ -132,8 +143,8 @@ public class retrieve {
 
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
-                event_id = rs.getInt("ii");
-            return event_id-1;
+                eventid = rs.getInt("ii");
+            return eventid-1;
 
 
 
@@ -141,14 +152,20 @@ public class retrieve {
 
             e.printStackTrace();
         }
-        return event_id-1;
+       finally {
+            if(stmt!=null)
+            {
+                stmt.close();
+            }
+        }
+        return eventid-1;
     }
 
 
 
     public int retriveeventid(String title) throws SQLException {
         Statement stmt = null;
-        int event_id = 0;
+        int eventid = 0;
 
         try {
             stmt = con.createStatement();
@@ -156,8 +173,8 @@ public class retrieve {
 
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next())
-                event_id = rs.getInt("Id");
-            return event_id;
+                eventid = rs.getInt("Id");
+            return eventid;
 
 
 
@@ -165,12 +182,17 @@ public class retrieve {
             setStatus("Error while retrieving event_id for the EventServices from database");
 
         }
-        return event_id;
+        finally {
+            if(stmt!=null)
+            {
+                stmt.close();
+            }
+        }
+        return eventid;
     }
 
 
-    public List<EventService> retrieveAllEventServices()
-    {
+    public List<EventService> retrieveAllEventServices() throws SQLException {
         Statement stmt = null;
 
         List<EventService> eventServices = new ArrayList<>();
@@ -191,6 +213,12 @@ public class retrieve {
             setStatus("Error while retrieving EventServices from database");
 
         }
+        finally {
+            if(stmt!=null)
+            {
+                stmt.close();
+            }
+        }
 
         return  eventServices;
 
@@ -207,10 +235,10 @@ public class retrieve {
 
             while (rs.next()) {
                 es.setId(rs.getInt("Id"));
-                es.setTitle(rs.getString("Title"));
+                es.setTitle(rs.getString(TITLE));
                 es.setDetails(rs.getString("Details"));
                 es.setEventCategory(rs.getString("Event_Category"));
-                es.setPrice(rs.getString("Price"));
+                es.setPrice(rs.getString(PRICE));
                 es.setPlace(rs.getString("Place"));
                 es.setStartTime(rs.getString("Start_Time"));
                 es.setEndTime(rs.getString("End_Time"));
@@ -227,6 +255,7 @@ public class retrieve {
             try {
                 if (stmt != null) stmt.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -243,7 +272,7 @@ public class retrieve {
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
-                title = rs.getString("Title");
+                title = rs.getString(TITLE);
 
             }
 
@@ -257,47 +286,49 @@ public class retrieve {
             try {
                 if (stmt != null) stmt.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
 
-    public List<Event> selectEventOfParticularDateAndServiceId(String date, int service_id) {
-        List<Event> Events = new ArrayList<>();
+    public List<Event> selectEventOfParticularDateAndServiceId(String date, int serviceid) {
+        List<Event> events = new ArrayList<>();
         Statement stmt = null;
         try {
             stmt = con.createStatement();
-            String query ="SELECT * FROM \"Event\" where \"Date\" = \'" + date + "\' and \"EventService_id\" = " + service_id + ";";
+            String query ="SELECT * FROM \"Event\" where \"Date\" = \'" + date + "\' and \"EventService_id\" = " + serviceid + ";";
 
-            String query1 = "SELECT \"Title\" FROM \"Event_Service\" where \"Id\" = " + service_id +";";
+            String query1 = "SELECT \"Title\" FROM \"Event_Service\" where \"Id\" = " + serviceid +";";
 
             ResultSet rs1 = stmt.executeQuery(query1);
-            String service_title = "";
+            String servicetitle = "";
             while (rs1.next()) {
-                service_title = rs1.getString("Title");
+                servicetitle = rs1.getString(TITLE);
             }
 
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 Event e = new Event(con);
-                e.setId(rs.getInt("Event_id"));
-                e.setServiceId(rs.getInt("EventService_id"));
-                e.setServiceTitle(service_title);
+                e.setId(rs.getInt(EVENT_ID));
+                e.setServiceId(rs.getInt(EVENT_SERVICE_ID));
+                e.setServiceTitle(servicetitle);
                 e.setDate(rs.getString("Date"));
                 e.setTime(rs.getString("Time"));
-                e.setDescription(rs.getString("Description"));
+                e.setDescription(rs.getString(DESCRIPTION));
                 e.setAttendeeCount(String.valueOf(rs.getInt("Attendee_Count")));
-                Events.add(e);
+                events.add(e);
             }
 
             setStatus("Retrieving events for the given date successfully");
-            return Events;
+            return events;
         } catch (Exception e) {
             setStatus("Error while retrieving events for the date from database");
-            return Events;
+            return events;
         } finally {
             try {
                 if (stmt != null) stmt.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -314,8 +345,8 @@ public class retrieve {
             while (rs.next()) {
                 vs.setVendorUserName(rs.getString("Vendor_User_Name"));
                 vs.setServiceType(rs.getString("Type"));
-                vs.setServiceDescription(rs.getString("Description"));
-                vs.setServicePrice(rs.getString("Price"));
+                vs.setServiceDescription(rs.getString(DESCRIPTION));
+                vs.setServicePrice(rs.getString(PRICE));
                 vs.setServiceAvailability(rs.getString("Availability"));
                 vs.setAverageRating(rs.getInt("Average_Rating"));
             }
@@ -330,6 +361,7 @@ public class retrieve {
             try {
                 if (stmt != null) stmt.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -343,11 +375,10 @@ public class retrieve {
 
             ResultSet rs = stmt.executeQuery(query);
 
-            String vendorUN = s;
             List<Integer> eventIDs = new ArrayList<>();
 
             while (rs.next()) {
-                eventIDs.add(rs.getInt("Event_id"));
+                eventIDs.add(rs.getInt(EVENT_ID));
             }
 
             for(int i = 0; i < eventIDs.size(); i++) {
@@ -357,23 +388,23 @@ public class retrieve {
                 ResultSet rs1 = stmt.executeQuery(query2);
 
                 AVendorBooking vb = new AVendorBooking();
-                Event e = new Event(con);
+
                 String serviceTitle = "";
-                int ServiceId = 0;
+                int serviceId = 0;
 
 
                 while (rs1.next()) {
-                    ServiceId = rs1.getInt("EventService_id");
-                    vb.setBooking_date(rs1.getString("Date"));
-                    vb.setStart_time(rs1.getString("Time"));
+                    serviceId = rs1.getInt(EVENT_SERVICE_ID);
+                    vb.setBookingdate(rs1.getString("Date"));
+                    vb.setStarttime(rs1.getString("Time"));
                 }
 
-               serviceTitle =  this.selectEventServicesOfParticularid(ServiceId);
+               serviceTitle =  this.selectEventServicesOfParticularid(serviceId);
 
 
 
-                vb.setBooking_time(this.selectEventServicesOfParticularName(serviceTitle).getBookingTime());
-                vb.setVendor_user_name(s);
+                vb.setBookingtime(this.selectEventServicesOfParticularName(serviceTitle).getBookingTime());
+                vb.setVendorusername(s);
 
                 vbs.add(vb);
             }
@@ -388,6 +419,7 @@ public class retrieve {
             try {
                 if (stmt != null) stmt.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -406,19 +438,19 @@ public class retrieve {
 
 
 
-    public Map<Integer,Boolean> CheckDays(int year , int month ,EventService eventService) {
+    public Map<Integer,Boolean> checkDays(int year , int month ,EventService eventService) {
 
         Map<String, Integer> dateCountMap = new HashMap<>();
 
-        Map<Integer, Boolean> DateAvalability = new HashMap<>();
+        Map<Integer, Boolean> dateAvalability = new HashMap<>();
 
 
         List<Event> events = this.selectEventOfParticularServiceId(eventService);
 
-        int TimeDiff = abs(Generator.getTimeDifference(eventService.getStartTime(), eventService.getEndTime()));
-        int BookingTime = Integer.parseInt(eventService.getBookingTime()) * 60;
+        int timeDiff = abs(Generator.getTimeDifference(eventService.getStartTime(), eventService.getEndTime()));
+        int bookingTime = Integer.parseInt(eventService.getBookingTime()) * 60;
 
-        int NumberOfEvents = TimeDiff / BookingTime;
+        int numberOfEvents = timeDiff / bookingTime;
 
 
         for (Event event : events) {
@@ -434,23 +466,22 @@ public class retrieve {
             LocalDate date = LocalDate.parse(key, formatter);
 
 
-            int Day = date.getDayOfMonth();
-            int Month = date.getMonthValue();
-            int Year = date.getYear();
+            int day1 = date.getDayOfMonth();
+            int month1 = date.getMonthValue();
+            int year1 = date.getYear();
 
 
-            if (year == Year && month == Month) {
-                if (value == NumberOfEvents) {
-                    DateAvalability.put(Day, false);
+            if (year == year1 && month == month1 && (value == numberOfEvents)) {
+                    dateAvalability.put(day1, false);
 
-                }
+
 
             }
 
 
 
         }
-        return DateAvalability;
+        return dateAvalability;
 
 
     }
@@ -463,7 +494,7 @@ public class retrieve {
 
 
     public List<Event> selectEventOfParticularServiceId(EventService eventService) {
-        List<Event> Events = new ArrayList<>();
+        List<Event> events = new ArrayList<>();
         Statement stmt = null;
         try {
             stmt = con.createStatement();
@@ -472,26 +503,27 @@ public class retrieve {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 Event e = new Event(con);
-                e.setId(rs.getInt("Event_id"));
-                e.setServiceId(rs.getInt("EventService_id"));
+                e.setId(rs.getInt(EVENT_ID));
+                e.setServiceId(rs.getInt(EVENT_SERVICE_ID));
                 e.setServiceTitle(eventService.getTitle());
                 e.setDate(rs.getString("Date"));
                 e.setTime(rs.getString("Time"));
-                e.setDescription(rs.getString("Description"));
+                e.setDescription(rs.getString(DESCRIPTION));
                 e.setAttendeeCount(String.valueOf(rs.getInt("Attendee_Count")));
-                Events.add(e);
+                events.add(e);
             }
 
 
-            return Events;
+            return events;
         } catch (Exception e) {
 
-            return Events;
+            return events;
         } finally {
             try {
                 if (stmt != null) stmt.close();
             } catch (Exception e) {
 
+                e.printStackTrace();
             }
         }
     }

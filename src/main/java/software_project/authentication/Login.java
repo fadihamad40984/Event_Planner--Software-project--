@@ -1,6 +1,6 @@
 package software_project.authentication;
 
-import software_project.DataBase.retrieve.retrieveuser;
+import software_project.DataBase.retrieve.Retrieveuser;
 import software_project.UserManagement.User;
 import software_project.helper.UserSession;
 
@@ -9,11 +9,11 @@ import java.util.List;
 
 public class Login {
     private String status;
-    private retrieveuser usersRetriever;
+    private final Retrieveuser usersRetriever;
 
     public String userType;
     public Login(Connection connection) {
-        usersRetriever = new retrieveuser(connection);
+        usersRetriever = new Retrieveuser(connection);
     }
 
     public String getStatus() {
@@ -33,7 +33,7 @@ public class Login {
                 setStatus("Valid username and password");
                 userType = tmpUser.getUserType();
                 UserSession.setCurrentUser(tmpUser);
-                UserSession.setSessionId(UserSessionManager.createSession(username));
+                UserSession.setSessionId(UserSessionManager.createSession());
                 return true;
             }
         }
