@@ -3,10 +3,7 @@ package software_project.DataBase.retrieve;
 import software_project.UserManagement.User;
 import software_project.helper.Generator;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,25 +25,22 @@ public class Retrieveuser {
 
     public List<User> selectUsersWithCondition(String condition) {
         List<User> users = new ArrayList<>();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            String query = "SELECT * FROM users " + condition;
-            ps = con.prepareStatement(query);
-            rs = ps.executeQuery();
-            while (rs != null && rs.next())
+
+        String query = "SELECT * FROM users " + condition;
+
+        try (PreparedStatement ps = con.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
                 users.add(Generator.rsToUser(rs));
-            setStatus("Retrieving users successfully");
-        } catch (Exception e) {
-            setStatus("Error while retrieving users from database");
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-            } catch (Exception e) {
-                setStatus("Exception While Retrieve Data");
             }
+
+            setStatus("Retrieving users successfully");
+
+        } catch (SQLException e) {
+            setStatus("Error while retrieving users from database");
         }
+
         return users;
     }
 
