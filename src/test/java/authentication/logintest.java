@@ -30,7 +30,7 @@ public class logintest {
     }
 
     @When("user clicks on login")
-    public void user_clicks_on_login() {
+    public void user_clicks_on_login() throws SQLException {
         login.loginUser(username, password);
         status = login.getStatus();
     }

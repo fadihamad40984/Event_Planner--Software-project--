@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Retrieveuser {
-    private Connection con;
+    private final Connection con;
     private String status;
 
     public Retrieveuser(Connection con) {
@@ -23,36 +23,34 @@ public class Retrieveuser {
         this.status = status;
     }
 
-    public List<User> selectUsersWithCondition(String condition) {
+    public List<User> findUserByUsername(String userName) throws SQLException {
         List<User> users = new ArrayList<>();
+        ResultSet rs = null;
+        String query = "SELECT * FROM \"users\" where \"User_Name\" = ?;";
 
-        String query = "SELECT * FROM users WHERE " + condition;
 
-        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM users WHERE " + condition)) {
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setString(1, userName);
+
+            rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 users.add(Generator.rsToUser(rs));
             }
-
             setStatus("Retrieving users successfully");
 
-        } catch (SQLException e) {
-            setStatus("Error while retrieving users from database");
-        }
+            rs.close();
 
+            return users;
+
+        }
+       catch (SQLException e) {
+            setStatus("Error while retrieving users from database");
+
+        }
         return users;
     }
 
-
-    public List<User> selectFromusersTable(String field, String input) {
-        return selectUsersWithCondition("where " + "\"" + field + "\"" + " = \'" + input + "\';");
-    }
-
-
-    public List<User> findUserByUsername(String username) {
-        return selectFromusersTable("User_Name", username);
-    }
 
 
 

@@ -5,6 +5,7 @@ import software_project.UserManagement.User;
 import software_project.helper.UserSession;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public class Login {
@@ -25,7 +26,7 @@ public class Login {
         this.status = status;
     }
 
-    public boolean loginUser(String username, String password) {
+    public boolean loginUser(String username, String password) throws SQLException {
         List<User> allUsers = usersRetriever.findUserByUsername(username.toLowerCase());
         if (allUsers != null && !allUsers.isEmpty()) {
             User tmpUser = allUsers.get(0);
