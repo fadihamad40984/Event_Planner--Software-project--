@@ -46,6 +46,7 @@ public class InsertData {
 
         }
 
+
     }
 
     public boolean insertEventService(EventService es) {
@@ -62,6 +63,7 @@ public class InsertData {
         } catch (Exception e) {
 
             return false;
+
         }
 
     }
@@ -83,6 +85,7 @@ public class InsertData {
 
             return false;
         }
+
 
     }
 
@@ -133,7 +136,7 @@ public class InsertData {
         }
     }
 
-    public boolean insertEvent(Event e) {
+    public void insertEvent(Event e) {
         try {
             conn.setAutoCommit(false);
             String query = "insert into \"Event\" (\"EventService_id\",\"Date\", \"Time\", \"Description\", \"Attendee_Count\",\"Balance\") values (?,?, ?, ?, ?,?);";//id is serial
@@ -187,16 +190,15 @@ public class InsertData {
 
             setStatus("Event booked successfully");
             conn.commit();
-            return true;
         } catch (Exception exception) {
+            exception.printStackTrace();
 
-            return false;
         }
     }
 
 
 
-    public boolean insertVendorService(VendorService vs) {
+    public void insertVendorService(VendorService vs) {
         try {
             conn.setAutoCommit(false);//                                       avgRating
             String query = "insert into \"Vendor_Service\" (\"Vendor_User_Name\",\"Type\",\"Description\",\"Price\",\"Availability\",\"Average_Rating\") values (?, CAST(? AS \"Vendor_Type\"), ?, ?, ?, ?);";//service id is serial
@@ -212,17 +214,16 @@ public class InsertData {
             }
             setStatus("service confirmed to vendor successfully");
             conn.commit();
-            return true;
         } catch (Exception e) {
 
-            return false;
+            e.printStackTrace();
         }
+
+
     }
 
-    public boolean insertVendorReview(VendorReview vr) throws SQLException {
-        Statement stmt = null;
-        try {
-            stmt = conn.createStatement();
+    public void insertVendorReview(VendorReview vr) throws SQLException {
+        try (Statement stmt = conn.createStatement()) {
             conn.setAutoCommit(false);
             String query = "insert into \"Vendor_Review\" (\"Vendor_User_Name\",\"Customer_User_Name\",\"Rating\",\"FeedBack_Text\") values (?, ?, ?, ?);";//review id is serial
             try (PreparedStatement preparedStmt = conn.prepareStatement(query)) {
@@ -239,16 +240,18 @@ public class InsertData {
 
             String query2 = "select \"Rating\" from \"Vendor_Review\" where \"Vendor_User_Name\" = \'" + vr.getVendorUserName() + "\' ;";
 
-            ResultSet rs = stmt.executeQuery(query2);
-            int avgRating = 0;
-            int ratingsCount = 0;
-            while (rs.next()) {
-                avgRating += Generator.StarCounter(rs.getString("Rating"));
-                ratingsCount++;
+            int avgRating;
+            int ratingsCount;
+            try (ResultSet rs = stmt.executeQuery(query2)) {
+                avgRating = 0;
+                ratingsCount = 0;
+                while (rs.next()) {
+                    avgRating += Generator.starCounter(rs.getString("Rating"));
+                    ratingsCount++;
+                }
             }
 
-            if(ratingsCount!=0)
-            {
+            if (ratingsCount != 0) {
                 avgRating /= ratingsCount;
             }
 
@@ -257,23 +260,12 @@ public class InsertData {
             stmt.executeUpdate(query3);
 
 
-
-
             setStatus("service confirmed to vendor successfully");
             conn.commit();
 
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
 
-            return false;
-        }
-        finally {
-            if(stmt!=null)
-            {
-                stmt.close();
-
-            }
         }
     }
 

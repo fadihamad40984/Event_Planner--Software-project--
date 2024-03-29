@@ -26,11 +26,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+
+import java.util.*;
 import java.util.logging.*;
 
 import static java.lang.Math.abs;
@@ -74,6 +71,7 @@ public class Main {
     public static final String BOOKING_TIME = "BookingTime";
     public static final String TIME = "00:00";
 
+     static int balanceBookEvent;
 
 
 
@@ -420,7 +418,8 @@ public class Main {
 
     }
 
-    private static void showCalendarPage() throws SQLException, IOException {  logger.info("Choose The Event You Want To Cancel :");
+    private static void showCalendarPage() throws SQLException, IOException {
+        logger.info("Choose The Event You Want To Cancel :");
         List<Event> events;
         events = selectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
         logger.info(format(S_15_S_15_S_30_S_15_S_15_S_N,
@@ -693,337 +692,318 @@ public class Main {
     private static void bookEventPage() throws SQLException, IOException {
         List<EventService> allEvent = retrieve.retrieveAllEventServices();
 
-        int counter = 0;
-        int choice;
-        int year;
-        int month;
-        int day = 0;
-        String date;
-
-        String chosenTime;
-        String descr;
-        int attendeeCount;
-
-        List<String> guestList = new ArrayList<>();
-        List<String> images = new ArrayList<>();
-        List<String> vendors = new ArrayList<>();
-
-        int balance;
-        int storeBalance;
-
-        List<String> times = new ArrayList<>();
-
-
-        logger.info("Enter The Balance : ");
-        balance = scanner.nextInt();
-        storeBalance = balance;
-
-
-        logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
-                NUMBER, TITLE, DETAILS, EVENT_CATEGORY, PRICE, PLACE, START_TIME, END_TIME, BOOKING_TIME));
-        for (EventService eventService : allEvent) {
-            if (Integer.parseInt(eventService.getPrice()) <= balance) {
-
-
-                logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
-                        ++counter, eventService.getTitle(), eventService.getDetails(),
-                        eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
-                        eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
-            }
-
-            else{
-                counter++;
-            }
-        }
-
-
-
-
-        while(true)
-        {
-            logger.info("Choose Event Service (By Enter A Number Of Service) : ");
-            choice = scanner.nextInt();
-
-            if(choice>0 && choice<=counter)
-            {
-
-                logger.info("Enter Year You Want To Book The Event : ");
-                year = scanner.nextInt();
-                logger.info("Enter Month You Want To Book The Event : ");
-                month = scanner.nextInt();
-
-
-
-                Generator.printCalendar(year,month,retrieve.checkDays(year,month,allEvent.get(choice-1)));
-
-
-                while(true) {
-                    boolean validDay = false;
-
-                    while (!validDay) {
-                        logger.info("Enter Day You Want To Book The Event At: ");
-                        day = scanner.nextInt();
-
-                        if (day >= 1) {
-                            if ((month == 2 && ((year % 4 == 0 && day <= 29) || (day <= 28))) ||
-                                    ((month % 2 == 0 && day <= 30) || (month % 2 != 0 && day <= 31))) {
-                                validDay = true; // Day is valid, exit loop
-                            } else {
-                                logger.info("Invalid day for the selected month, please enter again.");
-                            }
-                        } else {
-                            logger.info("Day should be greater than or equal to 1.");
-                        }
-                    }
-
-
-                    date = Generator.generateDateString(day, month, year);
-
-                    List<Event> events = retrieve.selectEventOfParticularDateAndServiceId(date, allEvent.get(choice - 1).getId());
-
-                    if (events.isEmpty()) {
-                        logger.info("There Is No Events. You Can Request To Book An Event In This Day!");
-                    } else {
-                        logger.info(format("%-15s%-15s%-15s%n",
-                                START_TIME, END_TIME, DESCRIPTION));
-                        for (Event e : events) {
-                            int c = (abs(Generator.getTimeDifference(e.getTime(), TIME)) / 60) + Integer.parseInt(allEvent.get(choice - 1).getBookingTime());
-                            logger.info(format("%-15s%-15s%-15s%n",
-
-                                    e.getTime(), c + ":00", e.getDescription()));
-                        }
-                    }
-
-
-
-                    int timeDiff = abs(Generator.getTimeDifference(allEvent.get(choice - 1).getStartTime(), allEvent.get(choice - 1).getEndTime()));
-                    int bookingTime = Integer.parseInt(allEvent.get(choice - 1).getBookingTime()) * 60;
-                    int numberOfEvents = timeDiff / bookingTime;
-
-                    int count = 0;
-
-                    boolean flag = false;
-                    boolean f = false;
-                    String starttime = allEvent.get(choice - 1).getStartTime();
-                    List<Event> aLLEven = retrieve.selectEventOfParticularDateAndServiceId(date,allEvent.get(choice - 1).getId());
-
-
-
-
-                    for (int i = 0; i < numberOfEvents; i++) {
-                        for (Event event2 : aLLEven) {
-                            if (Objects.equals(starttime, event2.getTime())) {
-                                starttime = ((abs(Generator.getTimeDifference(event2.getTime(), TIME)) / 60) + Integer.parseInt(allEvent.get(choice - 1).getBookingTime())) + ":00";
-                                flag = true;
-                                break;
-
-                            }
-
-
-                        }
-                        if (flag) {
-                            continue;
-                        }
-
-
-
-                        times.add(starttime);
-                        logger.info(String.format("Time %d: %s", ++count, starttime));
-
-
-                        f = true;
-                        starttime = ((abs(Generator.getTimeDifference(starttime, TIME)) / 60) + Integer.parseInt(allEvent.get(choice - 1).getBookingTime())) + ":00";
-
-                    }
-
-                    if (!f) {
-                        logger.severe("Chosen Day Is Full");
-
-
-
-                    }
-
-                    else {
-                        break;
-                    }
-
-
+        balanceBookEvent = getUserBalance();
+        int storeBalance = balanceBookEvent;
+        while (true) {
+            int choice = displayEventServices(allEvent);
+            if (choice != -1) {
+                String date = getDateForBooking(allEvent, choice);
+                EventService eventService = allEvent.get(choice - 1);
+                List<Event> events = retrieveEvents(date, eventService);
+                printEventsInParticularDate(events, eventService);
+                List<String> times = calculateAvailableTimes(eventService, date);
+                boolean b = displayAvailableTimes(times);
+                if(!b){
+                    continue;
                 }
-
-                while (true)
-                {
-                    logger.info("Choose The Time You Want To Book Event At : ");
-
-
-                    int choseTime;
-
-                    choseTime = scanner.nextInt();
-                    chosenTime = times.get(choseTime-1);
-                    if(chosenTime == null)
-                    {
-                        logger.severe("Wrong option\n");
-
-                    }
-
-                    else
-                        break;
-                }
-
-                balance-=Integer.parseInt(allEvent.get(choice - 1).getPrice());
-
-                logger.info("Enter Description : ");
-
-                descr = reader.readLine();
-
-                logger.info("Enter AttendeeCount : ");
-
-                attendeeCount = scanner.nextInt();
-
-                logger.info("Enter Guests Names : ");
-
-                int k=0;
-                String guest;
-                for( k = 0 ; k < attendeeCount ; k++)
-                {
-                    guest = reader.readLine();
-                    if(guest == null)
-                    {
-                        logger.severe("You Should Enter A name\n");
-                        k--;
-                        continue;
-                    }
-                    guestList.add(guest);
-
-                }
-
-
-                while(true)
-                {
-                    String image;
-                    logger.info("Choose Image : ");
-                    image = chooseImagePath();
-                    images.add(image);
-
-                    logger.info("Do You Want Choose Another Image ?\s" +
-                            YES +
-                            NO);
-
-                    int ch;
-                    ch = scanner.nextInt();
-                    if(ch!=1)
-                    {
-                        break;
-                    }
-
-                }
-
-                boolean chooseAnotherVendor = true;
-
-                while (chooseAnotherVendor) {
-                    logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
-                            NUMBER, "Vendor_User_Name", DESCRIPTION, "Price/H", "Type", "Rating"));
-
-                    List<String> printedVendors = new ArrayList<>();
-                    List<Integer> printedPrice = new ArrayList<>();
-
-                    int counterservice = 0;
-                    for (VendorService vs : allVendorServices()) {
-                        boolean skipVendor = false;
-                        for (AVendorBooking vb : allNotAvailableVendors()) {
-                            if ((Objects.equals(vs.getVendorUserName(), vb.getVendorusername())) &&
-                                    (date.equals(vb.getBookingdate())) &&
-                                    (Objects.equals(chosenTime, vb.getStarttime()))) {
-                                skipVendor = true;
-                                break;
-                            }
-                        }
-
-                        if (!skipVendor) {
-                            String description = vs.getServiceDescription().replace("\n", " ");
-                            StringBuilder rate = new StringBuilder();
-                            for (int i = 0; i < vs.getAverageRating(); i++) {
-                                rate.append("*");
-                            }
-
-                            if (Integer.parseInt(vs.getServicePrice()) <= balance) {
-                                printedVendors.add(vs.getVendorUserName());
-                                printedPrice.add(Integer.parseInt(vs.getServicePrice()));
-                                logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
-                                        ++counterservice, vs.getVendorUserName(), description,
-                                        vs.getServicePrice(), vs.getServiceType(), rate));
-                            } else {
-                                counterservice++;
-                            }
-                        }
-                    }
-
-                    if (printedVendors.isEmpty()) {
-                        logger.severe("No Vendor Matching With Remaining Balance");
-                        break;
-                    }
-
-                    boolean validInput = false;
-                    int chooseVendor;
-                    while (!validInput) {
-                        logger.info("Choose Vendor : ");
-                        chooseVendor = scanner.nextInt();
-                        if (chooseVendor > 0 && chooseVendor <= counterservice) {
-                            balance -= printedPrice.get(chooseVendor - 1) * Integer.parseInt(allEvent.get(choice - 1).getBookingTime());
-                            vendors.add(printedVendors.get(chooseVendor - 1));
-                            logger.info("Do You Want Choose Another Vendor : \s" +
-                                    YES +
-                                    NO);
-                            int choiceInput = scanner.nextInt();
-                            if (choiceInput == 1) {
-                                validInput = true;
-                            } else {
-                                chooseAnotherVendor = false;
-                                validInput = true;
-                            }
-                        } else {
-                            logger.severe(INVALID_INPUT);
-                        }
-                    }
-                }
-
-
-
-
+                String chosenTime = getTimeForBooking(allEvent, choice, date);
+                balanceBookEvent -= Integer.parseInt(eventService.getPrice());
+                String descr = getDescription();
+                int attendeeCount = getAttendeeCount();
+                List<String> guestList = getGuestList(attendeeCount);
+                List<String> images = chooseImages();
+                List<String> vendors = chooseVendors(date, chosenTime);
                 Event accpetevent = new Event(conn.getCon());
                 accpetevent.setDate(date);
                 accpetevent.setDescription(descr);
                 accpetevent.setTime(chosenTime);
                 accpetevent.setAttendeeCount(String.valueOf(attendeeCount));
-                accpetevent.setServiceTitle(allEvent.get(choice-1).getTitle());
-                accpetevent.setServiceId(allEvent.get(choice-1).getId());
+                accpetevent.setServiceTitle(allEvent.get(choice - 1).getTitle());
+                accpetevent.setServiceId(allEvent.get(choice - 1).getId());
                 accpetevent.setBalance(String.valueOf(storeBalance));
                 accpetevent.setGuestList(guestList);
                 accpetevent.setImages(images);
                 accpetevent.setVendors(vendors);
                 accpetevent.setUsername(UserSession.getCurrentUser().getUsername());
                 eventManipulation.bookEvent(accpetevent);
-
                 logger.severe(eventManipulation.getStatus());
-                logger.severe(String.format("Remaining Balance is: %s%n", balance));
-
-
-
-                break;
-
-
+                logger.severe(String.format("Remaining Balance is: %s%n", balanceBookEvent));
             }
 
-            else {
-                logger.info("Enter A Valid Number\n");
-            }
+            break;
+        }
+    }
 
+    private static int getUserBalance() {
+        logger.info("Enter The Balance : ");
+        return scanner.nextInt();
+    }
+
+    private static int displayEventServices(List<EventService> allEvent) {
+        int counter = 0;
+        logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
+                NUMBER, TITLE, DETAILS, EVENT_CATEGORY, PRICE, PLACE, START_TIME, END_TIME, BOOKING_TIME));
+        for (EventService eventService : allEvent) {
+            if (Integer.parseInt(eventService.getPrice()) <= balanceBookEvent) {
+                logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
+                        ++counter, eventService.getTitle(), eventService.getDetails(),
+                        eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
+                        eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
+            } else {
+                counter++;
+            }
         }
 
 
-
-
+        return getEventChoice(counter);
     }
 
+    private static int getEventChoice(int counter) {
+        while (true) {
+            logger.info("Choose Event Service (By Enter A Number Of Service) : ");
+            int choice = scanner.nextInt();
+            if (choice > 0 && choice <= counter) {
+                return choice;
+            } else {
+                logger.info("Enter A Valid Number\n");
+            }
+        }
+    }
+
+    private static String getDateForBooking(List<EventService> allEvent, int choice) {
+        logger.info("Enter Year You Want To Book The Event : ");
+        int year = scanner.nextInt();
+        logger.info("Enter Month You Want To Book The Event : ");
+        int month = scanner.nextInt();
+
+        Generator.printCalendar(year, month, retrieve.checkDays(year, month, allEvent.get(choice - 1)));
+
+        int day = 0;
+        boolean validDay = false;
+        while (!validDay) {
+            logger.info("Enter Day You Want To Book The Event At: ");
+            day = scanner.nextInt();
+
+            if (day >= 1) {
+                if ((month == 2 && ((year % 4 == 0 && day <= 29) || (day <= 28))) ||
+                        ((month % 2 == 0 && day <= 30) || (month % 2 != 0 && day <= 31))) {
+                    validDay = true; // Day is valid, exit loop
+                } else {
+                    logger.info("Invalid day for the selected month, please enter again.");
+                }
+            } else {
+                logger.info("Day should be greater than or equal to 1.");
+            }
+        }
+
+        return Generator.generateDateString(day, month, year);
+    }
+
+    private static List<Event> retrieveEvents(String date, EventService eventService) {
+        return retrieve.selectEventOfParticularDateAndServiceId(date, eventService.getId());
+    }
+
+    private static void printEventsInParticularDate(List<Event> events, EventService eventService){
+        if (events.isEmpty()) {
+            logger.info("There Is No Events. You Can Request To Book An Event In This Day!");
+        } else {
+            logger.info(format("%-15s%-15s%-15s%n",
+                    START_TIME, END_TIME, DESCRIPTION));
+            for (Event e : events) {
+                int c = (abs(Generator.getTimeDifference(e.getTime(), TIME)) / 60) + Integer.parseInt(eventService.getBookingTime());
+                logger.info(format("%-15s%-15s%-15s%n",
+
+                        e.getTime(), c + ":00", e.getDescription()));
+            }
+        }
+    }
+
+    private static List<String> calculateAvailableTimes(EventService eventService, String date) {
+        List<String> times = new ArrayList<>();
+        int timeDiff = abs(Generator.getTimeDifference(eventService.getStartTime(), eventService.getEndTime()));
+        int bookingTime = Integer.parseInt(eventService.getBookingTime()) * 60;
+        int numberOfEvents = timeDiff / bookingTime;
+        String starttime = eventService.getStartTime();
+        List<Event> allEvents = retrieveEvents(date, eventService);
+
+        for (int i = 0; i < numberOfEvents; i++) {
+            boolean flag = false;
+            for (Event event2 : allEvents) {
+                if (Objects.equals(starttime, event2.getTime())) {
+                    starttime = ((abs(Generator.getTimeDifference(event2.getTime(), TIME)) / 60) + Integer.parseInt(eventService.getBookingTime())) + ":00";
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                continue;
+            }
+            times.add(starttime);
+            starttime = ((abs(Generator.getTimeDifference(starttime, TIME)) / 60) + Integer.parseInt(eventService.getBookingTime())) + ":00";
+        }
+
+        return times;
+    }
+
+    private static boolean displayAvailableTimes(List<String> times) {
+        if (times.isEmpty()) {
+            logger.severe("Chosen Day Is Full");
+            return false;
+        } else {
+            int count = 0;
+            for (String time : times) {
+                logger.info(String.format("Time %d: %s", ++count, time));
+            }
+        }
+        return true;
+    }
+
+    private static String getTimeForBooking(List<EventService> allEvent, int choice, String date) {
+        String chosenTime;
+        List<String> times = calculateAvailableTimes(allEvent.get(choice-1), date);
+        while (true) {
+            logger.info("Choose The Time You Want To Book Event At : ");
+            int chosenTimeIndex = scanner.nextInt();
+            if (chosenTimeIndex > 0 && chosenTimeIndex <= times.size()) {
+                chosenTime = times.get(chosenTimeIndex - 1);
+                break;
+            } else {
+                logger.severe("Wrong option\n");
+            }
+        }
+        return chosenTime;
+    }
+
+    private static String getDescription() throws IOException {
+        logger.info("Enter Description : ");
+        return reader.readLine();
+    }
+
+    private static int getAttendeeCount() {
+        logger.info("Enter AttendeeCount : ");
+        return scanner.nextInt();
+    }
+
+    private static List<String> getGuestList(int attendeeCount) throws IOException {
+        List<String> guestList = new ArrayList<>();
+        logger.info("Enter Guests Names : ");
+        int k;
+        for (k = 0; k < attendeeCount; k++) {
+            String guest = reader.readLine();
+            if (guest != null) {
+                guestList.add(guest);
+            } else {
+                logger.severe("You Should Enter A name\n");
+                k--;
+            }
+        }
+        return guestList;
+    }
+
+    private static List<String> chooseImages() {
+        List<String> images = new ArrayList<>();
+        while (true) {
+            String image;
+            logger.info("Choose Image : ");
+            image = chooseImagePath();
+            images.add(image);
+            logger.info("Do You Want Choose Another Image ?  " +
+                    YES +" "+
+                    NO);
+            int ch = scanner.nextInt();
+            if (ch != 1) {
+                break;
+            }
+        }
+        return images;
+    }
+
+
+
+    private static List<String> chooseVendors(String date, String chosenTime) throws SQLException {
+        List<String> vendors;
+
+            displayVendorServices(date, chosenTime);
+            List<String> printedVendors = getPrintedVendors(date, chosenTime);
+            if (printedVendors.isEmpty()) {
+                logger.severe("No Vendor Matching With Remaining Balance");
+
+            }
+            vendors = selectVendors(printedVendors);
+
+
+        return vendors;
+    }
+
+    private static void displayVendorServices( String date, String chosenTime) throws SQLException {
+        logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
+                NUMBER, "Vendor_User_Name", DESCRIPTION, "Price/H", "Type", "Rating"));
+        int counterservice = 0;
+        for (VendorService vs : allVendorServices()) {
+            if (isVendorAvailable(vs, balanceBookEvent, date, chosenTime)) {
+                displayVendorService(vs, counterservice);
+                counterservice++;
+            }
+        }
+    }
+
+    private static List<String> getPrintedVendors(String date, String chosenTime) throws SQLException {
+        List<String> printedVendors = new ArrayList<>();
+        for (VendorService vs : allVendorServices()) {
+            if (isVendorAvailable(vs, balanceBookEvent, date, chosenTime)) {
+                printedVendors.add(vs.getVendorUserName());
+            }
+        }
+        return printedVendors;
+    }
+
+    private static boolean isVendorAvailable(VendorService vs, int balance, String date, String chosenTime) throws SQLException {
+        for (AVendorBooking vb : allNotAvailableVendors()) {
+            if (vs.getVendorUserName().equals(vb.getVendorusername()) &&
+                    date.equals(vb.getBookingdate()) &&
+                    chosenTime.equals(vb.getStarttime())) {
+                return false;
+            }
+        }
+        return Integer.parseInt(vs.getServicePrice()) <= balance;
+    }
+
+    private static void displayVendorService(VendorService vs, int counterservice) {
+        String description = vs.getServiceDescription().replace("\n", " ");
+        StringBuilder rate = new StringBuilder();
+        for (int i = 0; i < vs.getAverageRating(); i++) {
+            rate.append("*");
+        }
+        logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
+                counterservice + 1, vs.getVendorUserName(), description,
+                vs.getServicePrice(), vs.getServiceType(), rate));
+    }
+
+    private static List<String> selectVendors( List<String> printedVendors) throws SQLException {
+        List<String> vendors = new ArrayList<>();
+        int counterService = printedVendors.size();
+        boolean validInput = false;
+        while (!validInput) {
+            logger.info("Choose Vendor : ");
+            int chooseVendor = scanner.nextInt();
+            if (chooseVendor > 0 && chooseVendor <= counterService) {
+                balanceBookEvent -= Integer.parseInt(allVendorServices().get(chooseVendor - 1).getServicePrice());
+                vendors.add(printedVendors.get(chooseVendor - 1));
+                logger.info("Do You Want Choose Another Vendor :  " +
+                        YES +" "+
+                        NO);
+                int choiceInput = scanner.nextInt();
+                if (choiceInput == 1) {
+                    validInput = false;
+                } else {
+                    validInput = true;
+                }
+            } else {
+                logger.severe(INVALID_INPUT);
+            }
+        }
+        return vendors;
+    }
 
 
     private static List<AVendorBooking> allNotAvailableVendors() throws SQLException {
@@ -1191,8 +1171,11 @@ public class Main {
         List<Event> events = selectAllRequests();
         List<String> status = selectAllStatus();
 
-        logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
-                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE, STATUS));
+
+            logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
+                    NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE, STATUS));
+
+
 
         displayEvents(events, status);
 
@@ -1243,8 +1226,8 @@ public class Main {
     }
 
     private static void returnToMainPage() throws SQLException, IOException {
-        logger.info("Do You Want To Return To Main Page : \s" +
-                YES +
+        logger.info("Do You Want To Return To Main Page :  " +
+                YES+"  " +
                 NO);
 
         while (true) {
