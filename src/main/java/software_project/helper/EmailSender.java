@@ -54,7 +54,6 @@ public class EmailSender {
             setValidEmail(true);
         }
         catch (MessagingException ppp) {
-            ppp.printStackTrace();
 
             setStatus("Email doesnt Send Successfully");
             setValidEmail(false);
