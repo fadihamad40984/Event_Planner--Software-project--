@@ -139,7 +139,7 @@ public class Generator {
 
     public static int StarCounter(String rating) {
         int originalLength = rating.length();
-        int withoutStarsLength = rating.replaceAll("\\*", "").length();
+        int withoutStarsLength = rating.replace("\\*", "").length();
         return originalLength - withoutStarsLength;
     }
 
@@ -151,30 +151,29 @@ public class Generator {
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.MONTH, month - 1); // Adjust month as Calendar months are zero-based
+        cal.set(Calendar.MONTH, month);
         cal.set(Calendar.DAY_OF_MONTH, 1);
 
         int startDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
         int numDaysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        for (String s : Arrays.asList(" " + getMonthName(month) + " " + year, " Su Mo Tu We Th Fr Sa")) {
-            logger.info(s);
-        }
+        System.out.println(" " + getMonthName(month) + " " + year);
+        System.out.println(" Su Mo Tu We Th Fr Sa");
 
         for (int i = 1; i < startDayOfWeek; i++) {
-            logger.info("   ");
+            System.out.print("   ");
         }
 
         for (int i = 1; i <= numDaysInMonth; i++) {
-            String colorCode = (colorMap.containsKey(i) && !colorMap.get(i)) ? "\u001B[31m" : "\u001B[34m";
-            logger.info(String.format("%s%3d", colorCode, i));
+            String colorCode = colorMap.containsKey(i) && !colorMap.get(i) ? "\u001B[31m" : "\u001B[34m"; // Red for false, Blue for true
+            System.out.printf("%s%3d", colorCode, i);
             if ((startDayOfWeek + i - 1) % 7 == 0) {
-                logger.info("");
+                System.out.println();
             }
-            logger.info("\u001B[0m"); // Reset color
+            System.out.print("\u001B[0m"); // Reset color
         }
-        logger.info("\n");
+        System.out.println("\n");
     }
 
     public static String generateDateString(int day, int month, int year) {
