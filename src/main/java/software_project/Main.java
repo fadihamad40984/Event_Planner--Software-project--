@@ -553,29 +553,20 @@ public class Main {
 
 
     public static List<String> selectStatusOfParticularUserName(String username) throws SQLException {
-        Statement stmt = null;
         List<String> statuses = new ArrayList<>();
-
-        try {
-            stmt = conn.getCon().createStatement();
-            String query = "SELECT * FROM \"Requests\" where \"UserName\" = \'"+username+ "\';";
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next())
-            {
-                statuses.add(rs.getString(STATUS));
+        try (PreparedStatement selectRequestsStatement = conn.getCon().prepareStatement("SELECT * FROM \"Requests\" WHERE \"UserName\" = ?")) {
+            selectRequestsStatement.setString(1, username);
+            try (ResultSet rs = selectRequestsStatement.executeQuery()) {
+                while (rs.next()) {
+                    statuses.add(rs.getString(STATUS));
+                }
             }
-        }catch (Exception e){
+        } catch (SQLException e) {
             logger.info(e.getMessage());
-
-        }finally {
-            if (stmt != null) {
-                stmt.close();
-            }
         }
-
         return statuses;
-
     }
+
 
     private static List<Event> selectAllRequestOfParticualrUserName(String username) throws SQLException {
         List<Event> events = new ArrayList<>();
@@ -617,52 +608,43 @@ public class Main {
 
 
     private static List<Event> selectAllEventOfParticualrUserName(String username) throws SQLException {
-        Statement stmt = null;
         List<Event> events = new ArrayList<>();
         List<Integer> eventsIDs = new ArrayList<>();
 
-        try {
-            stmt = conn.getCon().createStatement();
-            String query = "SELECT * FROM \"Event_User\" where \"UserName\" = \'"+username+ "\';";
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next())
-            {
-                eventsIDs.add(rs.getInt(EVENT_ID1));
-            }
-
-            for(int i=0 ; i < eventsIDs.size();i++)
-            {
-                String query2 = SELECT_FROM_EVENT_WHERE_EVENT_ID +eventsIDs.get(i)+";";
-                ResultSet rs1 = stmt.executeQuery(query2);
-                while(rs1.next())
-                {
-                    Event event = new Event(conn.getCon());
-                    event.setId(rs1.getInt(EVENT_ID));
-                    event.setDate(rs1.getString("Date"));
-                    event.setDescription(rs1.getString(DESCRIPTION));
-                    event.setTime(rs1.getString("Time"));
-                    event.setAttendeeCount(rs1.getString(ATTENDEE_COUNT));
-                    event.setServiceId(rs1.getInt(EVENT_SERVICE_ID));
-                    event.setBalance(rs1.getString(BALANCE));
-                    event.setUsername(username);
-                    events.add(event);
-
+        try (PreparedStatement selectEventUserStatement = conn.getCon().prepareStatement("SELECT * FROM \"Event_User\" WHERE \"UserName\" = ?")) {
+            selectEventUserStatement.setString(1, username);
+            try (ResultSet rs = selectEventUserStatement.executeQuery()) {
+                while (rs.next()) {
+                    eventsIDs.add(rs.getInt(EVENT_ID1));
                 }
 
-
+                for (int eventId : eventsIDs) {
+                    try (PreparedStatement selectEventStatement = conn.getCon().prepareStatement(SELECT_FROM_EVENT_WHERE_EVENT_ID + "?")) {
+                        selectEventStatement.setInt(1, eventId);
+                        try (ResultSet rs1 = selectEventStatement.executeQuery()) {
+                            while (rs1.next()) {
+                                Event event = new Event(conn.getCon());
+                                event.setId(rs1.getInt(EVENT_ID));
+                                event.setDate(rs1.getString("Date"));
+                                event.setDescription(rs1.getString(DESCRIPTION));
+                                event.setTime(rs1.getString("Time"));
+                                event.setAttendeeCount(rs1.getString(ATTENDEE_COUNT));
+                                event.setServiceId(rs1.getInt(EVENT_SERVICE_ID));
+                                event.setBalance(rs1.getString(BALANCE));
+                                event.setUsername(username);
+                                events.add(event);
+                            }
+                        }
+                    }
+                }
             }
-
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new SQLException(e);
-        }finally {
-            if (stmt != null) {
-                stmt.close();
-            }
         }
 
         return events;
-
     }
+
 
     private static void bookEventPage() throws SQLException, IOException {
         List<EventService> allEvent = retrieve.retrieveAllEventServices();
@@ -1216,56 +1198,45 @@ public class Main {
             }
         }
     }
-    private static List<Event> selectAllRequests() throws SQLException , NullPointerException {
-        Statement stmt = null;
+    private static List<Event> selectAllRequests() throws SQLException, NullPointerException {
         List<Event> events = new ArrayList<>();
         List<String> users = new ArrayList<>();
         List<Integer> eventsIDs = new ArrayList<>();
 
-        try {
-            stmt = conn.getCon().createStatement();
-            String query = "SELECT * FROM \"Requests\";";
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next())
-            {
-                eventsIDs.add(rs.getInt(EVENT_ID1));
-                users.add(rs.getString("UserName"));
-            }
-
-            for(int i=0 ; i < eventsIDs.size();i++)
-            {
-                String query2 = SELECT_FROM_EVENT_WHERE_EVENT_ID +eventsIDs.get(i)+";";
-                ResultSet rs1 = stmt.executeQuery(query2);
-                while(rs1.next())
-                {
-                    Event event = new Event(conn.getCon());
-                    event.setId(rs1.getInt(EVENT_ID));
-                    event.setDate(rs1.getString("Date"));
-                    event.setDescription(rs1.getString(DESCRIPTION));
-                    event.setTime(rs1.getString("Time"));
-                    event.setAttendeeCount(rs1.getString(ATTENDEE_COUNT));
-                    event.setServiceId(rs1.getInt(EVENT_SERVICE_ID));
-                    event.setBalance(rs1.getString(BALANCE));
-                    event.setUsername(users.get(i));
-                    events.add(event);
-
+        try (PreparedStatement selectRequestsStatement = conn.getCon().prepareStatement("SELECT * FROM \"Requests\";")) {
+            try (ResultSet rs = selectRequestsStatement.executeQuery()) {
+                while (rs.next()) {
+                    eventsIDs.add(rs.getInt(EVENT_ID1));
+                    users.add(rs.getString("UserName"));
                 }
 
-
+                for (int i = 0; i < eventsIDs.size(); i++) {
+                    try (PreparedStatement selectEventStatement = conn.getCon().prepareStatement(SELECT_FROM_EVENT_WHERE_EVENT_ID + "?")) {
+                        selectEventStatement.setInt(1, eventsIDs.get(i));
+                        try (ResultSet rs1 = selectEventStatement.executeQuery()) {
+                            while (rs1.next()) {
+                                Event event = new Event(conn.getCon());
+                                event.setId(rs1.getInt(EVENT_ID));
+                                event.setDate(rs1.getString("Date"));
+                                event.setDescription(rs1.getString(DESCRIPTION));
+                                event.setTime(rs1.getString("Time"));
+                                event.setAttendeeCount(rs1.getString(ATTENDEE_COUNT));
+                                event.setServiceId(rs1.getInt(EVENT_SERVICE_ID));
+                                event.setBalance(rs1.getString(BALANCE));
+                                event.setUsername(users.get(i));
+                                events.add(event);
+                            }
+                        }
+                    }
+                }
             }
-
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new SQLException(e);
-        }finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-
         }
 
         return events;
-
     }
+
 
     private static List<String> selectAllStatus() throws SQLException {
         Statement stmt = null;
