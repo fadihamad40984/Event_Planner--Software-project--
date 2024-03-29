@@ -1,9 +1,6 @@
 package software_project.EventManagement;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +18,7 @@ public class Event {
     private List<String> vendors;
     private String username;
 
-    private Connection con;
+    private final Connection con;
     private Statement stmt;
 
     public Event(Connection con) throws SQLException {
@@ -120,6 +117,7 @@ public class Event {
             throw new SQLException(e);
         }
     }
+
 
     public void setServiceId(int serviceId) {
         this.serviceId = serviceId;
