@@ -30,7 +30,7 @@ public class Register {
 
 
 
-    public void registerUser(User user)  {
+    public void registerUser(User user) throws SQLException {
         String st = Validation.rollValidationTest(user);
         setStatus(st);
         if(getStatus().equals("Valid")){
