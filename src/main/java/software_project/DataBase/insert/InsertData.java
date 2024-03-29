@@ -246,7 +246,7 @@ public class InsertData {
                 avgRating = 0;
                 ratingsCount = 0;
                 while (rs.next()) {
-                    avgRating += Generator.StarCounter(rs.getString("Rating"));
+                    avgRating += Generator.starCounter(rs.getString("Rating"));
                     ratingsCount++;
                 }
             }

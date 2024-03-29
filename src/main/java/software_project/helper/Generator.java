@@ -8,7 +8,6 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -85,14 +84,14 @@ public class Generator {
 
         return preparedStmt;
     }
-    public static PreparedStatement guestListStatementToPS(PreparedStatement preparedStmt,  String Guest , int id) throws SQLException {
+    public static PreparedStatement guestListStatementToPS(PreparedStatement preparedStmt,  String guest , int id) throws SQLException {
         preparedStmt.setInt(1, id);
-        preparedStmt.setString(2, Guest);
+        preparedStmt.setString(2, guest);
         return preparedStmt;
     }
-    public static PreparedStatement imageStatementToPS(PreparedStatement preparedStmt, String Path , int id) throws SQLException {
+    public static PreparedStatement imageStatementToPS(PreparedStatement preparedStmt, String path , int id) throws SQLException {
         preparedStmt.setInt(1, id);
-        preparedStmt.setString(2, Path);
+        preparedStmt.setString(2, path);
         return preparedStmt;
     }
 
@@ -137,7 +136,7 @@ public class Generator {
     }
 
 
-    public static int StarCounter(String rating) {
+    public static int starCounter(String rating) {
         int originalLength = rating.length();
         int withoutStarsLength = rating.replace("\\*", "").length();
         return originalLength - withoutStarsLength;
@@ -166,7 +165,7 @@ public class Generator {
         }
 
         for (int i = 1; i <= numDaysInMonth; i++) {
-            String colorCode = colorMap.containsKey(i) && !colorMap.get(i) ? "\u001B[31m" : "\u001B[34m"; // Red for false, Blue for true
+            String colorCode = colorMap.containsKey(i) && Boolean.TRUE.equals(!colorMap.get(i)) ? "\u001B[31m" : "\u001B[34m"; // Red for false, Blue for true
             System.out.printf("%s%3d", colorCode, i);
             if ((startDayOfWeek + i - 1) % 7 == 0) {
                 System.out.println();
