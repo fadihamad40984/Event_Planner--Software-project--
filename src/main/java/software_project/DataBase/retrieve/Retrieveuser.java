@@ -4,6 +4,7 @@ import software_project.UserManagement.User;
 import software_project.helper.Generator;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -27,27 +28,28 @@ public class Retrieveuser {
 
     public List<User> selectUsersWithCondition(String condition) {
         List<User> users = new ArrayList<>();
-        Statement st = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
-
             String query = "SELECT * FROM users " + condition;
-            st = con.createStatement();
-            ResultSet rs = st.executeQuery(query);
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
             while (rs != null && rs.next())
                 users.add(Generator.rsToUser(rs));
             setStatus("Retrieving users successfully");
-            return users;
         } catch (Exception e) {
             setStatus("Error while retrieving users from database");
-            return new ArrayList<>();
         } finally {
             try {
-                if (st != null) st.close();
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
             } catch (Exception e) {
                 setStatus("Exception While Retrieve Data");
             }
         }
+        return users;
     }
+
 
     public List<User> selectFromusersTable(String field, String input) {
         return selectUsersWithCondition("where " + "\"" + field + "\"" + " = \'" + input + "\';");

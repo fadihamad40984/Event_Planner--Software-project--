@@ -141,32 +141,28 @@ public class Retrieve {
 
 
     public int retriveeventid(String title) throws SQLException {
-        Statement stmt = null;
+        PreparedStatement pstmt = null;
         int eventid = 0;
 
         try {
-            stmt = con.createStatement();
-            String query = "SELECT \"Id\" FROM \"Event_Service\" where \"Title\" = \'" + title + "\';";
+            String query = "SELECT \"Id\" FROM \"Event_Service\" WHERE \"Title\" = ?";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, title);
 
-            ResultSet rs = stmt.executeQuery(query);
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next())
                 eventid = rs.getInt("Id");
             return eventid;
-
-
-
         } catch (SQLException e) {
             setStatus("Error while retrieving event_id for the EventServices from database");
-
-        }
-        finally {
-            if(stmt!=null)
-            {
-                stmt.close();
+        } finally {
+            if (pstmt != null) {
+                pstmt.close();
             }
         }
         return eventid;
     }
+
 
 
     public List<EventService> retrieveAllEventServices() throws SQLException {
@@ -202,13 +198,14 @@ public class Retrieve {
     }
 
     public EventService selectEventServicesOfParticularName(String serviceTitle) throws SQLException {
-        Statement stmt = null;
+        PreparedStatement pstmt = null;
         EventService es = new EventService();
         try {
-            stmt = con.createStatement();
-            String query = "SELECT * FROM \"Event_Service\" where \"Title\" = \'" + serviceTitle + "\';";
+            String query = "SELECT * FROM \"Event_Service\" WHERE \"Title\" = ?";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, serviceTitle);
 
-            ResultSet rs = stmt.executeQuery(query);
+            ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 es.setId(rs.getInt("Id"));
@@ -230,8 +227,9 @@ public class Retrieve {
             return es;
         } finally {
             try {
-                if (stmt != null) stmt.close();
+                if (pstmt != null) pstmt.close();
             } catch (Exception e) {
+                setStatus("Error while retrieving event from database");
             }
         }
     }
@@ -239,17 +237,17 @@ public class Retrieve {
 
 
     public String selectEventServicesOfParticularid(int id) throws SQLException {
-        Statement stmt = null;
+        PreparedStatement pstmt = null;
         String title = "";
         try {
-            stmt = con.createStatement();
-            String query = "SELECT \"Title\" FROM \"Event_Service\" where \"Id\" = " + id + ";";
+            String query = "SELECT \"Title\" FROM \"Event_Service\" WHERE \"Id\" = ?";
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, id);
 
-            ResultSet rs = stmt.executeQuery(query);
+            ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 title = rs.getString(TITLE);
-
             }
 
             setStatus("Retrieving event successfully");
@@ -260,11 +258,13 @@ public class Retrieve {
             return title;
         } finally {
             try {
-                if (stmt != null) stmt.close();
+                if (pstmt != null) pstmt.close();
             } catch (Exception e) {
+                // Handle or log the exception
             }
         }
     }
+
 
     public List<Event> selectEventOfParticularDateAndServiceId(String date, int serviceid) {
         List<Event> events = new ArrayList<>();
@@ -431,12 +431,13 @@ public class Retrieve {
 
     public List<Event> selectEventOfParticularServiceId(EventService eventService) {
         List<Event> events = new ArrayList<>();
-        Statement stmt = null;
+        PreparedStatement pstmt = null;
         try {
-            stmt = con.createStatement();
-            String query ="SELECT * FROM \"Event\" where \"EventService_id\" = " + eventService.getId() + ";";
+            String query ="SELECT * FROM \"Event\" where \"EventService_id\" = ?";
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, eventService.getId());
 
-            ResultSet rs = stmt.executeQuery(query);
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 Event e = new Event(con);
                 e.setId(rs.getInt(EVENT_ID));
@@ -449,17 +450,16 @@ public class Retrieve {
                 events.add(e);
             }
 
-
             return events;
         } catch (Exception e) {
+            setStatus("Exception while retrieving data");
 
             return events;
         } finally {
             try {
-                if (stmt != null) stmt.close();
+                if (pstmt != null) pstmt.close();
             } catch (Exception e) {
-
-                setStatus("Exception While Retrieve Data");
+                setStatus("Exception while retrieving data");
             }
         }
     }

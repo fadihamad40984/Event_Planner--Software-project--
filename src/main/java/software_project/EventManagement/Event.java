@@ -1,9 +1,6 @@
 package software_project.EventManagement;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,17 +106,29 @@ public class Event {
     }
 
     public void setServiceIdBasedOnTitle(String serviceTitle) throws SQLException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
-            String query = "SELECT \"Id\" FROM \"Event_Service\" where \"Title\" = \'" + serviceTitle +"\';";
-            ResultSet rs = stmt.executeQuery(query);
+            String query = "SELECT \"Id\" FROM \"Event_Service\" where \"Title\" = ?";
+            ps = con.prepareStatement(query);
+            ps.setString(1, serviceTitle);
+            rs = ps.executeQuery();
 
-            while(rs.next()){
+            while (rs.next()) {
                 this.serviceId = rs.getInt("Id");
             }
         } catch (SQLException e) {
             throw new SQLException(e);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            } catch (SQLException e) {
+                throw new SQLException(e);
+            }
         }
     }
+
 
     public void setServiceId(int serviceId) {
         this.serviceId = serviceId;
