@@ -8,6 +8,8 @@ import java.util.Map;
 
 public class JasperReportGenerator {
 
+    private String status;
+
     DBConnection connection = new DBConnection();
     public void generateReport(String jrxmlFilePath , String outputFile) {
         try {
@@ -21,12 +23,21 @@ public class JasperReportGenerator {
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, outputFile);
         } catch (JRException e) {
-            e.printStackTrace();
+            setStatus("Error Report");
+
         }
     }
 
     public static void main(String[] args) {
         JasperReportGenerator reportGenerator = new JasperReportGenerator();
         reportGenerator.generateReport("userreport.jrxml","output");
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
