@@ -26,10 +26,10 @@ public class Retrieveuser {
     public List<User> selectUsersWithCondition(String condition) {
         List<User> users = new ArrayList<>();
 
-        String query = "SELECT * FROM users " + condition;
+        String query = "SELECT * FROM users WHERE " + condition;
 
-        try (PreparedStatement ps = con.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM users WHERE " + condition)) {
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 users.add(Generator.rsToUser(rs));
