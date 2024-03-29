@@ -223,49 +223,43 @@ public class InsertData {
     }
 
     public void insertVendorReview(VendorReview vr) throws SQLException {
-        try (Statement stmt = conn.createStatement()) {
+        try (PreparedStatement insertStatement = conn.prepareStatement("INSERT INTO \"Vendor_Review\" (\"Vendor_User_Name\",\"Customer_User_Name\",\"Rating\",\"FeedBack_Text\") VALUES (?, ?, ?, ?)")) {
             conn.setAutoCommit(false);
-            String query = "insert into \"Vendor_Review\" (\"Vendor_User_Name\",\"Customer_User_Name\",\"Rating\",\"FeedBack_Text\") values (?, ?, ?, ?);";//review id is serial
-            try (PreparedStatement preparedStmt = conn.prepareStatement(query)) {
-                preparedStmt.setString(1, vr.getVendorUserName());
-                preparedStmt.setString(2, vr.getCustomerUserName());
-                preparedStmt.setString(3, vr.getRating());
-                preparedStmt.setString(4, vr.getFeedBackText());
-
-                preparedStmt.execute();
-            }
+            insertStatement.setString(1, vr.getVendorUserName());
+            insertStatement.setString(2, vr.getCustomerUserName());
+            insertStatement.setString(3, vr.getRating());
+            insertStatement.setString(4, vr.getFeedBackText());
+            insertStatement.executeUpdate();
 
             conn.commit();
-            conn.setAutoCommit(false);
 
-            String query2 = "select \"Rating\" from \"Vendor_Review\" where \"Vendor_User_Name\" = \'" + vr.getVendorUserName() + "\' ;";
+            try (PreparedStatement selectStatement = conn.prepareStatement("SELECT \"Rating\" FROM \"Vendor_Review\" WHERE \"Vendor_User_Name\" = ?")) {
+                selectStatement.setString(1, vr.getVendorUserName());
+                try (ResultSet rs = selectStatement.executeQuery()) {
+                    int avgRating = 0;
+                    int ratingsCount = 0;
+                    while (rs.next()) {
+                        avgRating += Generator.starCounter(rs.getString("Rating"));
+                        ratingsCount++;
+                    }
 
-            int avgRating;
-            int ratingsCount;
-            try (ResultSet rs = stmt.executeQuery(query2)) {
-                avgRating = 0;
-                ratingsCount = 0;
-                while (rs.next()) {
-                    avgRating += Generator.starCounter(rs.getString("Rating"));
-                    ratingsCount++;
+                    if (ratingsCount != 0) {
+                        avgRating /= ratingsCount;
+                    }
+
+                    try (PreparedStatement updateStatement = conn.prepareStatement("UPDATE \"Vendor_Service\" SET \"Average_Rating\" = ? WHERE \"Vendor_User_Name\" = ?")) {
+                        updateStatement.setInt(1, avgRating);
+                        updateStatement.setString(2, vr.getVendorUserName());
+                        updateStatement.executeUpdate();
+                    }
                 }
             }
 
-            if (ratingsCount != 0) {
-                avgRating /= ratingsCount;
-            }
-
-
-            String query3 = "update \"Vendor_Service\" set \"Average_Rating\" = \'" + avgRating + "\' where \"Vendor_User_Name\" = \'" + vr.getVendorUserName() + "\';";
-            stmt.executeUpdate(query3);
-
-
-            setStatus("service confirmed to vendor successfully");
+            setStatus("Service confirmed to vendor successfully");
             conn.commit();
-
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            conn.rollback();
             e.printStackTrace();
-
         }
     }
 
