@@ -54,7 +54,7 @@ public class EditEvent {
             try {
                 conn.rollback();
             } catch (SQLException rollbackException) {
-                rollbackException.printStackTrace();
+                setStatus("Exception While Update Data");
             }
             return false;
         }
