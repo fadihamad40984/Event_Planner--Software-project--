@@ -18,7 +18,7 @@ public class Event {
     private List<String> vendors;
     private String username;
 
-    private Connection con;
+    private final Connection con;
     private Statement stmt;
 
     public Event(Connection con) throws SQLException {
@@ -106,26 +106,15 @@ public class Event {
     }
 
     public void setServiceIdBasedOnTitle(String serviceTitle) throws SQLException {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
         try {
-            String query = "SELECT \"Id\" FROM \"Event_Service\" where \"Title\" = ?";
-            ps = con.prepareStatement(query);
-            ps.setString(1, serviceTitle);
-            rs = ps.executeQuery();
+            String query = "SELECT \"Id\" FROM \"Event_Service\" where \"Title\" = \'" + serviceTitle +"\';";
+            ResultSet rs = stmt.executeQuery(query);
 
-            while (rs.next()) {
+            while(rs.next()){
                 this.serviceId = rs.getInt("Id");
             }
         } catch (SQLException e) {
             throw new SQLException(e);
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-            } catch (SQLException e) {
-                throw new SQLException(e);
-            }
         }
     }
 
