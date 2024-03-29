@@ -44,7 +44,7 @@ public class Retrieveuser {
             try {
                 if (st != null) st.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                setStatus("Exception While Retrieve Data");
             }
         }
     }

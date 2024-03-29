@@ -1304,7 +1304,7 @@ public class Main {
             try {
                 conn.getCon().rollback();
             } catch (SQLException rollbackException) {
-                rollbackException.printStackTrace();
+                logger.info("Exception While inserting Data");
             }
             return false;
         }

@@ -41,7 +41,6 @@ public class InsertData {
             setStatus("User was inserted successfully");
             conn.commit();
         } catch (Exception e) {
-            e.printStackTrace();
             setStatus("Couldn't insert user");
 
         }
@@ -131,7 +130,7 @@ public class InsertData {
 
         }catch (Exception e){
 
-            e.printStackTrace();
+            setStatus("Exception While inserting Data");
 
         }
     }
@@ -191,7 +190,7 @@ public class InsertData {
             setStatus("Event booked successfully");
             conn.commit();
         } catch (Exception exception) {
-            exception.printStackTrace();
+            setStatus("Exception While inserting Data");
 
         }
     }
@@ -216,7 +215,7 @@ public class InsertData {
             conn.commit();
         } catch (Exception e) {
 
-            e.printStackTrace();
+            setStatus("Exception While inserting Data");
         }
 
 
@@ -259,7 +258,7 @@ public class InsertData {
             conn.commit();
         } catch (SQLException e) {
             conn.rollback();
-            e.printStackTrace();
+            setStatus("Exception While inserting Data");
         }
     }
 

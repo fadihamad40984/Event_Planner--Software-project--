@@ -82,7 +82,6 @@ public class Retrieve {
             }
         } catch (SQLException e) {
             setStatus("Error while retrieving event services for the place from database");
-            e.printStackTrace();
             return new ArrayList<>();
         }
     }
@@ -104,7 +103,6 @@ public class Retrieve {
             }
         } catch (SQLException e) {
             setStatus("Error while retrieving placeID for the place from database");
-            e.printStackTrace();
             return null;
         }
     }
@@ -130,7 +128,6 @@ public class Retrieve {
 
         } catch (SQLException e) {
 
-            e.printStackTrace();
         }
        finally {
             if(stmt!=null)
@@ -235,7 +232,6 @@ public class Retrieve {
             try {
                 if (stmt != null) stmt.close();
             } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }
@@ -266,7 +262,6 @@ public class Retrieve {
             try {
                 if (stmt != null) stmt.close();
             } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }
@@ -302,7 +297,6 @@ public class Retrieve {
             }
         } catch (SQLException e) {
             setStatus("Error while retrieving events for the date from database");
-            e.printStackTrace();
         }
         return events;
     }
@@ -325,7 +319,6 @@ public class Retrieve {
             }
         } catch (SQLException e) {
             setStatus("Error while retrieving vendor service from database");
-            e.printStackTrace();
         }
         return vs;
     }
@@ -363,7 +356,6 @@ public class Retrieve {
             }
         } catch (SQLException e) {
             setStatus("Error while retrieving vendor booking from database");
-            e.printStackTrace();
         }
         return vbs;
     }
@@ -467,7 +459,7 @@ public class Retrieve {
                 if (stmt != null) stmt.close();
             } catch (Exception e) {
 
-                e.printStackTrace();
+                setStatus("Exception While Retrieve Data");
             }
         }
     }
