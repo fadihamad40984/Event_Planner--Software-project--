@@ -1,37 +1,51 @@
 package softwareproject.helper;
 
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.util.JRSaver;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.swing.JRViewer;
 import softwareproject.database.DBConnection;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+
+
+
+import javax.swing.*;
 
 public class JasperReportGenerator {
 
     private String status;
 
     DBConnection connection = new DBConnection();
-    public void generateReport(String jrxmlFilePath , String outputFile) {
-        try {
-            JasperReport jasperReport = JasperCompileManager.compileReport(jrxmlFilePath);
+    public void generateReport(String jrxmlFilePath, String outputFile) throws SQLException, IOException, JRException {
+        try (Connection con = connection.getCon();
+             InputStream input = new FileInputStream(new File(jrxmlFilePath));
+             OutputStream output = new FileOutputStream(new File(outputFile))) {
 
-            JRSaver.saveObject(jasperReport, "compiled_report.jasper");
+            JasperDesign jasperDesign = JRXmlLoader.load(input);
+            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, con);
 
-            Map<String, Object> parameters = new HashMap<>();
+            JasperExportManager.exportReportToPdfStream(jasperPrint, output);
 
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection.getCon());
-
-            JasperExportManager.exportReportToPdfFile(jasperPrint, outputFile);
-        } catch (JRException e) {
-            setStatus("Error Report");
-
+            JFrame frame = new JFrame("Report");
+            frame.getContentPane().add(new JRViewer(jasperPrint));
+            frame.pack();
+            frame.setVisible(true);
         }
     }
 
-    public static void main(String[] args) {
-        JasperReportGenerator reportGenerator = new JasperReportGenerator();
-        reportGenerator.generateReport("userreport.jrxml","output");
-    }
 
     public String getStatus() {
         return status;
