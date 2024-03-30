@@ -1,3 +1,5 @@
+package software_project;
+
 import software_project.DataBase.DBConnection;
 import software_project.DataBase.retrieve.Retrieve;
 import software_project.EventManagement.Event;
@@ -182,7 +184,10 @@ public class Main {
             userType = reader.readLine();
             logger.info("Choose Image : ");
             imagePath = chooseImagePath();
-            logger.info(String.format("%n%s", imagePath));
+            if (logger.isLoggable(Level.INFO)) {
+                logger.log(Level.INFO, String.format("%n%s", imagePath));
+            }
+
 
 
 
@@ -300,15 +305,17 @@ public class Main {
             {
                 events = showUpcomingEventsForParticularVendor(UserSession.getCurrentUser().getUsername());
 
+                if (logger.isLoggable(Level.INFO)){
                 logger.info(format("%-15s%-15s%-15s%-30s%-15s%n",
-                        NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT));
+                        NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT));}
 
                 int counter = 0;
                 for(Event e : events)
                 {
+                    if (logger.isLoggable(Level.INFO)){
                     logger.info(format("%-15s%-15s%-15s%-30s%-15s%n",
                             ++counter, e.getDate(), e.getTime(),
-                            e.getDescription(), e.getAttendeeCount()));
+                            e.getDescription(), e.getAttendeeCount()));}
                 }
 
 
@@ -404,18 +411,20 @@ public class Main {
         logger.info("Choose The Event You Want To Cancel :");
         List<Event> events;
         events = selectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
+        if (logger.isLoggable(Level.INFO)){
         logger.info(format(S_15_S_15_S_30_S_15_S_15_S_N,
-                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE));
+                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE));}
 
         int counter = 0;
         for(Event e : events)
         {
+            if (logger.isLoggable(Level.INFO)){
             logger.info(format(S_15_S_15_S_30_S_15_S_15_S_N,
                     ++counter, e.getDate(), e.getTime(),
-                    e.getDescription(), e.getAttendeeCount(), e.getBalance()));
+                    e.getDescription(), e.getAttendeeCount(), e.getBalance()));}
         }
 
-        logger.info("Return To Main Page Enter \"ok\" ");
+        logger.info("Return To software_project.Main Page Enter \"ok\" ");
         String ch;
         ch= reader.readLine();
         if(Objects.equals(ch, "ok") || "OK".equals(ch))
@@ -434,18 +443,20 @@ public class Main {
         List<String> status;
         status = selectStatusOfParticularUserName(UserSession.getCurrentUser().getUsername());
         events = selectAllRequestOfParticualrUserName(UserSession.getCurrentUser().getUsername());
+        if (logger.isLoggable(Level.INFO)){
         logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
-                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE, STATUS));
+                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE, STATUS));}
 
         int counter = 0;
         for(Event e : events)
         {
+            if (logger.isLoggable(Level.INFO)){
             logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
                     ++counter, e.getDate(), e.getTime(),
-                    e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));
+                    e.getDescription(), e.getAttendeeCount(), e.getBalance() , status.get(counter-1)));}
         }
 
-        logger.info("Do You Want To Return To Main Page : \s" +
+        logger.info("Do You Want To Return To software_project.Main Page : \s" +
                 YES +
                 NO);
 
@@ -477,15 +488,17 @@ public class Main {
         List<Event> events;
         events = selectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
 
+        if (logger.isLoggable(Level.INFO)){
         logger.info(format(S_15_S_15_S_30_S_15_S_15_S_N,
-                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE));
+                NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE));}
 
         int counter = 0;
         for(Event e : events)
         {
+            if (logger.isLoggable(Level.INFO)){
             logger.info(format(S_15_S_15_S_30_S_15_S_15_S_N,
                     ++counter, e.getDate(), e.getTime(),
-                    e.getDescription(), e.getAttendeeCount(), e.getBalance()));
+                    e.getDescription(), e.getAttendeeCount(), e.getBalance()));}
         }
 
         int choise;
@@ -681,7 +694,8 @@ public class Main {
                 accpetevent.setUsername(UserSession.getCurrentUser().getUsername());
                 eventManipulation.bookEvent(accpetevent);
                 logger.severe(eventManipulation.getStatus());
-                logger.severe(String.format("Remaining Balance is: %s%n", balanceBookEvent));
+                if (logger.isLoggable(Level.INFO)){
+                logger.severe(String.format("Remaining Balance is: %s%n", balanceBookEvent));}
             }
 
             break;
@@ -695,14 +709,16 @@ public class Main {
 
     private static int displayEventServices(List<EventService> allEvent) {
         int counter = 0;
+        if (logger.isLoggable(Level.INFO)){
         logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
-                NUMBER, TITLE, DETAILS, EVENT_CATEGORY, PRICE, PLACE, START_TIME, END_TIME, BOOKING_TIME));
+                NUMBER, TITLE, DETAILS, EVENT_CATEGORY, PRICE, PLACE, START_TIME, END_TIME, BOOKING_TIME));}
         for (EventService eventService : allEvent) {
             if (Integer.parseInt(eventService.getPrice()) <= balanceBookEvent) {
+                if (logger.isLoggable(Level.INFO)){
                 logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
                         ++counter, eventService.getTitle(), eventService.getDetails(),
                         eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
-                        eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
+                        eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));}
             } else {
                 counter++;
             }
@@ -761,13 +777,15 @@ public class Main {
         if (events.isEmpty()) {
             logger.info("There Is No Events. You Can Request To Book An Event In This Day!");
         } else {
+            if (logger.isLoggable(Level.INFO)){
             logger.info(format("%-15s%-15s%-15s%n",
-                    START_TIME, END_TIME, DESCRIPTION));
+                    START_TIME, END_TIME, DESCRIPTION));}
             for (Event e : events) {
                 int c = (abs(Generator.getTimeDifference(e.getTime(), TIME)) / 60) + Integer.parseInt(eventService.getBookingTime());
+                if (logger.isLoggable(Level.INFO)){
                 logger.info(format("%-15s%-15s%-15s%n",
 
-                        e.getTime(), c + ":00", e.getDescription()));
+                        e.getTime(), c + ":00", e.getDescription()));}
             }
         }
     }
@@ -806,7 +824,8 @@ public class Main {
         } else {
             int count = 0;
             for (String time : times) {
-                logger.info(String.format("Time %d: %s", ++count, time));
+                if (logger.isLoggable(Level.INFO)){
+                logger.info(String.format("Time %d: %s", ++count, time));}
             }
         }
         return true;
@@ -890,8 +909,9 @@ public class Main {
     }
 
     private static void displayVendorServices( String date, String chosenTime) throws SQLException {
+        if (logger.isLoggable(Level.INFO)){
         logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
-                NUMBER, "Vendor_User_Name", DESCRIPTION, "Price/H", "Type", "Rating"));
+                NUMBER, "Vendor_User_Name", DESCRIPTION, "Price/H", "Type", "Rating"));}
         int counterservice = 0;
         for (VendorService vs : allVendorServices()) {
             if (isVendorAvailable(vs, balanceBookEvent, date, chosenTime)) {
@@ -928,9 +948,10 @@ public class Main {
         for (int i = 0; i < vs.getAverageRating(); i++) {
             rate.append("*");
         }
+        if (logger.isLoggable(Level.INFO)){
         logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
                 counterservice + 1, vs.getVendorUserName(), description,
-                vs.getServicePrice(), vs.getServiceType(), rate));
+                vs.getServicePrice(), vs.getServiceType(), rate));}
     }
 
     private static List<String> selectVendors( List<String> printedVendors) throws SQLException {
@@ -1126,8 +1147,9 @@ public class Main {
         List<String> status = selectAllStatus();
 
 
+        if (logger.isLoggable(Level.INFO)){
             logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
-                    NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE, STATUS));
+                    NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT, BALANCE, STATUS));}
 
 
 
@@ -1141,9 +1163,10 @@ public class Main {
     private static void displayEvents(List<Event> events, List<String> status) {
         int counter = 0;
         for (Event e : events) {
+            if (logger.isLoggable(Level.INFO)){
             logger.info(format(S_15_S_15_S_30_S_15_S_15_S_15_S_N,
                     ++counter, e.getDate(), e.getTime(),
-                    e.getDescription(), e.getAttendeeCount(), e.getBalance(), status.get(counter - 1)));
+                    e.getDescription(), e.getAttendeeCount(), e.getBalance(), status.get(counter - 1)));}
         }
     }
 
@@ -1179,7 +1202,7 @@ public class Main {
     }
 
     private static void returnToMainPage() throws SQLException, IOException {
-        logger.info("Do You Want To Return To Main Page :  " +
+        logger.info("Do You Want To Return To software_project.Main Page :  " +
                 YES+"  " +
                 NO);
 
@@ -1339,13 +1362,18 @@ public class Main {
     private static void deleteeventservice() throws SQLException, IOException {
         List<EventService> allEvent = retrieve.retrieveAllEventServices();
 
-        logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
-                "Id", TITLE, DETAILS, EVENT_CATEGORY, PRICE, PLACE, START_TIME, END_TIME, BOOKING_TIME));
-        for (EventService eventService : allEvent) {
+        if (logger.isLoggable(Level.INFO)) {
+
             logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
-                    eventService.getId(), eventService.getTitle(), eventService.getDetails(),
-                    eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
-                    eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
+                    "Id", TITLE, DETAILS, EVENT_CATEGORY, PRICE, PLACE, START_TIME, END_TIME, BOOKING_TIME));
+        }
+        for (EventService eventService : allEvent) {
+            if (logger.isLoggable(Level.INFO)) {
+                logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
+                        eventService.getId(), eventService.getTitle(), eventService.getDetails(),
+                        eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
+                        eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
+            }
         }
 
         int eventId;
@@ -1379,13 +1407,19 @@ public class Main {
 
         List<EventService> allEvent = retrieve.retrieveAllEventServices();
 
-        logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
+        if (logger.isLoggable(Level.INFO)){
+        logger.log(Level.INFO, String.format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
                 "Id", TITLE, DETAILS, EVENT_CATEGORY, PRICE, PLACE, START_TIME, END_TIME, BOOKING_TIME));
+        }
+
         for (EventService eventService : allEvent) {
-            logger.info(format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
-                    eventService.getId(), eventService.getTitle(), eventService.getDetails(),
-                    eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
-                    eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
+            if (logger.isLoggable(Level.INFO)) {
+                logger.log(Level.INFO, String.format(S_20_S_15_S_15_S_15_S_15_S_15_S_15_S_15_S_N,
+                        eventService.getId(), eventService.getTitle(), eventService.getDetails(),
+                        eventService.getEventCategory(), eventService.getPrice(), eventService.getPlace(),
+                        eventService.getStartTime(), eventService.getEndTime(), eventService.getBookingTime()));
+
+            }
         }
 
         int id;
