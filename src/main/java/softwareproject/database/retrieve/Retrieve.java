@@ -3,8 +3,8 @@ package softwareproject.database.retrieve;
 import softwareproject.eventmanagement.Event;
 import softwareproject.eventmanagement.EventService;
 import softwareproject.eventmanagement.Places;
-import softwareproject.Vendor.AVendorBooking;
-import softwareproject.Vendor.VendorService;
+import softwareproject.vendor.AVendorBooking;
+import softwareproject.vendor.VendorService;
 import softwareproject.helper.Generator;
 
 import java.sql.*;
@@ -24,6 +24,7 @@ public class Retrieve {
     public static final String EVENT_ID = "Event_id";
     public static final String EVENT_SERVICE_ID = "EventService_id";
     public static final String DESCRIPTION = "Description";
+    public static final String ERROR_WHILE_RETRIEVING_EVENT_FROM_DATABASE = "Error while retrieving event from database";
     private final Connection con;
     private String status;
 
@@ -128,6 +129,8 @@ public class Retrieve {
 
         } catch (SQLException e) {
 
+            con2.rollback();
+
         }
        finally {
             if(stmt!=null)
@@ -223,13 +226,13 @@ public class Retrieve {
             return es;
 
         } catch (Exception e) {
-            setStatus("Error while retrieving event from database");
+            setStatus(ERROR_WHILE_RETRIEVING_EVENT_FROM_DATABASE);
             return es;
         } finally {
             try {
                 if (pstmt != null) pstmt.close();
             } catch (Exception e) {
-                setStatus("Error while retrieving event from database");
+                setStatus(ERROR_WHILE_RETRIEVING_EVENT_FROM_DATABASE);
             }
         }
     }
@@ -254,7 +257,7 @@ public class Retrieve {
             return title;
 
         } catch (Exception e) {
-            setStatus("Error while retrieving event from database");
+            setStatus(ERROR_WHILE_RETRIEVING_EVENT_FROM_DATABASE);
             return title;
         } finally {
             try {

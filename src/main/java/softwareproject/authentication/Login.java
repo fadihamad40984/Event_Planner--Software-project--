@@ -1,7 +1,7 @@
 package softwareproject.authentication;
 
 import softwareproject.database.retrieve.Retrieveuser;
-import softwareproject.UserManagement.User;
+import softwareproject.usermanagement.User;
 import softwareproject.helper.UserSession;
 import java.sql.Connection;
 import java.sql.SQLException;

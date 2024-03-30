@@ -2,7 +2,7 @@ package softwareproject.helper;
 
 
 
-import softwareproject.UserManagement.User;
+import softwareproject.usermanagement.User;
 
 
 public class UserSession {

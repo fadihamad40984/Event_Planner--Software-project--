@@ -4,14 +4,15 @@ import softwareproject.database.retrieve.Retrieve;
 import softwareproject.eventmanagement.Event;
 import softwareproject.eventmanagement.EventService;
 import softwareproject.eventmanagement.Places;
-import softwareproject.UserManagement.User;
-import softwareproject.Vendor.VendorReview;
-import softwareproject.Vendor.VendorService;
+import softwareproject.usermanagement.User;
+import softwareproject.vendor.VendorReview;
+import softwareproject.vendor.VendorService;
 import softwareproject.helper.Generator;
 
 import java.sql.*;
 
 public class InsertData {
+    public static final String EXCEPTION_WHILE_INSERTING_DATA = "Exception While inserting Data";
     private String status;
     private final Connection conn;
 
@@ -67,7 +68,7 @@ public class InsertData {
 
     }
 
-    public boolean insertEventServicePlace(EventService es) {
+    public void insertEventServicePlace(EventService es) {
         try {
             conn.setAutoCommit(false);
             String query = "insert into \"Place_EventServices\" values (?, ?);";
@@ -79,16 +80,15 @@ public class InsertData {
             }
             setStatus("Event_Place added successfully");
             conn.commit();
-            return true;
         } catch (Exception e) {
+            setStatus(EXCEPTION_WHILE_INSERTING_DATA);
 
-            return false;
         }
 
 
     }
 
-    public boolean insertVenue(Places p) {
+    public void insertVenue(Places p) {
 
         try {
             conn.setAutoCommit(false);
@@ -98,11 +98,10 @@ public class InsertData {
             preparedStmt.execute();
             setStatus("Venue added successfully");
             conn.commit();
-            return true;
         } catch (Exception e) {
 
+            setStatus(EXCEPTION_WHILE_INSERTING_DATA);
 
-            return false;
         }
 
     }
@@ -130,7 +129,7 @@ public class InsertData {
 
         }catch (Exception e){
 
-            setStatus("Exception While inserting Data");
+            setStatus(EXCEPTION_WHILE_INSERTING_DATA);
 
         }
     }
@@ -190,7 +189,7 @@ public class InsertData {
             setStatus("Event booked successfully");
             conn.commit();
         } catch (Exception exception) {
-            setStatus("Exception While inserting Data");
+            setStatus(EXCEPTION_WHILE_INSERTING_DATA);
 
         }
     }
@@ -215,7 +214,7 @@ public class InsertData {
             conn.commit();
         } catch (Exception e) {
 
-            setStatus("Exception While inserting Data");
+            setStatus(EXCEPTION_WHILE_INSERTING_DATA);
         }
 
 
@@ -258,7 +257,7 @@ public class InsertData {
             conn.commit();
         } catch (SQLException e) {
             conn.rollback();
-            setStatus("Exception While inserting Data");
+            setStatus(EXCEPTION_WHILE_INSERTING_DATA);
         }
     }
 
