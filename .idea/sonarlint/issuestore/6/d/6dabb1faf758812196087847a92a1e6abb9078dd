@@ -1,0 +1,52 @@
+
+•
+java:S1192"LDefine a constant instead of duplicating this literal "Description" 3 times.(ğˆÖèûÿÿÿÿ8µ“ì¹ç1J$373dfeea-3ca0-42b4-a36a-f2d8f2ed506d
+
+java:S1192@"FDefine a constant instead of duplicating this literal "Title" 4 times.(â°¶…ıÿÿÿÿ8¶“ì¹ç1J$4f2203e7-361e-4336-be50-2b5c122c0273
+’
+java:S1192™"IDefine a constant instead of duplicating this literal "Event_id" 3 times.(ÊÑ¹”úÿÿÿÿ8¶“ì¹ç1J$510ff034-faaa-48db-a749-ddb0e4c21438
+™
+java:S1192š"PDefine a constant instead of duplicating this literal "EventService_id" 3 times.(·á–×üÿÿÿÿ8¶“ì¹ç1J$ea50c995-3389-4db9-abfd-a682f28111dc
+‰
+java:S1192C"FDefine a constant instead of duplicating this literal "Price" 3 times.(¢Œ£³8·“ì¹ç1J$81d36a82-d855-4f3c-8ce5-679fc74c6a77
+s
+java:S1066º"/Merge this if statement with the enclosing one.(•›·8ÿé¨°æ1J$6135217c-90ae-460a-9141-5a501eebdedc
+’	java:S117%"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÌÏ‡x8ÿé¨°æ1J$1f1cfe8b-5e50-463f-8501-205509b05909
+“	java:S117&"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(´“ŸÀ8ÿé¨°æ1J$2c8a7b23-b147-40ed-884a-2d8bda7ed1e7
+’	java:S117-"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÿĞÕ8ÿé¨°æ1J$a44399f0-6b00-4e2e-b70f-a68d897f5041
+˜	java:S117Y"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÙåŞÀüÿÿÿÿ8ÿé¨°æ1J$b7d65073-b5b5-4a32-aa67-de3392a1458c
+˜	java:S117{"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ƒšéËûÿÿÿÿ8ÿé¨°æ1J$66fd5c90-53d3-4dc8-b3ab-982b26c5370a
+™	java:S117–"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ƒšéËûÿÿÿÿ8ÿé¨°æ1J$5a41bdf5-ec75-4544-8645-4da14fe75879
+”	java:S117‡"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(º§™8ÿé¨°æ1J$9c44fbca-847f-4a49-8204-61af3d93eb54
+™	java:S117ˆ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(•çƒ­ıÿÿÿÿ8ÿé¨°æ1J$1517eb8d-588d-4c8a-9c0b-88c48dbbdc74
+™	java:S117‘"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¼×ÖËùÿÿÿÿ8ÿé¨°æ1J$1afa2053-a24a-40e7-88ae-78611e70f5c8
+”	java:S117é"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½Í¶É8ÿé¨°æ1J$0a0422df-89d8-4caf-b773-a6767e3ba0de
+”	java:S117œ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(”Ñ—Ñ8ÿé¨°æ1J$223e1d5f-1b1b-4a81-b47c-8c1397a32ee8
+™	java:S117¡"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¢˜¸µüÿÿÿÿ8ÿé¨°æ1J$0876a01e-de16-412e-bd07-8e442c0cf531
+“	java:S117¢"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¾Ä48ÿé¨°æ1J$a0fa87f6-d703-4d0b-a4f1-53b53988de0c
+”	java:S117¤"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÂÉæä8ÿé¨°æ1J$196d9903-c194-43f4-add2-30c4f0d2e5d9
+”	java:S117´"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Üº†—8ÿé¨°æ1J$7ee95ace-fbbb-447d-919a-9c8fd0f1fd67
+™	java:S117µ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(É‘­øÿÿÿÿ8€ê¨°æ1J$5278bfff-dd9f-44a8-9a41-0e8829729d1b
+™	java:S117¶"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ôû¤‡ÿÿÿÿÿ8€ê¨°æ1J$d92d91f0-96c2-4860-8125-0ad9e5a1fdad
+™	java:S117Ñ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(•çƒ­ıÿÿÿÿ8€ê¨°æ1J$09f7ae19-2c34-40d8-8a18-0ca2eb0528e7
+œ	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(–ç´8ƒê¨°æ1J$e4542dea-6f4a-4a7b-bebd-044bc49f63c2
+‹
+java:S2095™"GUse try-with-resources or close this "Statement" in a "finally" clause.(œïì”8Ûì¨°æ1J$d278b151-ee0f-41f1-b263-f1ff92655c96
+‹
+java:S2095±"GUse try-with-resources or close this "Statement" in a "finally" clause.(œïì”8Ûì¨°æ1J$a4aa3556-b321-44f4-8557-673c21f1baf6
+Š
+java:S2095"GUse try-with-resources or close this "Statement" in a "finally" clause.(¼Êİü8Ûì¨°æ1J$045dd9bf-8dd2-4b1c-adeb-9f0635b6d14d
+Š
+java:S2095`"GUse try-with-resources or close this "Statement" in a "finally" clause.(œïì”8Ûì¨°æ1J$46acead9-fad5-47cb-88b7-a5297fb31cc0
+k	java:S108S")Either remove or fill this block of code.(”ı¾8óì¨°æ1J$91c7c34b-4953-4e55-87bd-b28ca0d0efc8
+l	java:S108ä")Either remove or fill this block of code.(”ı¾8üì¨°æ1J$0faa57c1-4c4f-4acb-84a8-b89d7407a9c5
+l	java:S108‚")Either remove or fill this block of code.(”ı¾8şì¨°æ1J$775ca3da-a0b7-44ea-851c-2ff1b1ff64f5
+l	java:S108«")Either remove or fill this block of code.(”ı¾8„í¨°æ1J$c82aa711-c4cf-424a-b516-a1273c509fe8
+l	java:S108Ë")Either remove or fill this block of code.(”ı¾8‡í¨°æ1J$1c44fa55-e7f1-4bf5-a176-b89e41a5546e
+v
+java:S1481Ù"-Remove this unused "vendorUN" local variable.(Üä¬Íÿÿÿÿÿ8ˆí¨°æ1J$9ef17383-0915-4e21-ab3e-7bc7050c88d4
+i
+java:S1481ç"&Remove this unused "e" local variable.(©áë8Ší¨°æ1J$d70296a2-9d48-4276-8506-44de0b5ea13a
+l	java:S108…")Either remove or fill this block of code.(”ı¾8‹í¨°æ1J$c4e77e50-0098-40b6-97d9-e031f2b4cad8
+‘	java:S100˜"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÍÕğ€8¡í¨°æ1J$e4bc9fc4-f4ab-47e1-a4e6-995a0393fb4b
+l	java:S108ì")Either remove or fill this block of code.(”ı¾8§í¨°æ1J$bbf12904-a0d3-4021-b4e0-97078b847ede

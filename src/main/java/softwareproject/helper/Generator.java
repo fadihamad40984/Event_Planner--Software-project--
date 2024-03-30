@@ -3,13 +3,14 @@ import softwareproject.database.DBConnection;
 import softwareproject.eventmanagement.Event;
 import softwareproject.eventmanagement.EventService;
 import softwareproject.eventmanagement.Places;
-import softwareproject.UserManagement.User;
+import softwareproject.usermanagement.User;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.Math.abs;
@@ -193,7 +194,8 @@ public class Generator {
     public static void main(String[] args)
     {
         int c = (abs(getTimeDifference("14:00","00:00"))/60);
-        logger.info(String.valueOf(c));
+        if (logger.isLoggable(Level.INFO)){
+        logger.info(String.valueOf(c));}
 
     }
 

@@ -87,9 +87,5 @@ public class EmailSender {
     }
 
 
-    public static void main(String args[])
-    {
-        EmailSender em=new EmailSender("esawiaburakan@gmail.com");
-        em.sendEmail("hhhhh","hi");
-    }
+
 }

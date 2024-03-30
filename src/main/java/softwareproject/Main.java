@@ -3,9 +3,9 @@ package softwareproject;
 import softwareproject.database.retrieve.Retrieve;
 import softwareproject.eventmanagement.Event;
 import softwareproject.eventmanagement.EventService;
-import softwareproject.UserManagement.User;
-import softwareproject.Vendor.AVendorBooking;
-import softwareproject.Vendor.VendorService;
+import softwareproject.usermanagement.User;
+import softwareproject.vendor.AVendorBooking;
+import softwareproject.vendor.VendorService;
 import softwareproject.authentication.Login;
 import softwareproject.authentication.Register;
 import softwareproject.helper.EmailSender;
@@ -320,6 +320,8 @@ public class Main {
             }
             else if(choise==2)
                 menu();
+
+
             else
             {
                 logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);

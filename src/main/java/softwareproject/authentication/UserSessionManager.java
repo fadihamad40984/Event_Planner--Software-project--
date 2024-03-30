@@ -4,6 +4,7 @@ import softwareproject.helper.UserSession;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UserSessionManager {
@@ -39,7 +40,8 @@ public class UserSessionManager {
 
     public static void invalidateSession(String sessionId) {
         activeSessions.remove(sessionId);
-       logger.info("Session invalidated for Session ID: " + sessionId);
+        if (logger.isLoggable(Level.INFO)){
+       logger.info("Session invalidated for Session ID: " + sessionId);}
     }
 
     public static void logoutUser() {

@@ -1,0 +1,12 @@
+
+™	java:S117‘"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(”Ã«Ñıÿÿÿÿ8¿ÊøŒè1J$cd7e0799-61cb-4076-966c-3271ff391a57
+e
+java:S1643›"Use a StringBuilder instead.(Ÿª÷şÿÿÿÿ8ÀÊøŒè1J$0ba38494-21b4-4406-a773-8d1ce417213d
+›
+java:S3776ƒ"RRefactor this method to reduce its Cognitive Complexity from 34 to the 15 allowed.(é’ŸÃúÿÿÿÿ8ÌøŒè1J$553eba4a-8af2-4121-8add-259224644efa
+_
+java:S3626¿"Remove this redundant jump.(ÉŠ©ƒ8ÌøŒè1J$588a4859-d32f-41ee-a66e-7a6d45a5f890
+‚
+java:S1155˜">Use isEmpty() to check whether the collection is empty or not.(™¸‘‡8†ÌøŒè1J$6fe571eb-ea75-46e7-836e-641154583144
+
+java:S6541ƒ"ÅA "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 73 to 64, Complexity from 21 to 14, Nesting Level from 5 to 2, Number of Variables from 27 to 6.(é’ŸÃúÿÿÿÿ8“ÌøŒè1J$6e2d0f93-7bc6-46d5-8935-135935b7c2a5

@@ -7,9 +7,9 @@ import softwareproject.database.retrieve.Retrieve;
 import softwareproject.eventmanagement.Event;
 import softwareproject.eventmanagement.EventService;
 import softwareproject.eventmanagement.Places;
-import softwareproject.UserManagement.User;
-import softwareproject.Vendor.AVendorBooking;
-import softwareproject.Vendor.VendorService;
+import softwareproject.usermanagement.User;
+import softwareproject.vendor.AVendorBooking;
+import softwareproject.vendor.VendorService;
 
 import java.io.File;
 import java.sql.SQLException;

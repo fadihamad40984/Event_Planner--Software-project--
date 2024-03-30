@@ -3,8 +3,8 @@ package Vendor;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import softwareproject.database.DBConnection;
-import softwareproject.Vendor.VendorManipulation;
-import softwareproject.Vendor.VendorService;
+import softwareproject.vendor.VendorManipulation;
+import softwareproject.vendor.VendorService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

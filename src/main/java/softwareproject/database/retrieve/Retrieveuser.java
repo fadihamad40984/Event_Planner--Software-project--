@@ -1,6 +1,6 @@
 package softwareproject.database.retrieve;
 
-import softwareproject.UserManagement.User;
+import softwareproject.usermanagement.User;
 import softwareproject.helper.Generator;
 
 import java.sql.*;

@@ -3,7 +3,7 @@ package authentication;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import softwareproject.database.DBConnection;
-import softwareproject.UserManagement.User;
+import softwareproject.usermanagement.User;
 import softwareproject.authentication.Register;
 
 import java.sql.SQLException;

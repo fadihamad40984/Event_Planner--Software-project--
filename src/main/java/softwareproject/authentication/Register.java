@@ -3,7 +3,7 @@ package softwareproject.authentication;
 
 import softwareproject.database.insert.InsertData;
 import softwareproject.database.retrieve.Retrieveuser;
-import softwareproject.UserManagement.User;
+import softwareproject.usermanagement.User;
 import softwareproject.helper.Validation;
 
 import java.sql.*;
