@@ -2,7 +2,7 @@ package DataBase;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.DataBase.DBConnection;
+import softwareproject.database.DBConnection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -3,10 +3,9 @@ package EventManagement;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.DataBase.DBConnection;
-import software_project.DataBase.DBConnection;
-import software_project.EventManagement.EventManipulation;
-import software_project.EventManagement.EventService;
+import softwareproject.database.DBConnection;
+import softwareproject.eventmanagement.EventManipulation;
+import softwareproject.eventmanagement.EventService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -2,9 +2,9 @@ package Vendor;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.DataBase.DBConnection;
-import software_project.Vendor.VendorManipulation;
-import software_project.Vendor.VendorService;
+import softwareproject.database.DBConnection;
+import softwareproject.Vendor.VendorManipulation;
+import softwareproject.Vendor.VendorService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
