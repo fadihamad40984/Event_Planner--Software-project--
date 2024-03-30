@@ -3,7 +3,7 @@ package authentication;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.helper.EmailSender;
+import softwareproject.helper.EmailSender;
 
 import javax.mail.MessagingException;
 

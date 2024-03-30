@@ -152,7 +152,7 @@
             <configuration>
 
                 <excludes>
-                    <exclude>C:\Users\User\IdeaProjects\software_project\src\main\java\software_project/software_project.Main.java</exclude>
+                    <exclude>C:\Users\User\IdeaProjects\softwareproject\src\main\java\softwareproject/softwareproject.Main.java</exclude>
                 </excludes>
             </configuration>
             <executions>

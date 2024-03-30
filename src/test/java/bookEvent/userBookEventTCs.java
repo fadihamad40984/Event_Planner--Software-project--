@@ -1,13 +1,10 @@
 package bookEvent;
 
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import software_project.DataBase.DBConnection;
-import software_project.DataBase.DBConnection;
-import software_project.EventManagement.Event;
-import software_project.EventManagement.EventManipulation;
-import software_project.EventManagement.EventService;
+import softwareproject.database.DBConnection;
+import softwareproject.eventmanagement.Event;
+import softwareproject.eventmanagement.EventManipulation;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
