@@ -1,8 +1,10 @@
 package softwareproject;
 
+import net.sf.jasperreports.engine.JRException;
 import softwareproject.database.retrieve.Retrieve;
 import softwareproject.eventmanagement.Event;
 import softwareproject.eventmanagement.EventService;
+import softwareproject.helper.JasperReportGenerator;
 import softwareproject.usermanagement.User;
 import softwareproject.vendor.AVendorBooking;
 import softwareproject.vendor.VendorService;
@@ -32,6 +34,8 @@ import static java.lang.System.exit;
 
 
 public class Main {
+    private static final JasperReportGenerator reportGenerator = new JasperReportGenerator();
+
     private static final JFileChooser fileChooser = new JFileChooser();
 
     private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -130,7 +134,7 @@ public class Main {
 
 
 
-    public static void menu() throws IOException, SQLException {
+    public static void menu() throws IOException, SQLException, JRException {
         int ch;
         logger.info("***************************Login Page***************************\n");
         logger.info("""
@@ -149,7 +153,7 @@ public class Main {
 
     }
 
-    private static void signUpPage() throws IOException, SQLException {
+    private static void signUpPage() throws IOException, SQLException, JRException {
         logger.info("***************************Register Page***************************\n");
 
         User user;
@@ -232,7 +236,7 @@ public class Main {
 
     }
 
-    private static void signinpage() throws IOException, SQLException {
+    private static void signinpage() throws IOException, SQLException, JRException {
         boolean continueLoop = true;
 
         while (continueLoop)
@@ -287,7 +291,7 @@ public class Main {
 
     }
 
-    private static void vendorpage() throws IOException, SQLException {
+    private static void vendorpage() throws IOException, SQLException, JRException {
         logger.info("***************************Vendor Page***************************\n");
         List<Event> events;
 
@@ -370,7 +374,7 @@ public class Main {
     }
 
 
-    private static void customerpage() throws IOException, SQLException {
+    private static void customerpage() throws IOException, SQLException, JRException {
         logger.info("***************************Customer Page***************************\n");
         int choise;
         boolean continueloop = true;
@@ -406,7 +410,7 @@ public class Main {
 
     }
 
-    private static void showCalendarPage() throws SQLException, IOException {
+    private static void showCalendarPage() throws SQLException, IOException, JRException {
         logger.info("Choose The Event You Want To Cancel :");
         List<Event> events;
         events = selectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
@@ -436,7 +440,7 @@ public class Main {
 
     }
 
-    private static void checkRequestPage() throws SQLException, IOException {
+    private static void checkRequestPage() throws SQLException, IOException, JRException {
 
         List<Event> events;
         List<String> status;
@@ -561,7 +565,7 @@ public class Main {
     }
 
 
-    public static List<String> selectStatusOfParticularUserName(String username) throws SQLException {
+    public static List<String> selectStatusOfParticularUserName(String username)  {
         List<String> statuses = new ArrayList<>();
         try (PreparedStatement selectRequestsStatement = conn.getCon().prepareStatement("SELECT * FROM \"Requests\" WHERE \"UserName\" = ?")) {
             selectRequestsStatement.setString(1, username);
@@ -1058,7 +1062,7 @@ public class Main {
 
     }
 
-    private static void serviceproviderpage() throws IOException, SQLException {
+    private static void serviceproviderpage() throws IOException, SQLException, JRException {
         logger.info("***************************ServiceProvider Page***************************\n");
 
         boolean continueLoop = true;
@@ -1087,7 +1091,7 @@ public class Main {
         return scanner.nextInt();
     }
 
-    private static void handleEventServiceManagement() throws IOException, SQLException {
+    private static void handleEventServiceManagement() throws IOException, SQLException, JRException {
         logger.info("***************************Event Service Management***************************\n");
 
         boolean continueLoop = true;
@@ -1117,7 +1121,7 @@ public class Main {
         return scanner.nextInt();
     }
 
-    private static void handleVenueManagement() throws IOException, SQLException {
+    private static void handleVenueManagement() throws IOException, SQLException, JRException {
         logger.info("***************************Venue Management***************************\n");
 
         boolean continueLoop = true;
@@ -1139,7 +1143,7 @@ public class Main {
         String userInput = reader.readLine();
         return userInput.equals("yes");
     }
-    private static void requestsPage() throws SQLException, IOException {
+    private static void requestsPage() throws SQLException, IOException, JRException {
         logger.info("***************************Requests Page***************************\n");
 
         List<Event> events = selectAllRequests();
@@ -1200,7 +1204,7 @@ public class Main {
         events.removeIf(event -> event.getId() == eventId);
     }
 
-    private static void returnToMainPage() throws SQLException, IOException {
+    private static void returnToMainPage() throws SQLException, IOException, JRException {
         logger.info("Do You Want To Return To software_project.Main Page :  " +
                 YES+"  " +
                 NO);
@@ -1334,7 +1338,7 @@ public class Main {
 
 
 
-    private static void addvenu() throws IOException, SQLException {
+    private static void addvenu() throws IOException, SQLException, JRException {
 
 
         String name;
@@ -1358,7 +1362,7 @@ public class Main {
 
     }
 
-    private static void deleteeventservice() throws SQLException, IOException {
+    private static void deleteeventservice() throws SQLException, IOException, JRException {
         List<EventService> allEvent = retrieve.retrieveAllEventServices();
 
         if (logger.isLoggable(Level.INFO)) {
@@ -1390,7 +1394,7 @@ public class Main {
 
     }
 
-    private static void editeventservice() throws IOException, SQLException {
+    private static void editeventservice() throws IOException, SQLException, JRException {
         EventService es;
 
         String title;
@@ -1454,7 +1458,7 @@ public class Main {
 
     }
 
-    private static void addeventservice() throws IOException, SQLException {
+    private static void addeventservice() throws IOException, SQLException, JRException {
         boolean continueLoop = true;
         EventService eventService;
 
@@ -1510,14 +1514,37 @@ public class Main {
 
     }
 
-    private static void adminpage() {
+    private static void adminpage() throws SQLException, IOException, JRException {
 
         logger.info("""
                 Choose Number
                 1- All Users Report\s
                 2- All Events Report
                 3- All EventService Report
-                4- Delete User""");
+                4- Log Out""");
+
+        boolean flag = false;
+        while(!flag) {
+            int choice;
+            choice = scanner.nextInt();
+            if (choice == 1) {
+                reportGenerator.generateReport("userreport.jrxml", "userReport");
+
+            } else if (choice == 2) {
+                reportGenerator.generateReport("eventreport.jrxml", "EventReport");
+
+            } else if (choice == 3) {
+                reportGenerator.generateReport("eventservicereport.jrxml", "EventServiceReport");
+
+            } else if (choice == 4) {
+                flag=true;
+                menu();
+
+            }
+
+        }
+
+
 
 
 

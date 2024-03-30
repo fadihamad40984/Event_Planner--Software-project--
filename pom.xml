@@ -88,8 +88,15 @@
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
-            <version>6.21.2</version>
+            <version>6.20.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>23.3.0.23.09</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.jacoco</groupId>
