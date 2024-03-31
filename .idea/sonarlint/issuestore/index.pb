@@ -149,10 +149,6 @@ t
 Dsrc/main/java/softwareproject/eventmanagement/EventManipulation.java,e\7\e71025f4c937b5cd1cf5e6397537419e7f1ae253
 o
 ?src/main/java/softwareproject/eventmanagement/EventService.java,d\f\df92339b3051c3c93c25c2e6e6f1c2c90396e882
-Z
-*src/test/java/AllTests/AcceptanceTest.java,1\a\1af5c98158e8d65829edced997ec94c030229861
-X
-(src/test/java/AllTests/AllTestCases.java,4\0\40e264f83d8da2bd5b2c49892aeffde1fa7e16c8
 l
 <src/main/java/softwareproject/database/update/EditEvent.java,a\8\a87df3af6e259a4814967bcc2cc544bddc667a85
 m
@@ -211,10 +207,6 @@ Q.idea/sonarlint/securityhotspotstore/0/e/0e9be8694b97479922c135a9a8f6b5ff21273c
 Q.idea/sonarlint/securityhotspotstore/d/8/d835fbac0a4c7270ee4a3efb3b53881ee3073fbd,d\9\d90ffb0d254b70e51d47b180f8f10a94a67ef1b1
 
 Q.idea/sonarlint/securityhotspotstore/f/f/ffae3ac04e93ababaa5c7e54b969b51d50330c5e,d\6\d6bb98d871329243e4e6e365ca296c76c5635071
-w
-G.idea/sonarlint/issuestore/1/a/1af5c98158e8d65829edced997ec94c030229861,9\a\9ac64ee625965e9bdb8c17d6391ed7c48a6c25f6
-
-Q.idea/sonarlint/securityhotspotstore/1/a/1af5c98158e8d65829edced997ec94c030229861,9\f\9ff3ec8b302cb6c4683beba99167e1f6dd5915c4
 
 Q.idea/sonarlint/securityhotspotstore/7/a/7a41a662ec29107506224c5f612ae6b4d17da80d,7\3\739b8f3f0e9dca2a2fd9c1a8a70f31db867b0d4f
 
@@ -225,10 +217,6 @@ w
 G.idea/sonarlint/issuestore/4/2/42944e895f2241a548fbec1fb568c75bfb9f374e,2\2\225edc099badc4c45999e6b9397687c2c61ecbfd
 
 Q.idea/sonarlint/securityhotspotstore/d/f/df92339b3051c3c93c25c2e6e6f1c2c90396e882,f\8\f856ef96dd6d6d8bcefb3a165db90bfb296a471b
-
-Q.idea/sonarlint/securityhotspotstore/4/0/40e264f83d8da2bd5b2c49892aeffde1fa7e16c8,b\5\b5c73908ecca2cd574ec36b6dc0b10e430357779
-w
-G.idea/sonarlint/issuestore/4/0/40e264f83d8da2bd5b2c49892aeffde1fa7e16c8,b\d\bd970cd4f1c10b3b322f2ac2af3932dc904254c9
 
 Q.idea/sonarlint/securityhotspotstore/a/8/a87df3af6e259a4814967bcc2cc544bddc667a85,3\1\31865215c95ada9417804dcc8fa1d48eae099b3a
 
@@ -539,3 +527,9 @@ G
 Features/logout.feature,2\a\2a232fd312664fad823fb4b342ea5bb6d7f62064
 G
 Features/jasper.feature,5\7\57a00c0fc03cd255ae9cf70ff96312173002333d
+W
+'src/main/java/softwareproject/Main.java,8\d\8dad46521d079814d39795502e4e458bb5c07970
+X
+(src/test/java/AllTests/AllTestCases.java,4\0\40e264f83d8da2bd5b2c49892aeffde1fa7e16c8
+Z
+*src/test/java/AllTests/AcceptanceTest.java,1\a\1af5c98158e8d65829edced997ec94c030229861
