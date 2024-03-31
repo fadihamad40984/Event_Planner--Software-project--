@@ -7,6 +7,8 @@ import softwareproject.eventmanagement.EventService;
 import softwareproject.helper.JasperReportGenerator;
 import softwareproject.usermanagement.User;
 import softwareproject.vendor.AVendorBooking;
+import softwareproject.vendor.VendorManipulation;
+import softwareproject.vendor.VendorReview;
 import softwareproject.vendor.VendorService;
 import softwareproject.authentication.Login;
 import softwareproject.authentication.Register;
@@ -70,8 +72,9 @@ public class Main {
     public static final String END_TIME = "EndTime";
     public static final String BOOKING_TIME = "BookingTime";
     public static final String TIME = "00:00";
+    public static final String CHOOSE_THE_EVENT_YOU_WANT_TO_CANCEL = "Choose The Event You Want To Cancel :";
 
-     static int balanceBookEvent;
+    static int balanceBookEvent;
 
 
 
@@ -386,7 +389,8 @@ public class Main {
                     2- Cancel Event
                     3- Check Request
                     4- Show Calendar
-                    5- Log out""");
+                    5- Review Vendors
+                    6- Log out""");
             choise = scanner.nextInt();
             if(choise==1)
                 bookEventPage();
@@ -397,6 +401,8 @@ public class Main {
             else if(choise==4)
                 showCalendarPage();
             else if(choise==5)
+                reviewVendors();
+            else if(choise==6)
                 menu();
             else
             {
@@ -410,8 +416,70 @@ public class Main {
 
     }
 
+    private static void reviewVendors() throws IOException, SQLException, JRException {
+        List<String> vendors = selectVendors(UserSession.getCurrentUser().getUsername());
+        HashSet<String> setWithoutDuplicates = new HashSet<>(vendors);
+
+        List<String> vendors1 = new ArrayList<>(setWithoutDuplicates);
+        while (true) {
+            int choice = displayVendors(vendors1);
+            int rating;
+            StringBuilder rate = new StringBuilder();
+            String feedback;
+            logger.info("Enter Rating (Number Of Stars \"Max =5\")");
+            rating = scanner.nextInt();
+            logger.info("Enter FeedBack Text : ");
+            feedback = reader.readLine();
+            VendorReview vr = new VendorReview();
+            rate.append("*".repeat(Math.max(0, rating)));
+            vr.setRating(rate.toString());
+            vr.setVendorUserName(vendors.get(choice - 1));
+            vr.setFeedBackText(feedback);
+            vr.setCustomerUserName(UserSession.getCurrentUser().getUsername());
+            VendorManipulation vendorManipulation = new VendorManipulation(conn.getCon());
+            vendorManipulation.addVendorReview(vr);
+
+            logger.info("""
+                    Do You Want To Review Another Vendor
+                    1- Yes
+                    2- No""");
+            int ch;
+            ch = scanner.nextInt();
+            if (ch != 1)
+                break;
+        }
+
+        customerpage();
+
+    }
+
+    private static int getVendorChoice(int counter) {
+        while (true) {
+            logger.info("Choose Vendor : ");
+            int choice = scanner.nextInt();
+            if (choice > 0 && choice <= counter) {
+                return choice;
+            } else {
+                logger.info("Enter A Valid Number\n");
+            }
+        }
+    }
+
+    private static int displayVendors(List<String> vendors) {
+        int counter = 1;
+
+        for (String str : vendors) {
+            if (logger.isLoggable(Level.INFO)){
+            logger.info(String.format("%d: %s", counter, str));}
+            counter++;
+        }
+
+
+        return getVendorChoice(counter);
+    }
+
     private static void showCalendarPage() throws SQLException, IOException, JRException {
-        logger.info("Choose The Event You Want To Cancel :");
+        logger.info(CHOOSE_THE_EVENT_YOU_WANT_TO_CANCEL);
         List<Event> events;
         events = selectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
         if (logger.isLoggable(Level.INFO)){
@@ -487,7 +555,7 @@ public class Main {
 
     private static void cancelEventPage() throws SQLException {
 
-        logger.info("Choose The Event You Want To Cancel :");
+        logger.info(CHOOSE_THE_EVENT_YOU_WANT_TO_CANCEL);
         List<Event> events;
         events = selectAllEventOfParticualrUserName(UserSession.getCurrentUser().getUsername());
 
@@ -948,9 +1016,7 @@ public class Main {
     private static void displayVendorService(VendorService vs, int counterservice) {
         String description = vs.getServiceDescription().replace("\n", " ");
         StringBuilder rate = new StringBuilder();
-        for (int i = 0; i < vs.getAverageRating(); i++) {
-            rate.append("*");
-        }
+        rate.append("*".repeat(Math.max(0, vs.getAverageRating())));
         if (logger.isLoggable(Level.INFO)){
         logger.info(format("%-15s%-25s%-40s%-15s%-15s%-20s%n",
                 counterservice + 1, vs.getVendorUserName(), description,
@@ -1286,7 +1352,7 @@ public class Main {
     }
 
 
-    public static boolean deleteEvent(int id) {
+    public static void deleteEvent(int id) {
 
         try {
             conn.getCon().setAutoCommit(false);
@@ -1296,15 +1362,13 @@ public class Main {
                 preparedStmt.execute();
             }
             conn.getCon().commit();
-            return true;
         } catch (Exception e) {
-
-            return false;
+            logger.info("Exception while Delete Data");
         }
 
     }
 
-    public static boolean updateStatus(String status , int id) {
+    public static void updateStatus(String status , int id) {
         try {
             conn.getCon().setAutoCommit(false);
             String query = "update \"Requests\" set \"Status\"= ? where \"Event Id\"=?";
@@ -1317,10 +1381,8 @@ public class Main {
             }
             if (rowsUpdated > 0) {
                 conn.getCon().commit();
-                return true;
             } else {
                 conn.getCon().rollback();
-                return false;
             }
 
         } catch (Exception e) {
@@ -1329,7 +1391,6 @@ public class Main {
             } catch (SQLException rollbackException) {
                 logger.info("Exception While inserting Data");
             }
-            return false;
         }
     }
 
@@ -1544,13 +1605,37 @@ public class Main {
 
         }
 
-
-
-
-
     }
 
 
+
+    public static List<String> selectVendors(String username) {
+        List<String> vbs = new ArrayList<>();
+        try (PreparedStatement selectVendorBookingStatement = conn.getCon().prepareStatement("SELECT * FROM \"Event_User\" WHERE \"UserName\" = ?")) {
+            selectVendorBookingStatement.setString(1, username);
+            try (ResultSet rs = selectVendorBookingStatement.executeQuery()) {
+                List<Integer> eventIDs = new ArrayList<>();
+                while (rs.next()) {
+                    eventIDs.add(rs.getInt(EVENT_ID1));
+                }
+                for (int eventId : eventIDs) {
+                    try (PreparedStatement selectEventStatement = conn.getCon().prepareStatement("SELECT * FROM \"Vendor_Bookings\" WHERE \"Event_id\" = ?")) {
+                        selectEventStatement.setInt(1, eventId);
+                        try (ResultSet rs1 = selectEventStatement.executeQuery()) {
+                            while (rs1.next()) {
+                                vbs.add(rs1.getString("Vendor_UN"));
+                            }
+
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            logger.info("Exception while Retrieving Data");
+        }
+
+        return vbs;
+    }
 
 
 
