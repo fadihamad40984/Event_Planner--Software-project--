@@ -8,7 +8,6 @@ import softwareproject.usermanagement.User;
 public class UserSession {
     private static String sessionId;
     private static User currentUser;
-    private static User userToDisplay;
 
 
     public static String getSessionId() {
@@ -25,14 +24,6 @@ public class UserSession {
 
     public static void setCurrentUser(User currentUser) {
         UserSession.currentUser = new User(currentUser);
-    }
-
-    public static User getUserToDisplay() {
-        return userToDisplay;
-    }
-
-    public static void setUserToDisplay(User userToDisplay) {
-        UserSession.userToDisplay = userToDisplay;
     }
 
 

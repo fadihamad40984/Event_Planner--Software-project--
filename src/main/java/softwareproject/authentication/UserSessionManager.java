@@ -30,9 +30,6 @@ public class UserSessionManager {
         return sessionId;
     }
 
-    public static boolean isValidSession(String sessionId) {
-        return activeSessions.contains(sessionId);
-    }
 
     private static String generateSessionId() {
         return "SESSION_" + System.currentTimeMillis();
@@ -48,5 +45,6 @@ public class UserSessionManager {
         UserSessionManager.invalidateSession(UserSession.getSessionId());
         UserSession.setSessionId(null);
         logger.info("Logged out");
+        setStatus("Logged out");
     }
 }
