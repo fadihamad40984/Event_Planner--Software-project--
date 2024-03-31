@@ -43,6 +43,7 @@ public class JasperReportGenerator {
             frame.getContentPane().add(new JRViewer(jasperPrint));
             frame.pack();
             frame.setVisible(true);
+            setStatus("Successful Generated");
         }
     }
 
