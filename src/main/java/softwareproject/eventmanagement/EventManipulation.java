@@ -76,6 +76,10 @@ public class EventManipulation {
 
         setStatus("Event updated successfully");
 
+    }
 
+    public void deleteUser(String username){
+        delete.deleteUser(username);
+        setStatus(delete.getStatus());
     }
 }

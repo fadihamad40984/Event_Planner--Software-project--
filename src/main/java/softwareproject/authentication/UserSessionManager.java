@@ -30,7 +30,6 @@ public class UserSessionManager {
         return sessionId;
     }
 
-
     private static String generateSessionId() {
         return "SESSION_" + System.currentTimeMillis();
     }

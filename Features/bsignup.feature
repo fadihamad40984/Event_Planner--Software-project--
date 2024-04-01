@@ -33,6 +33,7 @@ Feature: sign-Up
       | fadi21     | Fadi      | Hamad    | 0595014020  | 1234**Aa     | fadi22@gmail.com     | customer         | User was registered successfully |
       | fadi22     | Fadi      | Hamad    | 0595014020  | 1234**Aa     | fadi22@gmail.com     | service provider | User was registered successfully |
       | fadi28     | Fadi      | Hamad    | 0595014020  | 1234**Aa     | fadi22@gmail.com     | none             | Invalid user type                |
+      | lokman12   | lokman    | sayed    | 0595014020  | 1234**Aa     | lokman22@gmail.com   | vendor           | User was registered successfully |
 
 
 
