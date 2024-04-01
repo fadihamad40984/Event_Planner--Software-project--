@@ -1582,7 +1582,8 @@ public class Main {
                 1- All Users Report\s
                 2- All Events Report
                 3- All EventService Report
-                4- Log Out""");
+                4- Delete User
+                5- Log Out""");
 
         boolean flag = false;
         while(!flag) {
@@ -1598,6 +1599,10 @@ public class Main {
                 reportGenerator.generateReport("eventservicereport.jrxml", "EventServiceReport");
 
             } else if (choice == 4) {
+                deleteuserpage();
+
+            }
+            else if (choice == 5) {
                 flag=true;
                 menu();
 
@@ -1607,6 +1612,33 @@ public class Main {
 
     }
 
+    private static void deleteuserpage() throws SQLException, JRException, IOException {
+        List<User> users = retrieve.retrieveAllUsers();
+
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info(String.format("%-5s | %-15s | %-15s | %-15s | %-15s",
+                    "No.", "First Name", "Last Name", "Username", "User Type"));
+            logger.info("------------------------------------------------------------");
+
+            int counter = 1;
+            for (User user : users) {
+                if(!Objects.equals(user.getUsername(), UserSession.getCurrentUser().getUsername())) {
+                    logger.info(String.format("%-5d | %-15s | %-15s | %-15s | %-15s",
+                            counter++, user.getFirstName(), user.getLastName(),
+                            user.getUsername(), user.getUserType()));
+                }
+            }
+
+        }
+
+        int ch;
+        logger.info("Select User To Delete (By Enter The Number Of Row): ");
+        ch = scanner.nextInt();
+        eventManipulation.deleteUser(users.get(ch-1).getUsername());
+        logger.info(eventManipulation.getStatus());
+        adminpage();
+
+    }
 
 
     public static List<String> selectVendors(String username) {

@@ -51,7 +51,7 @@ public class DeleteEvent {
                 preparedStmt.setString(1, username);
                 preparedStmt.execute();
             }
-            setStatus("user deleted successfully");
+            setStatus("User deleted successfully");
             conn.commit();
             return true;
         } catch (Exception e) {

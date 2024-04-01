@@ -529,7 +529,9 @@ G
 Features/jasper.feature,5\7\57a00c0fc03cd255ae9cf70ff96312173002333d
 W
 'src/main/java/softwareproject/Main.java,8\d\8dad46521d079814d39795502e4e458bb5c07970
+K
+Features/deleteuser.feature,f\f\ffcea57238f57cb43203351d3b333516d6e9c20e
 X
 (src/test/java/AllTests/AllTestCases.java,4\0\40e264f83d8da2bd5b2c49892aeffde1fa7e16c8
-Z
-*src/test/java/AllTests/AcceptanceTest.java,1\a\1af5c98158e8d65829edced997ec94c030229861
+B
+src/main/Main.java,f\e\fe03b4fd3afe162c6e01309b98a22588e093d274

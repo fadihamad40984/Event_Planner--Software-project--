@@ -3,6 +3,7 @@ package softwareproject.database.retrieve;
 import softwareproject.eventmanagement.Event;
 import softwareproject.eventmanagement.EventService;
 import softwareproject.eventmanagement.Places;
+import softwareproject.usermanagement.User;
 import softwareproject.vendor.AVendorBooking;
 import softwareproject.vendor.VendorService;
 import softwareproject.helper.Generator;
@@ -197,6 +198,42 @@ public class Retrieve {
         }
 
         return  eventServices;
+
+    }
+
+    public List<User> retrieveAllUsers() throws SQLException {
+        Statement stmt = null;
+
+        List<User> users = new ArrayList<>();
+        try {
+            stmt = con.createStatement();
+            String query = "SELECT * FROM \"users\";";
+
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+
+                User user = new User();
+                user.setFirstName(rs.getString("First_Name"));
+                user.setLastName(rs.getString("Last_Name"));
+                user.setUsername(rs.getString("User_Name"));
+                user.setUserType(rs.getString("User_Type"));
+                users.add(user);
+
+            }
+
+        } catch (SQLException e) {
+            setStatus("Error while retrieving users from database");
+
+        }
+        finally {
+            if(stmt!=null)
+            {
+                stmt.close();
+            }
+        }
+
+        return  users;
 
     }
 

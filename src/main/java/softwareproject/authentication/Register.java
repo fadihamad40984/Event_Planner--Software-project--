@@ -1,11 +1,8 @@
 package softwareproject.authentication;
-
-
 import softwareproject.database.insert.InsertData;
 import softwareproject.database.retrieve.Retrieveuser;
 import softwareproject.usermanagement.User;
 import softwareproject.helper.Validation;
-
 import java.sql.*;
 import java.util.List;
 
@@ -41,14 +38,9 @@ public class Register {
                 setStatus("User was registered successfully");
             }
 
-
             else setStatus("Username is already taken");
 
-
-
         }
-
-
 
     }
 }
