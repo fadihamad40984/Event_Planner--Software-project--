@@ -127,7 +127,6 @@
 
     </dependencies>
 
-
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -136,6 +135,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>fadihamad40984_Event_Planner--Software-project--</sonar.projectKey>
     </properties>
+
 
     <build>
         <plugins>
