@@ -1,5 +1,4 @@
-
-name: SonarCloud
+name: SonarQube Cloud
 on:
   push:
     branches:
@@ -19,7 +18,7 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu' # Alternative distribution options are available.
-      - name: Cache SonarCloud packages
+      - name: Cache SonarQube packages
         uses: actions/cache@v3
         with:
           path: ~/.sonar/cache
@@ -33,6 +32,8 @@ jobs:
           restore-keys: ${{ runner.os }}-m2 
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B jacoco:prepare-agent verify jacoco:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=SoftwareProject2024najah_software_project
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Automatically available
+          SONARQUBE_TOKEN: c16d7be3ee445d4f564f2e883a6f0274052ac8a3  # Hardcoded token (Not recommended)
+        run: mvn -B jacoco:prepare-agent verify jacoco:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          -Dsonar.projectKey=SoftwareProject2024najah_software_project \
+          -Dsonar.host.url=https://sonarcloud.io
