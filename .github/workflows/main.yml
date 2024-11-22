@@ -34,7 +34,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Automatically available
           SONARQUBE_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-        run: mvn -B jacoco:prepare-agent verify jacoco:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+        run: mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
           -Dsonar.projectKey=SoftwareProject2024najah_software_project \
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
