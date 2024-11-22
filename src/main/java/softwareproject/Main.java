@@ -817,8 +817,16 @@ public class Main {
         logger.info("Enter Month You Want To Book The Event : ");
         int month = scanner.nextInt();
 
-      
-        // Calculate the days for the calendar then Print the calendar
+        try {
+
+            // Calculate the days for the calendar
+            Map<Integer, Boolean> days = retrieve.checkDays(year, month, allEvent.get(choice - 1));
+
+            // Print the calendar
+            Generator.printCalendar(year, month, days);
+        } catch (IndexOutOfBoundsException e) {
+            logger.severe("Invalid choice. Please select a valid event.");
+        }
         Generator.printCalendar(year, month, retrieve.checkDays(year, month, allEvent.get(choice - 1)));
 
         int day = 0;
