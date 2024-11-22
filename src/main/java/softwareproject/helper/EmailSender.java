@@ -29,6 +29,7 @@ public class EmailSender {
 
     private void sending(String subject, String text){
         try {
+            String emailPassword = System.getenv("EMAIL_PASSWORD");
             Properties properties = System.getProperties();
             properties.put("mail.smtp.host", "smtp.gmail.com");
             properties.put("mail.smtp.port", "587");
@@ -38,7 +39,7 @@ public class EmailSender {
             Session session = Session.getDefaultInstance(properties,new javax.mail.Authenticator(){
                 @Override
                 protected  PasswordAuthentication getPasswordAuthentication(){
-                    return new PasswordAuthentication("fadi3business@gmail.com","tgac jvkm eoak eles");
+                    return new PasswordAuthentication("fadi3business@gmail.com",emailPassword);
                 }
             });
             session.setDebug(false);

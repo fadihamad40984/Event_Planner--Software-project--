@@ -4,9 +4,9 @@ Feature: Database Connection
   Scenario: Successful connection
     When I want to connect to database
     And I fill in 'port' with '5432'
-    And I fill in 'databaseName' with 'Event_Planner'
+    And I fill in 'databaseName' with 'postgres'
     And I fill in 'username' with 'postgres'
-    And I fill in 'password' with 'admin'
+    And I fill in 'password' with 'SfE#76132'
     Then I should see "Connected To The Database Successfully" for connection
 
   Scenario: Failure connection

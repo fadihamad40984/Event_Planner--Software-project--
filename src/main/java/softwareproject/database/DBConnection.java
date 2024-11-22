@@ -14,9 +14,9 @@ public class DBConnection {
 
     public DBConnection() {
         setPort(5432);
-        setDatabaseName("Event_Planner");
+        setDatabaseName("postgres");
         setUsername("postgres");
-        setPassword("admin");
+        setPassword("SfE#76132");
         setCon();
     }
 
@@ -66,5 +66,7 @@ public class DBConnection {
             setStatus("Couldn't Connect To The Database");
         }
     }
+
+
 
 }
