@@ -817,8 +817,16 @@ public class Main {
         logger.info("Enter Month You Want To Book The Event : ");
         int month = scanner.nextInt();
 
+        // Validate choice before proceeding
         if (choice > 0 && choice <= allEvent.size()) {
-            Generator.printCalendar(year, month, retrieve.checkDays(year, month, allEvent.get(choice - 1)));
+            // Retrieve the selected event
+            Event selectedEvent = allEvent.get(choice - 1);
+
+            // Calculate the days for the calendar
+            List<Day> days = retrieve.checkDays(year, month, selectedEvent);
+
+            // Print the calendar
+            Generator.printCalendar(year, month, days);
         } else {
             System.out.println("Invalid choice. Please select a valid event.");
         }
