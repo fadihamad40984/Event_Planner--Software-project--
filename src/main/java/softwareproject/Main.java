@@ -147,12 +147,17 @@ public class Main {
 
         ch = scanner.nextInt();
 
-        if (ch==1)
-            signinpage();
-        else if(ch==2)
-            signUpPage();
-        else
-            logger.severe(YOU_SHOULD_CHOOSE_NUMBER_ABOVE);
+        switch (ch) {
+            case 1:
+                signinpage();
+                break;
+            case 2:
+                signUpPage();
+                break;
+            default:
+                logger.severe(YOU_SHOULD_CHOOSE_NUMBER_ABOVE);
+                break;
+        }
 
     }
 
@@ -305,36 +310,35 @@ public class Main {
             logger.info("1- Show Upcoming Events\n" +
                     "2- Log out");
             choise = scanner.nextInt();
-            if(choise==1)
-            {
-                events = showUpcomingEventsForParticularVendor(UserSession.getCurrentUser().getUsername());
+            switch (choise) {
+                case 1:
+                    events = showUpcomingEventsForParticularVendor(UserSession.getCurrentUser().getUsername());
 
-                if (logger.isLoggable(Level.INFO)){
-                logger.info(format("%-15s%-15s%-15s%-30s%-15s%n",
-                        NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT));}
+                    if (logger.isLoggable(Level.INFO)) {
+                        logger.info(format("%-15s%-15s%-15s%-30s%-15s%n", NUMBER, "Date", "Time", DESCRIPTION, ATTENDEE_COUNT));
+                    }
 
-                int counter = 0;
-                for(Event e : events)
-                {
-                    if (logger.isLoggable(Level.INFO)){
-                    logger.info(format("%-15s%-15s%-15s%-30s%-15s%n",
-                            ++counter, e.getDate(), e.getTime(),
-                            e.getDescription(), e.getAttendeeCount()));}
-                }
+                    int counter = 0;
+                    for (Event e : events) {
+                        if (logger.isLoggable(Level.INFO)) {
+                            logger.info(format("%-15s%-15s%-15s%-30s%-15s%n",
+                                    ++counter, e.getDate(), e.getTime(),
+                                    e.getDescription(), e.getAttendeeCount()));
+                        }
+                    }
+                    break;
 
+                case 2:
+                    menu();
+                    break;
 
-
+                default:
+                    logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
+                    String userInput = reader.readLine();
+                    continueloop = userInput.equals("yes");
+                    break;
             }
-            else if(choise==2)
-                menu();
 
-
-            else
-            {
-                logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
-                String userInput = reader.readLine();
-                continueloop = userInput.equals("yes");
-            }
         }
     }
 
@@ -392,24 +396,32 @@ public class Main {
                     5- Review Vendors
                     6- Log out""");
             choise = scanner.nextInt();
-            if(choise==1)
-                bookEventPage();
-            else if(choise==2)
-                cancelEventPage();
-            else if(choise==3)
-                checkRequestPage();
-            else if(choise==4)
-                showCalendarPage();
-            else if(choise==5)
-                reviewVendors();
-            else if(choise==6)
-                menu();
-            else
-            {
-                logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
-                String userInput = reader.readLine();
-                continueloop = userInput.equals("yes");
+            switch (choise) {
+                case 1:
+                    bookEventPage();
+                    break;
+                case 2:
+                    cancelEventPage();
+                    break;
+                case 3:
+                    checkRequestPage();
+                    break;
+                case 4:
+                    showCalendarPage();
+                    break;
+                case 5:
+                    reviewVendors();
+                    break;
+                case 6:
+                    menu();
+                    break;
+                default:
+                    logger.info(DO_YOU_WANT_TO_CONTINUE_YES_NO);
+                    String userInput = reader.readLine();
+                    continueloop = userInput.equals("yes");
+                    break;
             }
+
         }
 
 
@@ -535,18 +547,18 @@ public class Main {
         {
             int ch;
             ch = scanner.nextInt();
-            if(ch==1)
-            {
-                customerpage();
-                return;
+            switch (ch) {
+                case 1:
+                    customerpage();
+                    return;
+                case 2:
+                    exit(0);
+                    break;
+                default:
+                    logger.info("Enter Valid Input\n");
+                    break;
             }
-            else if(ch==2)
-            {
-                exit(0);
-            }
-            else{
-                logger.info("Enter Valid Input\n");
-            }
+
 
         }
 
@@ -1261,13 +1273,18 @@ public class Main {
                         "1- Accept" +
                         "2- Refuse");
                 int statusChoice = scanner.nextInt();
-                if (statusChoice == 1) {
-                    updateAndDeleteEvent("accept", events.get(eventNumber - 1).getId(), events);
-                } else if (statusChoice == 2) {
-                    updateStatus("refuse", events.get(eventNumber - 1).getId());
-                } else {
-                    continueLoop = false; // Terminate loop
+                switch (statusChoice) {
+                    case 1:
+                        updateAndDeleteEvent("accept", events.get(eventNumber - 1).getId(), events);
+                        break;
+                    case 2:
+                        updateStatus("refuse", events.get(eventNumber - 1).getId());
+                        break;
+                    default:
+                        continueLoop = false; // Terminate loop
+                        break;
                 }
+
             } else {
                 logger.info(INVALID_INPUT);
             }
@@ -1287,14 +1304,18 @@ public class Main {
 
         while (true) {
             int ch = scanner.nextInt();
-            if (ch == 1) {
-                serviceproviderpage();
-                return;
-            } else if (ch == 2) {
-                exit(0);
-            } else {
-                logger.info("Enter Valid Input\n");
+            switch (ch) {
+                case 1:
+                    serviceproviderpage();
+                    return;
+                case 2:
+                    exit(0);
+                    break;
+                default:
+                    logger.info("Enter Valid Input\n");
+                    break;
             }
+
         }
     }
     private static List<Event> selectAllRequests() throws SQLException, NullPointerException {
