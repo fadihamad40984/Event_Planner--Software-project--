@@ -190,11 +190,7 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
-                        <configuration>
-                            <reports>
-                                <xml>true</xml>
-                            </reports>
-                        </configuration>
+
                     </execution>
                 </executions>
             </plugin>
