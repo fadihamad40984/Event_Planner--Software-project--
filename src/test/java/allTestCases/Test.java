@@ -11,5 +11,5 @@ import org.junit.runner.RunWith;
         monochrome = true,snippets = CucumberOptions.SnippetType.CAMELCASE, glue = {"allTestCases"} )
 
 
-public class tester {
+public class Test {
 }
