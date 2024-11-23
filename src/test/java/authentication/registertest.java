@@ -19,7 +19,7 @@ public class registertest {
     private String status;
     @When("user is in sign-up page")
     public void user_is_in_sign_up_page() {
-        conn = new DBConnection(5432,"Event_Planner","postgres","admin");
+        conn = new DBConnection(5432,"postgres","postgres","SfE#76132");
         userregister = new Register(conn.getCon());
         user= new User();
     }

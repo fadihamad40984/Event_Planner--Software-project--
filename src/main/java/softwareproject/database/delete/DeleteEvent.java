@@ -63,5 +63,11 @@ public class DeleteEvent {
     }
 
 
+    public static void main(String[] args){
+        System.out.println(System.getenv("EMAIL_PASSWORD"));
+        System.out.println(System.getenv());
+
+
+    }
 
 }
